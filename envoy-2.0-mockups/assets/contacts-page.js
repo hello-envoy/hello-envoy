@@ -58,7 +58,13 @@ window.addEventListener("envoy:ready", () => {
     sortKey: "name",
     sortDir: "asc",
   };
-  let selected = qs.get("c") || (F.scope === "dir" ? "ashby" : "glam");
+  if (qs.get("c") && F.scope === "dir" && C.some((x) => x[0] === qs.get("c"))) {
+    F.scope = "project";
+    const url = new URL(location.href);
+    url.searchParams.set("scope", "project");
+    history.replaceState(null, "", url.pathname + url.search + url.hash);
+  }
+  let selected = qs.get("c") || "";
   let fixFocus = qs.get("fix") || (location.hash === "#fix" ? "auto" : "");
   let replyOpen = fixFocus === "reply";
 
@@ -71,25 +77,70 @@ window.addEventListener("envoy:ready", () => {
     return otherFor(c).length + 1;
   }
 
+  function dataCounts() {
+    const book = accountBookRows();
+    const weddingBooked = C.filter((c) => c[4] === "booked" || c[4] === "paid").length;
+    return {
+      bookTotal: book.length,
+      dirOnly: DIR.length,
+      reply: C.filter((c) => c[4] === "reply").length,
+      waiting: C.filter((c) => c[4] === "waiting").length,
+      booked: weddingBooked,
+      florists: C.filter((c) => c[3] === "Florist").length,
+      inBook: C.filter((c) => c[9]).length,
+      missingEmail: C.filter((c) => !c[7]).length,
+    };
+  }
+
+  function updateSavedViewOptions() {
+    const n = dataCounts();
+    const sel = document.getElementById("saved-view");
+    if (!sel) return;
+    const opts = [
+      ["", "Saved views…"],
+      ["reply", `Needs reply · ${n.reply}`],
+      ["florists", `Florists · ${n.florists}`],
+      ["booked-team", `Booked · ${n.booked}`],
+      ["in-book", `In contact book · ${n.inBook}`],
+      ["missing-email", `Missing email · ${n.missingEmail}`],
+    ];
+    const cur = sel.value;
+    sel.innerHTML = opts.map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+    sel.value = cur;
+  }
+
+  function syncSubtabLabels() {
+    const btn = document.getElementById("contacts-subtab-list");
+    if (btn) btn.textContent = F.scope === "dir" ? "Directory" : "Contacts";
+    const sortBtn = document.querySelector("#sort-filter-menu summary");
+    if (sortBtn) {
+      const label = { name: "Name", type: "Type", weddings: "Weddings" }[F.sortKey] || "Sort";
+      sortBtn.title = `${label} · ${F.sortDir === "asc" ? "Ascending" : "Descending"}`;
+    }
+  }
+
   function syncPageHead() {
     const eb = document.getElementById("page-eyebrow");
     const attachBtn = document.getElementById("open-attach");
     const backDir = document.getElementById("back-to-dir");
+    const n = dataCounts();
+    syncSubtabLabels();
+    updateSavedViewOptions();
     if (F.scope === "dir") {
       if (eb) eb.textContent = "Account · Directory";
       document.title = "Directory · Contacts · Envoy";
-      const book = accountBookRows();
-      document.getElementById("meta-n").textContent = `${book.length} in contact book`;
-      if (mb) mb.textContent = `${book.filter((c) => c[8] === "dir").length} directory-only`;
-      if (mr) mr.textContent = `${C.filter((c) => c[4] === "reply").length} need your reply on weddings`;
+      document.getElementById("meta-n").textContent = `${n.bookTotal} in contact book`;
+      if (mb) mb.textContent = `${n.dirOnly} directory-only`;
+      if (mr) mr.textContent = `${n.reply} need your reply on weddings`;
       attachBtn?.classList.add("hide");
       backDir?.classList.add("hide");
       metaExtra.forEach((el) => el.classList.remove("hide"));
     } else {
       applyWeddingPageHead("Contacts");
-      document.getElementById("meta-n").textContent = `${wSlice.contactsOn} on this wedding`;
-      if (mb) mb.textContent = `${wSlice.contactsBooked} booked`;
-      if (mr) mr.textContent = `${wSlice.contactsReply} need your reply`;
+      document.title = `${wSlice.label} · Contacts · Envoy`;
+      document.getElementById("meta-n").textContent = `${C.length} on this wedding`;
+      if (mb) mb.textContent = `${n.booked} booked`;
+      if (mr) mr.textContent = `${n.reply} need your reply`;
       attachBtn?.classList.remove("hide");
       backDir?.classList.remove("hide");
       if (backDir) backDir.href = "contacts.html";
@@ -112,7 +163,7 @@ window.addEventListener("envoy:ready", () => {
 
   document.getElementById("type-menu-pop").innerHTML = `<div class="eyebrow">Vendor types</div><div class="type-checks" id="type-checks">${TYPES.map((t) => `<label><input type="checkbox" value="${t}" ${F.types.has(t) ? "checked" : ""}> ${t}</label>`).join("")}</div>`;
   document.getElementById("advanced-filters").innerHTML = `
-    <div class="eyebrow">Sort</div>
+    <div class="eyebrow">Sort by</div>
     <div class="outreach-filter-row" data-f="sortKey">
       <button type="button" class="fopt" data-v="name" aria-pressed="true">Name</button>
       <button type="button" class="fopt" data-v="type" aria-pressed="false">Type</button>
@@ -132,19 +183,13 @@ window.addEventListener("envoy:ready", () => {
     <div class="eyebrow">Labels</div>
     <div class="outreach-filter-row" id="label-chips">${ALL_LABELS.map((l) => `<button type="button" class="fchip" data-label="${l}" aria-pressed="${F.label === l}">${l}</button>`).join("")}</div>
     <div class="eyebrow">Saved views</div>
-    <select class="input" id="saved-view" aria-label="Saved views">
-      <option value="">Saved views…</option>
-      <option value="reply">Needs reply · 2</option>
-      <option value="florists">Florists · 3</option>
-      <option value="booked-team">Booked · 7</option>
-      <option value="in-book">In contact book · 8</option>
-      <option value="missing-email">Missing email · 1</option>
-    </select>
+    <select class="input" id="saved-view" aria-label="Saved views"></select>
     <div class="eyebrow">Email</div>
     <div class="outreach-filter-row" data-f="email">
       <button type="button" class="fopt" data-v="all" aria-pressed="true">Any</button>
       <button type="button" class="fopt" data-v="missing" aria-pressed="false">Missing</button>
     </div>`;
+  updateSavedViewOptions();
 
   document.getElementById("type-checks").addEventListener("change", (e) => {
     const inp = e.target.closest('input[type="checkbox"]');
@@ -244,6 +289,22 @@ window.addEventListener("envoy:ready", () => {
     </button>`;
   }
 
+  function orderedVisibleRows(rows) {
+    if (F.scope === "dir" && !F.q && !F.types.size && F.status === "all" && !F.label) {
+      const needs = rows.filter((c) => !c[7]);
+      const ok = rows.filter((c) => c[7]);
+      const out = [...needs];
+      [...new Set(ok.map((c) => c[3]))].sort().forEach((t) => out.push(...ok.filter((c) => c[3] === t)));
+      return out.length ? out : rows;
+    }
+    if (F.scope === "project" && !F.q && !F.types.size) {
+      const out = [];
+      [...new Set(rows.map((c) => c[3]))].sort().forEach((t) => out.push(...rows.filter((c) => c[3] === t)));
+      return out.length ? out : rows;
+    }
+    return rows;
+  }
+
   function renderListBody(rows) {
     if (F.scope === "dir" && !F.q && !F.types.size && F.status === "all" && !F.label) {
       const needs = rows.filter((c) => !c[7]);
@@ -285,8 +346,9 @@ window.addEventListener("envoy:ready", () => {
     document.getElementById("inbox-list").classList.toggle("hide", rows.length === 0);
     document.getElementById("list-title").textContent = F.scope === "dir" ? "Contact book" : `${wSlice.label}`;
     syncPageHead();
+    const ordered = orderedVisibleRows(rows);
     document.getElementById("inbox-list").innerHTML = renderListBody(rows);
-    if (rows.length && !rows.some((c) => c[0] === selected)) selected = rows[0][0];
+    if (ordered.length && (!selected || !ordered.some((c) => c[0] === selected))) selected = ordered[0][0];
     drawDrawer();
   }
 
@@ -307,27 +369,32 @@ window.addEventListener("envoy:ready", () => {
     sweetgrass: [["Mail delivery", "Oct 30", 0, "Message not delivered: address info@sweetgrass-stems.com not found."]],
   };
 
-  function fixFor(c) {
+  function threadComposeHtml(c) {
     if (F.scope === "dir" || c[8] === "dir") return "";
-    if (!c[7]) return `<div class="fix" id="fix" data-fix="email">
-      <div class="fix-t">${icon("alert", 14)}Last send bounced — add an email and retry</div>
-      <div class="fix-d">Envoy found <b>hello@sweetgrassstems.com</b> on ${c[10]}. Your inquiry is saved and will resend as-is.</div>
+    const title = `Draft to ${c[1]}`;
+    if (!c[7]) return `<div class="thread-compose" id="fix" data-fix="email">
+      <div class="compose-title">${icon("alert", 14)} ${title} · fix email</div>
+      <p class="faint text-sm">Last send bounced. Envoy found <b>hello@sweetgrassstems.com</b> on ${c[10]}.</p>
       <div class="fix-row"><input class="input" id="fix-email" type="email" value="hello@sweetgrassstems.com" aria-label="Email for ${c[1]}"><button type="button" class="btn btn-primary btn-sm" id="fix-retry">${icon("send", 13)}Retry send</button></div></div>`;
     if (c[4] === "reply") {
       const ask = { glam: "Trial dates", coastal: "Chair count (128)" }[c[0]] || "Their last question";
       const body = { glam: "Hi Tasha — thank you! Elena would love a trial in <b>late August</b>; Sat Aug 21 or Sun Aug 29 both work. Happy to send the 30% retainer to hold Oct 16 once you confirm.<br><br>Warmly,<br>Sarah",
         coastal: "Hi Dev — confirming <b>128 chairs</b> (cap 140), plus 14 farm tables for the estate reception. Can you send an updated quote?<br><br>Thanks,<br>Sarah" }[c[0]] || `Hi ${c[2].split(" ")[0]} — thanks for your note. Following up for Elena &amp; Marcus, Oct 16, 2027.<br><br>Sarah`;
-      return `<div class="fix" id="fix" data-fix="reply">
-        <div class="fix-t">${icon("thread", 14)}Needs reply · waiting on you ${c[6]}</div>
-        <div class="fix-d">They asked: <b>${ask}</b>. Envoy drafted an answer from the project details.</div>
+      return `<div class="thread-compose" id="fix" data-fix="reply">
+        <div class="compose-title">${icon("thread", 14)} ${title} · reply</div>
+        <p class="faint text-sm">They asked: <b>${ask}</b>. Envoy drafted from project details.</p>
         ${replyOpen ? `<div class="input contacts-fix-body" contenteditable="true" id="fix-body">${body}</div>
           <div class="fix-row fix-row-end"><button type="button" class="btn btn-ghost btn-sm" id="fix-cancel">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="fix-send">${icon("send", 13)}Send reply</button></div>`
-        : `<div class="fix-row"><button type="button" class="btn btn-primary btn-sm" id="fix-draft">${icon("spark", 13)}Draft reply</button><button type="button" class="btn btn-ghost btn-sm" data-toast="Reminder set for Thursday">${icon("clock", 13)}Nudge Thu</button></div>`}</div>`;
+        : `<div class="fix-row"><button type="button" class="btn btn-primary btn-sm" id="fix-draft">${icon("spark", 13)}Open draft</button><button type="button" class="btn btn-ghost btn-sm" data-toast="Reminder set for Thursday">${icon("clock", 13)}Nudge Thu</button></div>`}</div>`;
     }
-    if (c[0] === "harborline" && !c._fixed) return `<div class="fix" id="fix" data-fix="hold">
-      <div class="fix-t">${icon("alert", 14)}Hold is Oct 8–10 — wedding is Oct 16</div>
-      <div class="fix-d">Ask Group Sales to move the 30-room courtesy hold to <b>Oct 15–17, 2027</b>.</div>
+    if (c[0] === "harborline" && !c._fixed) return `<div class="thread-compose" id="fix" data-fix="hold">
+      <div class="compose-title">${icon("alert", 14)} ${title} · hold dates</div>
+      <p class="faint text-sm">Hold is Oct 8–10 — ask for <b>Oct 15–17, 2027</b>.</p>
       <div class="fix-row"><button type="button" class="btn btn-primary btn-sm" id="fix-hold">${icon("send", 13)}Request Oct 15–17 hold</button></div></div>`;
+    if (c[4] === "none" && c[7]) return `<div class="thread-compose" id="fix" data-fix="inquiry">
+      <div class="compose-title">${icon("edit", 14)} ${title}</div>
+      <p class="faint text-sm">Envoy can draft an inquiry from wedding details — review in Approve &amp; send before anything sends.</p>
+      <div class="fix-row"><button type="button" class="btn btn-primary btn-sm" data-draft="${c[1]}">${icon("mail", 13)}Review draft</button></div></div>`;
     return "";
   }
 
@@ -351,7 +418,7 @@ window.addEventListener("envoy:ready", () => {
     const c = C.concat(DIR).find((x) => x[0] === selected) || accountBookRows()[0];
     const [lab, cls] = SLABEL[c[4]];
     const th = THREADS[c[0]] || (F.scope === "dir" ? [["You", "Sep 2026", 1, `Added <b>${c[1]}</b> to your contact book — not on a wedding thread yet.`]] : [["You", "Oct 20", 1, `Hi ${c[2].split(" ")[0]} — following up on Elena & Marcus, Oct 16, 2027 at The Ashby Estate.`]]);
-    const fix = fixFor(c);
+    const compose = threadComposeHtml(c);
     const free = ALL_WEDDINGS.filter((w) => !otherFor(c).includes(w));
     const projectScope = F.scope === "project";
     document.getElementById("drawer").innerHTML = `
@@ -363,27 +430,26 @@ window.addEventListener("envoy:ready", () => {
         </div>
       </div>
       <div class="drawer-scroll">
-        ${fix ? `<div class="card-body card-body-fix">${fix}</div>` : ""}
-        <div class="card-body ${fix ? "card-body-after-fix" : "card-body-loose"}">
+        <div class="card-body card-body-loose">
           ${c._showGate && projectScope && c[8] !== "dir" ? `<div class="mb-4">${bookGateHtml(c)}</div>` : ""}
-          <dl class="kv"><dt>Email</dt><dd>${c[7] || '<span class="accent">Missing</span>'}</dd><dt>Website</dt><dd><a class="btn-link" href="#" onclick="return false">${c[10]}</a></dd><dt>Next action</dt><dd>${c[5]}</dd>${weddingsFor(c)}</dl>
+          <dl class="kv"><dt>Email</dt><dd>${c[7] || '<span class="accent">Missing</span>'}</dd><dt>Website</dt><dd><span class="link-muted">${c[10]}</span></dd><dt>Next action</dt><dd>${c[5]}</dd>${weddingsFor(c)}</dl>
           ${projectScope && c[8] !== "dir" ? `<div class="eyebrow mt-4 mb-2">Status</div><div class="ladder" role="group" aria-label="Status">${LADDER.map((s, i) => `${i ? '<span class="arrow">→</span>' : ""}<button type="button" data-set="${s}" aria-pressed="${c[4] === s}">${SLABEL[s][0]}</button>`).join("")}</div>` : ""}
           <div class="row gap-2 mt-4 wrap">
             ${projectScope && c[9] ? `<button type="button" class="btn btn-secondary btn-sm" id="attach-other">${icon("attach", 13)}Attach to another wedding</button>` : ""}
-            ${projectScope && c[8] !== "dir" && !fix ? `<button type="button" class="btn btn-secondary btn-sm" data-draft="${c[1]}">${icon("edit", 13)}Draft inquiry</button>` : ""}
             ${projectScope && c[8] !== "dir" ? `<a class="btn btn-ghost btn-sm" href="${withW("approve-send.html")}">${icon("send", 13)}Approve &amp; send</a>` : ""}
           </div>
           ${projectScope && c[9] && pickWedding ? `<div class="wed-list" id="wed-list">${free.length ? free.map((w) => `<button type="button" data-wed="${w}"><span>${w.replace("&", "&amp;")}</span><span class="faint text-xs">Attach →</span></button>`).join("") : '<span class="faint text-sm">Already on every active wedding.</span>'}</div>` : ""}
         </div>
         <div class="thread-body contacts-thread-pane">
+          ${compose}
           <div class="row-between mb-3"><div class="eyebrow m-0">Conversation</div><span class="faint text-xs">${th.length} ${th.length === 1 ? "message" : "messages"}</span></div>
           <div class="stack stack-tight">${th.map((m) => `<div class="msg ${m[2] ? "me" : ""}"><div class="msg-h"><b>${m[0]}</b><span>${m[1]}</span></div>${m[3]}</div>`).join("")}</div>
         </div>
       </div>
-      <form class="ask-bar" onsubmit="event.preventDefault(); Envoy.toast('Envoy is drafting — you\\'ll review before it sends'); this.reset();">
-        ${icon("spark", 15)}<input class="input" placeholder="Ask Envoy about ${c[1]}…" aria-label="Ask Envoy"><button class="btn btn-primary btn-sm btn-icon" title="Ask">${icon("arrowr", 14)}</button>
+      <form class="ask-bar ask-bar-form">
+        ${icon("spark", 15)}<input class="input" placeholder="Ask Envoy about ${c[1]}…" aria-label="Ask Envoy"><button type="submit" class="btn btn-primary btn-sm btn-icon" title="Ask">${icon("arrowr", 14)}</button>
       </form>`;
-    if (fixFocus && fix) {
+    if (fixFocus && compose) {
       document.getElementById("fix").classList.add("is-focus");
       requestAnimationFrame(() => { const ds = document.querySelector("#drawer .drawer-scroll"); if (ds) ds.scrollTop = 0; const el = document.getElementById("fix-email") || document.getElementById("fix-retry") || document.getElementById("fix-send") || document.getElementById("fix-draft") || document.getElementById("fix-hold"); el && el.focus({ preventScroll: true }); });
       fixFocus = "";
@@ -391,6 +457,12 @@ window.addEventListener("envoy:ready", () => {
   }
 
   const THREAD_ADD = (id, who, text) => (THREADS[id] = THREADS[id] || []).unshift([who, "Just now", who === "You" ? 1 : 0, text]);
+  document.getElementById("drawer").addEventListener("submit", (e) => {
+    if (!e.target.matches(".ask-bar-form")) return;
+    e.preventDefault();
+    toast("Envoy is drafting — you'll review before it sends");
+    e.target.reset();
+  });
   document.getElementById("drawer").addEventListener("click", (e) => {
     const c = C.concat(DIR).find((x) => x[0] === selected); if (!c) return;
     const cp = e.target.closest("[data-copy]");

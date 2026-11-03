@@ -11,7 +11,7 @@
 <div data-topbar></div>
 
 <main class="page">
-  <div class="page-head">
+  <div class="page-head section-chrome-max">
     <div>
       <div class="eyebrow" id="page-eyebrow">Account · Directory</div>
       <h1>Contacts</h1>
@@ -25,13 +25,11 @@
     </div>
   </div>
 
-  <section class="contacts-chrome" aria-label="Contacts">
+  <section class="contacts-chrome section-chrome-max" aria-label="Contacts">
     <div class="contacts-chrome-head">
-      <div class="section-tabs-wrap">
-        <div class="section-tabs mastertabs" role="tablist" data-tabs="#contacts-views" data-hash>
-          <button type="button" data-tab="list" aria-selected="true">Directory</button>
-          <button type="button" data-tab="compare" aria-selected="false">Compare</button>
-        </div>
+      <div class="subtabs" role="tablist" data-tabs="#contacts-views" data-hash>
+        <button type="button" id="contacts-subtab-list" data-tab="list" aria-selected="true">Directory</button>
+        <button type="button" data-tab="compare" aria-selected="false">Compare</button>
       </div>
     </div>
 

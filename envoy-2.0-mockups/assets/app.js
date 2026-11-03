@@ -39,7 +39,7 @@
     attach: '<path d="M20 11.5 12 19.5a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/>',
     star: '<path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.8z"/>',
     filter: '<path d="M4 5h16l-6 7.5V19l-4 1.5v-8z"/>',
-    sort: '<path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>',
+    sort: '<path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>',
     listi: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
     gantt: '<path d="M4 4v16h16"/><rect x="7" y="7" width="7" height="3" rx="1"/><rect x="10" y="12" width="8" height="3" rx="1"/>',
     shield: '<path d="M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6z"/>',
@@ -128,11 +128,12 @@
   }
   function mountSectionNav() {
     if (document.body.dataset.shell !== "planner") return;
+    const page = document.body.dataset.page;
+    if (page === "portfolio" || page === "dayof") return;
     const main = document.querySelector("main.page");
     if (!main || main.querySelector(".section-tabs-wrap[data-primary]")) return;
-    const page = document.body.dataset.page;
     const wrap = document.createElement("div");
-    wrap.className = "section-tabs-wrap";
+    wrap.className = "section-tabs-wrap section-chrome-max";
     wrap.dataset.primary = "1";
     wrap.innerHTML = `<nav class="section-tabs" aria-label="Primary">${topbarNavHtml(page)}</nav>`;
     const anchor = main.querySelector(".page-head") || main.querySelector(".hero") || main.firstElementChild;
@@ -177,7 +178,7 @@
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
       <a class="brand" href="${withW("portfolio.html")}" title="Envoy">${BRAND}</a>
-      <div class="topbar-right grow" style="justify-content:flex-end">
+      <div class="topbar-right grow topbar-right-end">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
         <details class="menu account-menu">
           <summary class="account-trigger" title="Sarah Whitfield · Account"><span class="av av-ink">SW</span></summary>
@@ -490,16 +491,10 @@
     const render = () => {
       const head = `<thead><tr><th scope="col">Criterion</th>${V.map(
         (v) =>
-          `<th scope="col" class="col-h ${v.k === lean ? "lean" : ""}" data-k="${v.k}"><span class="sw" style="background:${v.c}"></span>${v.n.replace("&", "&amp;")}${v.k === lean ? '<span class="tag">Lean</span>' : ""}<div class="faint text-xs" style="font-weight:400;margin-top:4px">${v.who}</div></th>`,
+          `<th scope="col" class="col-h ${v.k === lean ? "lean" : ""}" data-k="${v.k}"><span class="sw" style="background:${v.c}"></span>${v.n.replace("&", "&amp;")}${v.k === lean ? '<span class="tag">Lean</span>' : ""}<div class="faint text-xs matrix-who">${v.who}</div></th>`,
       ).join("")}</tr></thead>`;
       const acts = (v) =>
-        compact
-          ? `<div class="acts"><button class="btn btn-${v.k === "hf" ? "primary" : "secondary"} btn-sm" data-draft-v="${v.n}">${icon("mail", 13)}Draft inquiry</button></div>`
-          : `<div class="acts">
-      <a class="btn btn-secondary btn-sm" href="contacts.html#draft"><i data-i="mail" data-s="13"></i>Draft inquiry</a>
-      <button class="btn btn-${booked === v.k ? "secondary" : "primary"} btn-sm" data-act="book" data-k="${v.k}"><i data-i="check" data-s="13"></i>${booked === v.k ? "Drafted" : "Book"}</button>
-      <button class="btn btn-ghost btn-sm" data-act="cb" data-k="${v.k}"><i data-i="attach" data-s="13"></i>${inBook.has(v.k) ? "In contact book" : "Add to contact book"}</button>
-    </div>`;
+        `<div class="acts"><button type="button" class="btn btn-${v.k === "hf" ? "primary" : "secondary"} btn-sm" data-draft-v="${v.n}">${icon("mail", 13)}Draft inquiry</button></div>`;
       const body = `<tbody>${ROWS.map(
         ([label, fn]) => `<tr><th scope="row">${label}</th>${V.map((v) => `<td>${fn(v)}</td>`).join("")}</tr>`,
       ).join("")}<tr><th scope="row">Actions</th>${V.map((v) => `<td>${acts(v)}</td>`).join("")}</tr></tbody>`;
@@ -613,15 +608,20 @@
       panel.querySelector(".sidebar-toggle").setAttribute("aria-expanded", !c);
     });
     wrap.classList.toggle("sidebar-collapsed", collapsed);
+    const col = document.createElement("div");
+    col.className = "planner-main";
+    const topHost = document.querySelector("[data-topbar]");
+    if (topHost) col.appendChild(topHost);
+    col.appendChild(main);
     wrap.appendChild(panel);
-    wrap.appendChild(main);
+    wrap.appendChild(col);
   }
 
   const STORY = [
     ["portfolio.html", "Start the day — portfolio across 24 weddings"],
     ["overview.html#attention", "Open a wedding — Overview surfaces what needs attention"],
-    ["contacts.html#attach", "Attach vendors from your contact book"],
-    ["contacts.html#compare", "Compare florists → draft inquiries"],
+    ["contacts.html?scope=project#attach", "Attach vendors from your contact book"],
+    ["contacts.html?scope=project#compare", "Compare florists → draft inquiries"],
     ["couple-portal.html#tasks", "Couple picks florist A/B in their portal"],
     ["project.html#lock", "Milestone “Lock catering” → Done on Booked → Deposit paid"],
   ];
@@ -631,7 +631,7 @@
     ["project.html#decisions", "Decisions — insights & ledger on Project"],
     ["day-of.html", "Day-of packet — calm, printable"],
     ["share-update.html", "Share update — thin couple share"],
-    ["contacts.html#compare", "Compare florists — matrix on Contacts"],
+    ["contacts.html?scope=project#compare", "Compare florists — matrix on Contacts"],
   ];
   function mountRail() {
     if (document.body.dataset.rail === "off") return;
@@ -683,7 +683,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     ensureFavicon();
-    mountTopbar(); mountPlannerShell(); mountSectionNav(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail();
+    mountPlannerShell(); mountTopbar(); mountSectionNav(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail();
     window.dispatchEvent(new Event("envoy:ready"));
   });
 })();

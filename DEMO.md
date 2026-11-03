@@ -15,7 +15,7 @@ Vite serves the mockups at [http://localhost:5174/](http://localhost:5174/).
 
 - [Landing](http://localhost:5174/landing/) — envoy-redesign `build/index.html` + [waitlist](http://localhost:5174/landing/waitlist.html)
 - [Overview](http://localhost:5174/app/overview.html) — Email shortlist, Log a booking, More
-- [Contacts](http://localhost:5174/app/contacts.html) — defaults to **Account Directory** (contact book); wedding list via [?scope=project](http://localhost:5174/app/contacts.html?scope=project); master **section tabs** (primary fill) + outreach shell; **Directory | Compare**; single filter row; Approve &amp; send for drafts
+- [Contacts](http://localhost:5174/app/contacts.html) — **Account Directory** default; [wedding scope](http://localhost:5174/app/contacts.html?scope=project); primary tabs + secondary **Directory | Compare** subtabs; full-height sidebar dock; compose **Draft to…** in thread pane; counts driven from data
 - [Project](http://localhost:5174/app/project.html) — opens on This week
 - [Couple portal](http://localhost:5174/app/couple-portal.html)
 - [Design system](http://localhost:5174/design-system/)
