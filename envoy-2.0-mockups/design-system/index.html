@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linen — Envoy Design System</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .ds { display: grid; grid-template-columns: 220px minmax(0,1fr); max-width: 1320px; margin: 0 auto; }
+  .ds-nav { position: sticky; top: 0; height: 100vh; padding: 32px 24px; border-right: 1px solid var(--line); overflow: auto; }
+  .ds-nav a { display: block; padding: 5px 8px; margin: 0 -8px; border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: var(--text-base); }
+  .ds-nav a:hover { background: var(--paper-2); color: var(--ink); }
+  .ds-nav .eyebrow { margin: 20px 0 6px; }
+  .ds-main { padding: 48px 56px 120px; min-width: 0; }
+  .ds-sec { padding: 56px 0 0; }
+  .ds-sec > h2 { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 38px; letter-spacing: -0.015em; }
+  .ds-sec > p.lead { color: var(--ink-2); margin-top: 8px; max-width: 680px; font-size: var(--text-md); line-height: 24px; }
+  .ds-sec > .demo { margin-top: 24px; }
+  .sw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .sw { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
+  .sw .c { height: 72px; border-bottom: 1px solid var(--line); }
+  .sw .m { padding: 10px 12px; font-size: var(--text-sm); }
+  .sw .m code { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+  .type-row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .type-row .spec { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); line-height: 16px; }
+  .space-row { display: flex; align-items: center; gap: 16px; padding: 6px 0; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-3); }
+  .space-row i { height: 12px; background: var(--clay-3); border-radius: 2px; display: block; }
+  .space-row span:first-child { width: 64px; color: var(--ink-2); }
+  .box-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .box-row > div { width: 140px; height: 96px; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
+  .panel { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); padding: 24px; }
+  .panel + .panel { margin-top: 12px; }
+  .panel .lbl { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); margin-bottom: 12px; display:block; }
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--ink); margin-top: 32px; }
+  .principles > div { padding: 20px 24px 0 0; } .principles > div + div { padding-left: 24px; border-left: 1px solid var(--line); }
+  .principles h4 { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 28px; }
+  .principles p { color: var(--ink-2); margin-top: 8px; }
+  .dodont { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dodont > div { border-radius: var(--r-lg); padding: 20px; border: 1px solid var(--line); background: var(--surface); }
+  .dodont h5 { margin: 0 0 8px; font-size: var(--text-sm); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .dodont ul { margin: 0; padding-left: 18px; color: var(--ink-2); display: grid; gap: 4px; }
+</style>
+</head>
+<body data-rail="off">
+<div class="ds">
+  <aside class="ds-nav">
+    <a class="brand" href="../landing/index.html" style="margin:0;padding:0"><svg class="brand-mark" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="#1C1A17" stroke-width="1.6"/><path d="M3.5 7.2 12 13l8.5-5.8" stroke="#9A3B27" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-word">Envoy</span></a>
+    <div class="faint text-sm mt-2">Linen design system · v2.0</div>
+    <div class="eyebrow">Foundations</div>
+    <a href="#principles">Principles</a><a href="#color">Color</a><a href="#type">Typography</a><a href="#space">Spacing</a><a href="#radius">Radius &amp; elevation</a>
+    <div class="eyebrow">Components</div>
+    <a href="#buttons">Buttons</a><a href="#inputs">Inputs</a><a href="#chips">Chips &amp; status</a><a href="#tabs">Tabs</a><a href="#cards">Cards &amp; KPIs</a><a href="#tables">Tables &amp; sheet</a><a href="#empty">Empty states</a><a href="#charts">Chart palette</a>
+    <div class="eyebrow">Product</div>
+    <a href="../app/overview.html">Overview</a><a href="../app/contacts.html">Contacts</a><a href="../app/project.html">Project</a><a href="../app/couple-portal.html">Couple portal</a><a href="../landing/index.html">Landing</a>
+  </aside>
+
+  <main class="ds-main">
+    <div class="eyebrow">Envoy 2.0 · SCRUM-341</div>
+    <h1 class="display display-4 mt-3" style="font-weight:300">Linen</h1>
+    <p class="text-lg muted mt-4" style="max-width:640px">A calm, editorial system for wedding planners. Warm paper, deep ink, and a single clay accent — the colour of a wax seal on an invitation.</p>
+
+    <section class="ds-sec" id="principles">
+      <h2>Principles</h2>
+      <div class="principles">
+        <div><h4>Calm is a feature.</h4><p>Planners live in urgency. The interface stays quiet so the four things that matter are loud. Clay is reserved for what needs a human now.</p></div>
+        <div><h4>Editorial, then operational.</h4><p>Fraunces sets the emotional register — names, dates, big numbers. Geist does the work: tables, labels, controls.</p></div>
+        <div><h4>Borders before shadows.</h4><p>Hairlines define structure. Shadows only appear for things that float: menus, toasts, dragged cards.</p></div>
+      </div>
+      <div class="dodont mt-6">
+        <div><h5 style="color:var(--ok)">Do</h5><ul><li>Use one accent (clay) for urgency, selection, and the primary story beat.</li><li>Use planner language: milestone, checklist item, hold, “50 weeks out”.</li><li>Right-align and tabular-figure every number.</li></ul></div>
+        <div><h5 style="color:var(--clay)">Don't</h5><ul><li>Gradients, glass, neon, or rainbow charts.</li><li>Jira vocabulary: epic, story points, sprint velocity.</li><li>Chat as the home screen.</li></ul></div>
+      </div>
+    </section>
+
+    <section class="ds-sec" id="color">
+      <h2>Color</h2>
+      <p class="lead">Neutrals carry 95% of the surface. Clay is the only hue. Semantic colours are muted cousins that never compete with it.</p>
+      <div class="demo"><div class="eyebrow mb-2">Paper &amp; ink</div><div class="sw-grid" data-sw="--paper,--paper-2,--paper-3,--surface,--line,--line-strong,--ink-4,--ink-3,--ink-2,--ink"></div></div>
+      <div class="demo mt-6"><div class="eyebrow mb-2">Clay — the one accent</div><div class="sw-grid" data-sw="--clay-soft,--clay-3,--clay-2,--clay,--clay-ink"></div></div>
+      <div class="demo mt-6"><div class="eyebrow mb-2">Semantic</div><div class="sw-grid" data-sw="--ok,--ok-soft,--warn,--warn-soft,--risk,--risk-soft,--info,--info-soft"></div></div>
+      <div class="panel mt-6"><span class="lbl">Contrast (WCAG on --paper)</span>
+        <div class="row wrap" style="gap:24px"><span><b>ink</b> 16.1:1</span><span><b class="muted">ink-2</b> 8.9:1</span><span><b class="faint">ink-3</b> 4.7:1 (AA body)</span><span><b class="accent">clay</b> 6.6:1</span><span class="faint">ink-4 is decorative only</span></div></div>
+    </section>
+
+    <section class="ds-sec" id="type">
+      <h2>Typography</h2>
+      <p class="lead"><b>Fraunces</b> (variable, optical size 9–144) for display. <b>Geist</b> for UI. <b>Geist Mono</b> for tokens, IDs and dense numbers. Display uses light weights at large sizes and tightens tracking as it grows.</p>
+      <div class="demo">
+        <div class="type-row"><div class="spec">Display 4 · Fraunces 300<br>64/68 · -0.015em</div><div class="display display-4" style="font-weight:300">Elena &amp; <span class="italic accent">Marcus</span></div></div>
+        <div class="type-row"><div class="spec">Display 3 · Fraunces 400<br>44/50</div><div class="display display-3">348 days to go</div></div>
+        <div class="type-row"><div class="spec">Display 2 · Fraunces 400<br>32/38</div><div class="display display-2">Needs attention</div></div>
+        <div class="type-row"><div class="spec">Display 1 · Fraunces 400<br>24/30</div><div class="display display-1">Lock catering</div></div>
+        <div class="type-row"><div class="spec">Large · Geist 400<br>18/26</div><div class="text-lg">The big pieces are in place — this month is about food and flowers.</div></div>
+        <div class="type-row"><div class="spec">Base · Geist 400<br>14/21</div><div>Wildflour sent a signed contract. Deposit of $7,920 due Friday, Nov 6.</div></div>
+        <div class="type-row"><div class="spec">Small · Geist 400<br>12.5/18</div><div class="text-sm muted">Last reply 4 days ago · Lowcountry Glam</div></div>
+        <div class="type-row"><div class="spec">Eyebrow · Geist 500<br>11/16 · caps +0.08em</div><div class="eyebrow">Milestone · In motion</div></div>
+        <div class="type-row"><div class="spec">Mono · Geist Mono<br>tabular</div><div class="mono">$120,000 · SCRUM-341 · --clay</div></div>
+      </div>
+    </section>
+
+    <section class="ds-sec" id="space">
+      <h2>Spacing</h2>
+      <p class="lead">A 4px base. Cards pad at 24, tables at 16 horizontal / 12 vertical, sections breathe at 40–48.</p>
+      <div class="demo panel" id="space-list"></div>
+    </section>
+
+    <section class="ds-sec" id="radius">
+      <h2>Radius &amp; elevation</h2>
+      <p class="lead">Small radii for controls, 12px for cards, 16px for hero surfaces. Elevation is mostly e-0 with a border.</p>
+      <div class="demo box-row">
+        <div style="border-radius:var(--r-xs)">r-xs · 4</div><div style="border-radius:var(--r-sm)">r-sm · 6</div><div style="border-radius:var(--r-md)">r-md · 8</div><div style="border-radius:var(--r-lg)">r-lg · 12</div><div style="border-radius:var(--r-xl)">r-xl · 16</div><div style="border-radius:var(--r-pill);width:140px;height:44px">pill</div>
+      </div>
+      <div class="demo box-row mt-6">
+        <div style="border-radius:12px">e-0 · border</div><div style="border-radius:12px;box-shadow:var(--e-1)">e-1 · rest</div><div style="border-radius:12px;box-shadow:var(--e-2)">e-2 · hover</div><div style="border-radius:12px;box-shadow:var(--e-3)">e-3 · float</div><div style="border-radius:12px;box-shadow:var(--focus)">focus ring</div>
+      </div>
+    </section>
+
+    <section class="ds-sec" id="buttons">
+      <h2>Buttons</h2>
+      <p class="lead">Ink is primary. Clay is reserved for the single most consequential action on a surface (e.g. “Log deposit paid”).</p>
+      <div class="demo panel"><span class="lbl">Variants</span><div class="row wrap">
+        <button class="btn btn-primary"><i data-i="share"></i>Share update</button>
+        <button class="btn btn-accent"><i data-i="check"></i>Log deposit paid</button>
+        <button class="btn btn-secondary"><i data-i="mail"></i>Email shortlist</button>
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-link">Draft inquiry</button>
+        <button class="btn btn-primary" disabled>Disabled</button></div></div>
+      <div class="panel"><span class="lbl">Sizes &amp; groups</span><div class="row wrap">
+        <button class="btn btn-primary btn-lg">Start your first wedding</button><button class="btn btn-secondary">Default</button><button class="btn btn-secondary btn-sm">Small</button>
+        <button class="btn btn-secondary btn-icon" title="More"><i data-i="more"></i></button>
+        <span class="btn-group"><button class="btn btn-ghost btn-sm"><i data-i="board" data-s="14"></i>Board</button><button class="btn btn-ghost btn-sm"><i data-i="listi" data-s="14"></i>List</button><button class="btn btn-ghost btn-sm"><i data-i="gantt" data-s="14"></i>Timeline</button></span></div></div>
+    </section>
+
+    <section class="ds-sec" id="inputs">
+      <h2>Inputs</h2>
+      <div class="demo panel"><div class="g-12">
+        <div class="field span-4"><label>Vendor name</label><input class="input" placeholder="e.g. Heron &amp; Fern Florals"><span class="hint">Shown to the couple once booked.</span></div>
+        <div class="field span-4"><label>Type</label><select class="select"><option>Florist</option><option>Venue</option><option>Caterer</option></select></div>
+        <div class="field span-4"><label>Email</label><input class="input is-error" value="info@sweetgrass-stems"><span class="hint accent">Last send bounced — check the address.</span></div>
+        <div class="field span-6"><label>Search</label><div class="search"><i data-i="search" data-s="15"></i><input class="input" placeholder="Search name, company, email…"></div></div>
+        <div class="field span-6"><label>Note</label><textarea class="textarea" placeholder="A thought for Sarah…"></textarea></div>
+        <div class="span-12 row" style="gap:24px"><label class="check"><input type="checkbox" checked> Preferred vendor</label><label class="check"><input type="checkbox"> Has email</label><label class="row gap-2"><input type="checkbox" class="toggle" checked> Show budget to couple</label></div>
+      </div></div>
+    </section>
+
+    <section class="ds-sec" id="chips">
+      <h2>Chips &amp; status</h2>
+      <p class="lead">Vendor status is a fixed vocabulary with a shape language, so it reads in grayscale: dashed ring → ring → filled → green.</p>
+      <div class="demo panel"><span class="lbl">Semantic chips</span><div class="row wrap"><span class="chip">Neutral</span><span class="chip chip-ok"><span class="dot"></span>Decided</span><span class="chip chip-warn"><span class="dot"></span>Held</span><span class="chip chip-risk"><span class="dot"></span>Deposit due</span><span class="chip chip-info">Drafted</span><span class="chip chip-ink">Most planners</span><span class="chip chip-outline">Florist</span></div></div>
+      <div class="panel"><span class="lbl">Filter chips</span><div class="row wrap"><button class="fchip is-on">All</button><button class="fchip" data-toggle-pressed aria-pressed="false">Needs reply <span class="count">2</span></button><button class="fchip" data-toggle-pressed aria-pressed="false">Waiting <span class="count">5</span></button><button class="fchip" data-toggle-pressed aria-pressed="false">Booked <span class="count">7</span></button></div></div>
+      <div class="panel"><span class="lbl">Vendor status vocabulary</span>
+        <div class="row wrap" style="gap:24px" id="status-demo"></div></div>
+      <div class="panel"><span class="lbl">Owner &amp; avatars</span><div class="row wrap" style="gap:20px"><span class="av av-ink">SW</span><span class="av av-clay">EM</span><span class="av">W</span><span class="av-stack"><span class="av av-sm av-ink">SW</span><span class="av av-sm av-clay">EM</span><span class="av av-sm">LP</span></span><span class="logo-sq">H</span></div></div>
+    </section>
+
+    <section class="ds-sec" id="tabs">
+      <h2>Tabs</h2>
+      <div class="demo panel"><span class="lbl">Underline tabs (page views)</span>
+        <div class="tabs" data-tabs="#tab-demo"><button class="tab" data-tab="a" aria-selected="true">Board</button><button class="tab" data-tab="b" aria-selected="false">This week <span class="count">7</span></button><button class="tab" data-tab="c" aria-selected="false">Risks &amp; holds</button></div>
+        <div id="tab-demo" class="mt-4"><p data-panel="a">Checklist items by status.</p><p data-panel="b" class="hide">What's due in “50 weeks out”.</p><p data-panel="c" class="hide">Ten rows, max.</p></div></div>
+      <div class="panel"><span class="lbl">Segmented (in-card filters)</span><div class="seg" data-tabs="#none"><button data-tab="1" aria-selected="true">Needs me</button><button data-tab="2" aria-selected="false">Waiting on them</button><button data-tab="3" aria-selected="false">All</button></div></div>
+    </section>
+
+    <section class="ds-sec" id="cards">
+      <h2>Cards &amp; KPIs</h2>
+      <div class="demo g-12">
+        <div class="card kpi span-3"><div class="label"><i data-i="clock" data-s="14"></i>Countdown</div><div class="value">348<small>days</small></div><div class="delta">Sat, Oct 16, 2027</div></div>
+        <div class="card kpi span-3"><div class="label"><i data-i="dollar" data-s="14"></i>Committed</div><div class="value">$80k<small>of $120k</small></div><div class="bar mt-3"><i style="width:67%"></i></div></div>
+        <div class="card kpi span-3"><div class="label"><i data-i="users" data-s="14"></i>Vendors booked</div><div class="value">6<small>of 13</small></div><div class="delta accent">2 need your reply</div></div>
+        <div class="card card-ink kpi span-3"><div class="label faint">Next milestone</div><div class="value" style="font-size:26px;line-height:32px">Lock catering</div><div class="delta faint">Deposit due Fri</div></div>
+        <div class="card span-6"><div class="card-head"><h3>Card with header <span class="sub">and subtitle</span></h3><button class="btn btn-ghost btn-sm btn-icon"><i data-i="more"></i></button></div><div class="card-body muted">Cards are surface + hairline. Headers are 56px, bodies pad 20/24.</div><div class="card-foot"><span>Footer meta</span><a class="btn-link">Action →</a></div></div>
+        <div class="card card-sunken card-pad span-6"><div class="eyebrow">Sunken card</div><p class="muted mt-2">For secondary groupings inside a page — rules, hints, “how this works”.</p></div>
+      </div>
+    </section>
+
+    <section class="ds-sec" id="tables">
+      <h2>Tables &amp; sheet</h2>
+      <p class="lead">Tables: caps headers, 1px row rules, hover-revealed row actions. Sheet: a spreadsheet grid for planners who think in cells — every cell is editable.</p>
+      <div class="demo card"><table class="table"><thead><tr><th>Vendor</th><th>Type</th><th>Status</th><th class="r">Amount</th><th class="r"></th></tr></thead><tbody>
+        <tr><td><div class="row"><span class="logo-sq">W</span><div><div class="cell-main">Wildflour Catering</div><div class="cell-sub">Priya Natarajan</div></div></div></td><td class="muted">Caterer</td><td><span class="chip chip-risk">Deposit due</span></td><td class="r num">$26,400</td><td class="r"><span class="row-actions"><button class="btn btn-ghost btn-sm btn-icon"><i data-i="thread" data-s="14"></i></button><button class="btn btn-ghost btn-sm btn-icon"><i data-i="edit" data-s="14"></i></button></span></td></tr>
+        <tr><td><div class="row"><span class="logo-sq">A</span><div><div class="cell-main">The Ashby Estate</div><div class="cell-sub">Margaret Ashby</div></div></div></td><td class="muted">Venue</td><td><span class="chip chip-ok">Deposit paid</span></td><td class="r num">$34,000</td><td class="r"><span class="row-actions"><button class="btn btn-ghost btn-sm btn-icon"><i data-i="thread" data-s="14"></i></button><button class="btn btn-ghost btn-sm btn-icon"><i data-i="edit" data-s="14"></i></button></span></td></tr>
+      </tbody></table></div>
+      <div class="sheet mt-4"><table><thead><tr><th class="idx"></th><th>Item</th><th>Owner</th><th style="text-align:right">Budget</th></tr></thead><tbody>
+        <tr class="group"><td class="idx"></td><td colspan="2"><div class="cell">Lock catering</div></td><td class="num"><div class="cell">$26,400</div></td></tr>
+        <tr><td class="idx">1</td><td><div class="cell" contenteditable="true">Menu B proposal</div></td><td><div class="cell" contenteditable="true">Couple</div></td><td class="num"><div class="cell" contenteditable="true">$26,400</div></td></tr>
+        <tr><td class="idx">2</td><td><div class="cell" contenteditable="true">Deposit 30%</div></td><td><div class="cell" contenteditable="true">Couple</div></td><td class="num"><div class="cell" contenteditable="true">$7,920</div></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="ds-sec" id="empty">
+      <h2>Empty states</h2>
+      <p class="lead">Every empty state offers the single next step — usually from the planner's own directory.</p>
+      <div class="demo g-12">
+        <div class="empty span-6"><div class="glyph"><i data-i="flower" data-s="20"></i></div><h4>No florists yet</h4><p>Attach one you trust from your directory, or import from a spreadsheet.</p><div class="row" style="justify-content:center"><button class="btn btn-primary btn-sm"><i data-i="star" data-s="14"></i>Attach preferred</button><button class="btn btn-secondary btn-sm">Import</button></div></div>
+        <div class="empty span-6"><div class="glyph"><i data-i="checkc" data-s="20"></i></div><h4>Nothing needs you</h4><p>Every vendor has replied and every deposit is in. Enjoy the quiet.</p><button class="btn btn-secondary btn-sm">Share update with couple</button></div>
+      </div>
+    </section>
+
+    <section class="ds-sec" id="charts">
+      <h2>Chart palette</h2>
+      <p class="lead">Monochrome-plus-one. Ink is the primary series, clay highlights what matters, stone and sand fill the rest. Order is fixed — never cycle hues.</p>
+      <div class="demo sw-grid" data-sw="--chart-1,--chart-2,--chart-3,--chart-4,--chart-5,--chart-6,--chart-7,--chart-8"></div>
+      <div class="g-12 mt-6">
+        <div class="card span-6"><div class="card-head"><h3>Bar · planned vs committed</h3></div><div class="card-body"><div class="chart-box" style="height:220px"><canvas id="c-bar"></canvas></div></div></div>
+        <div class="card span-6"><div class="card-head"><h3>Sankey · SVG, no dependency</h3></div><div class="card-body"><div id="c-sankey"></div></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { css, sankey } = Envoy;
+  document.querySelectorAll("[data-sw]").forEach(g => g.innerHTML = g.dataset.sw.split(",").map(v => `<div class="sw"><div class="c" style="background:var(${v})"></div><div class="m">${v.replace("--", "")}<code>${css(v)}</code></div></div>`).join(""));
+  document.getElementById("space-list").innerHTML = [["s-1",4],["s-2",8],["s-3",12],["s-4",16],["s-5",20],["s-6",24],["s-8",32],["s-10",40],["s-12",48],["s-16",64],["s-24",96]].map(([n, v]) => `<div class="space-row"><span>--${n}</span><i style="width:${v * 3}px"></i><span>${v}px</span></div>`).join("");
+  const ST = [["Not contacted","s-none"],["Waiting","s-waiting"],["Needs reply","s-reply"],["Booked","s-booked"],["Deposit paid","s-paid"],["Declined","s-declined"]];
+  document.getElementById("status-demo").innerHTML = ST.map(s => `<span class="status ${s[1]}">${s[0]}</span>`).join("");
+  if (window.Chart) new Chart(document.getElementById("c-bar"), { type: "bar",
+    data: { labels: ["Venue","Catering","Photo","Florals","Music","Attire"], datasets: [
+      { label: "Planned", data: [34,28,14,12,8,9], backgroundColor: css("--chart-6"), borderRadius: 3, barPercentage: .7 },
+      { label: "Committed", data: [34,26.4,8.4,0,6.2,3.8], backgroundColor: [css("--chart-1"),css("--chart-2"),css("--chart-1"),css("--chart-1"),css("--chart-1"),css("--chart-1")], borderRadius: 3, barPercentage: .7 }] },
+    options: { scales: { x: { grid: { display: false } }, y: { grid: { color: css("--line") }, border: { display: false }, ticks: { callback: v => "$" + v + "k" } } } } });
+  sankey(document.getElementById("c-sankey"), { nodes: [
+    { id: "t", label: "Total", col: 0 }, { id: "a", label: "Venue", col: 1, color: css("--chart-1") }, { id: "b", label: "Catering", col: 1, color: css("--chart-2") }, { id: "c", label: "Other", col: 1, color: css("--chart-4") },
+    { id: "bk", label: "Booked", col: 2, color: css("--ink") }, { id: "r", label: "Remaining", col: 2, color: css("--chart-6") }],
+    links: [{ source: "t", target: "a", value: 34 }, { source: "t", target: "b", value: 28 }, { source: "t", target: "c", value: 58 },
+      { source: "a", target: "bk", value: 34, color: css("--ink") }, { source: "b", target: "bk", value: 26.4, color: css("--ink") }, { source: "b", target: "r", value: 1.6, color: css("--chart-6"), opacity: .5 }, { source: "c", target: "bk", value: 19.6, color: css("--ink") }, { source: "c", target: "r", value: 38.4, color: css("--chart-6"), opacity: .5 }] },
+    { height: 220, labelSpace: 90, padL: 56, fmt: v => "$" + v + "k" });
+});
+</script>
+</body>
+</html>

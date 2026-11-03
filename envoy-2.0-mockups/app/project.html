@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .ms { padding: var(--s-5) var(--s-6); display: flex; flex-direction: column; gap: var(--s-3); transition: border-color var(--dur-2), background var(--dur-2); }
+  .ms h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 28px; letter-spacing: -0.01em; }
+  .ms .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: var(--text-sm); }
+  .ms .steps li { display: flex; gap: 8px; align-items: center; color: var(--ink-2); }
+  .ms .steps li.done { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+  .ms .steps li svg { flex: none; }
+  .ms .steps li.done svg { color: var(--ok); }
+  .ms .rule { font-size: var(--text-xs); color: var(--ink-3); display: flex; gap: 6px; align-items: center; padding: 8px 10px; background: var(--paper); border: 1px dashed var(--line-strong); border-radius: var(--r-sm); }
+  .ms.is-done { background: var(--paper-2); }
+  .ms.is-done h3::after { content: " ✓"; color: var(--ok); }
+  .ms-summary { display: flex; gap: 2px; margin-top: var(--s-4); }
+  .ms-summary span { flex: 1; height: 28px; border-radius: 4px; background: var(--paper-3); font-size: 10.5px; display: grid; place-items: center; color: var(--ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: block; line-height: 28px; text-align: center; padding: 0 6px; cursor: default; }
+  .ms-summary span.d { background: var(--ink); color: var(--paper); }
+  .ms-summary span.m { background: var(--clay-soft); color: var(--clay-ink); box-shadow: inset 0 0 0 1px var(--clay-3); }
+  .owner { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--ink-2); }
+  .owner::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+  .o-me::before { background: var(--ink); } .o-couple::before { background: var(--clay); } .o-vendor::before { background: var(--chart-4); }
+  .mtag { font-size: var(--text-xs); color: var(--ink-3); }
+  .wk-item { display: grid; grid-template-columns: 24px 1fr 160px 90px 90px; gap: 12px; align-items: center; padding: 11px var(--s-6); border-bottom: 1px solid var(--line); }
+  .wk-item:last-child { border-bottom: 0; }
+  .wk-item.done .t { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+  .wk-group { padding: 10px var(--s-6); background: var(--paper); border-bottom: 1px solid var(--line); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); font-weight: 500; display:flex; justify-content: space-between; }
+  .kind { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; }
+  .k-risk { background: var(--risk-soft); color: var(--risk); }
+  .k-decision { background: var(--paper-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .k-hold { background: var(--warn-soft); color: var(--warn); }
+  .impact { display: inline-flex; gap: 2px; } .impact i { width: 4px; height: 12px; border-radius: 1px; background: var(--paper-3); } .impact i.on { background: var(--ink-2); }
+  .src { display: inline-flex; gap: 5px; align-items: center; font-size: var(--text-xs); color: var(--ink-3); }
+  .src svg { color: var(--clay); }
+  .owner-filter .fchip { height: 28px; }
+  .sel-select { appearance: none; border: 0; background: transparent; font: inherit; color: inherit; cursor: pointer; padding: 0; }
+</style>
+</head>
+<body data-page="project">
+<div data-topbar></div>
+
+<main class="page">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Elena &amp; Marcus · Plan</div>
+      <h1>Project</h1>
+      <div class="meta"><span id="ms-count">5 of 12 milestones done</span><span class="faint">·</span><span>50 weeks out</span><span class="faint">·</span><span>14 checklist items this month</span></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-secondary" data-toast="New milestone"><i data-i="layers"></i>Milestone</button>
+      <button class="btn btn-primary" data-toast="New checklist item — assign Me, Couple, or Vendor"><i data-i="plus"></i>Checklist item</button>
+    </div>
+  </div>
+
+  <!-- ============ Milestones in motion ============ -->
+  <div class="g-12" id="lock-row">
+    <section class="card ms span-6" id="lock">
+      <div class="row-between"><span class="eyebrow">Milestone · In motion</span><span class="chip chip-risk" id="lock-chip"><span class="dot"></span>Deposit due Fri, Nov 6</span></div>
+      <h3>Lock catering</h3>
+      <ul class="steps" id="lock-steps">
+        <li class="done"><i data-i="checkc" data-s="15"></i>Menu B approved by couple · Oct 30</li>
+        <li class="done"><i data-i="checkc" data-s="15"></i>Wildflour contract countersigned · <span class="status sm s-booked">Booked</span></li>
+        <li id="dep-step"><i data-i="dollar" data-s="15"></i>30% deposit · $7,920 · <span class="owner o-couple">Couple pays</span></li>
+      </ul>
+      <div class="rule"><i data-i="bolt" data-s="13"></i>Auto-completes when Wildflour moves <b>Booked → Deposit paid</b> — no checkbox hunting.</div>
+      <div class="row gap-2"><button class="btn btn-accent btn-sm" id="log-dep"><i data-i="check" data-s="14"></i>Log deposit paid</button><button class="btn btn-ghost btn-sm" data-toast="Reminder sent to <b>Elena &amp; Marcus</b> in their portal">Remind couple</button></div>
+    </section>
+    <section class="card ms span-3">
+      <div class="row-between"><span class="eyebrow">In motion</span><span class="chip chip-warn">Couple deciding</span></div>
+      <h3>Choose florist</h3>
+      <ul class="steps">
+        <li class="done"><i data-i="checkc" data-s="15"></i>Shortlist of 3</li>
+        <li><i data-i="heart" data-s="15"></i>A/B pick · <span class="owner o-couple">Couple</span></li>
+        <li><i data-i="mail" data-s="15"></i>Inquiries · <span class="owner o-me">Me</span></li>
+      </ul>
+      <a class="btn btn-secondary btn-sm" href="contacts.html#compare" style="align-self:flex-start">Compare florists</a>
+    </section>
+    <section class="card ms span-3">
+      <div class="row-between"><span class="eyebrow">In motion</span><span class="chip chip-risk">Date conflict</span></div>
+      <h3>Hotel block</h3>
+      <ul class="steps">
+        <li class="done"><i data-i="checkc" data-s="15"></i>30 rooms requested</li>
+        <li><i data-i="alert" data-s="15"></i>Fix hold → Oct 15–17 · <span class="owner o-me">Me</span></li>
+        <li><i data-i="note" data-s="15"></i>Block agreement · <span class="owner o-vendor">Vendor</span></li>
+      </ul>
+      <a class="btn btn-secondary btn-sm" href="contacts.html?c=harborline" style="align-self:flex-start">Open thread</a>
+    </section>
+  </div>
+  <div class="ms-summary" id="ms-summary" aria-label="All 12 milestones"></div>
+
+  <!-- ============ Views ============ -->
+  <div class="row-between mt-8" style="border-bottom:1px solid var(--line)">
+    <div class="tabs" data-tabs="#views" data-hash style="border:0">
+      <button class="tab" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
+      <button class="tab" data-tab="board" aria-selected="false"><i data-i="board" data-s="15"></i>Board</button>
+      <button class="tab" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
+      <button class="tab" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
+      <button class="tab hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
+    </div>
+    <div class="row owner-filter" style="padding-bottom:6px">
+      <span class="faint text-sm">Owner</span>
+      <button class="fchip is-on" data-owner="all">All</button>
+      <button class="fchip" data-owner="me">Me</button>
+      <button class="fchip" data-owner="couple">Couple</button>
+      <button class="fchip" data-owner="vendor">Vendor</button>
+      <span class="faint" style="margin:0 2px">·</span>
+      <button class="btn btn-ghost btn-sm" id="open-sheet" title="Spreadsheet view of every checklist item"><i data-i="grid" data-s="13"></i>Sheet view</button>
+    </div>
+  </div>
+
+  <div id="views" class="mt-6">
+    <!-- Board -->
+    <section data-panel="board" class="hide">
+      <div class="board" id="board"></div>
+    </section>
+
+    <!-- This week -->
+    <section data-panel="week">
+      <div class="card">
+        <div class="card-head">
+          <div class="row"><button class="btn btn-ghost btn-sm btn-icon" title="Previous week" style="transform:rotate(180deg)"><i data-i="chevr" data-s="14"></i></button>
+            <h3 style="font-family:var(--font-display);font-weight:400;font-size:20px">50 weeks out</h3><span class="faint">Nov 2 – Nov 8</span>
+            <button class="btn btn-ghost btn-sm btn-icon" title="Next week"><i data-i="chevr" data-s="14"></i></button></div>
+          <div class="row gap-4 text-sm"><span class="faint">3 of 7 done</span><div class="bar" style="width:120px"><i style="width:43%"></i></div></div>
+        </div>
+        <div id="week-list"></div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section data-panel="timeline" class="hide" id="timeline">
+      <div class="gantt" id="gantt"></div>
+      <div class="legend mt-4"><span><i style="background:var(--ink)"></i>Done</span><span><i style="background:var(--clay-soft);border:1px solid var(--clay)"></i>In motion</span><span><i style="background:var(--paper-3);border:1px solid var(--line-strong)"></i>Upcoming</span><span><i style="background:var(--clay);transform:rotate(45deg)"></i>Deadline</span></div>
+    </section>
+
+    <!-- Risks & holds -->
+    <section data-panel="risks" class="hide">
+      <div class="card">
+        <div class="card-head"><h3>Risks, decisions &amp; holds <span class="sub">Kept short on purpose — 10 rows max</span></h3>
+          <div class="seg"><button aria-selected="true">Open</button><button aria-selected="false">All</button></div></div>
+        <div class="table-wrap"><table class="table" id="risk-table">
+          <thead><tr><th>Kind</th><th>Item</th><th>Impact</th><th>Owner</th><th>By</th><th>Status</th><th>Source</th></tr></thead><tbody></tbody></table></div>
+        <div class="card-foot"><span><i data-i="spark" data-s="13"></i> Envoy suggests risks and holds from vendor threads — you decide what's kept.</span><button class="btn btn-ghost btn-sm" data-toast="New risk, decision, or hold">+ Add row</button></div>
+      </div>
+    </section>
+
+    <!-- Sheet -->
+    <section data-panel="sheet" class="hide">
+      <div class="row-between mb-4">
+        <div class="row gap-2"><span class="chip chip-outline">Grouped by milestone</span><span class="chip chip-outline">Click any cell to edit</span></div>
+        <div class="row gap-2"><button class="btn btn-secondary btn-sm" data-toast="Exported Elena-Marcus-checklist.csv"><i data-i="upload" data-s="14"></i>Export CSV</button></div>
+      </div>
+      <div class="sheet"><table id="sheet"></table></div>
+    </section>
+  </div>
+</main>
+
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { icon, toast, hydrateIcons } = Envoy;
+
+  // ---------- Milestones ----------
+  const MS = [
+    ["Venue booked", "d", "2026-09-20", "2026-10-03"], ["Planner & team", "d", "2026-09-15", "2026-09-30"],
+    ["Photographer booked", "d", "2026-10-01", "2026-10-21"], ["Band booked", "d", "2026-10-05", "2026-10-24"],
+    ["Guest estimate set", "d", "2026-10-10", "2026-10-30"], ["Lock catering", "m", "2026-10-12", "2026-11-06"],
+    ["Choose florist", "m", "2026-10-25", "2026-12-01"], ["Hotel block", "m", "2026-10-20", "2026-11-20"],
+    ["Save-the-dates", "", "2026-12-01", "2027-02-15"], ["Attire & beauty", "", "2027-01-10", "2027-05-15"],
+    ["Final numbers", "", "2027-08-15", "2027-09-16"], ["Day-of", "", "2027-10-14", "2027-10-17"],
+  ];
+  const sumEl = document.getElementById("ms-summary");
+  const drawSummary = () => sumEl.innerHTML = MS.map(m => `<span class="${m[1]}" title="${m[0]}">${m[0]}</span>`).join("");
+  drawSummary();
+
+  // ---------- Board (checklist items) ----------
+  // title, milestone, owner, due, col
+  const ITEMS = [
+    ["Reply to Lowcountry Glam re: trial", "Attire & beauty", "me", "Nov 3", "next"],
+    ["Confirm hotel hold → Oct 15–17", "Hotel block", "me", "Nov 5", "next"],
+    ["Draft florist inquiries", "Choose florist", "me", "Nov 4", "next"],
+    ["Confirm chair count with Coastal", "Final numbers", "me", "Nov 6", "next"],
+    ["Pay catering deposit · $7,920", "Lock catering", "couple", "Nov 6", "motion"],
+    ["Pick florist A or B", "Choose florist", "couple", "Nov 9", "motion"],
+    ["Share must-haves & style words", "Choose florist", "couple", "Nov 9", "motion"],
+    ["Proposal from Marlowe", "Choose florist", "vendor", "Nov 7", "waiting"],
+    ["Block agreement from Harborline", "Hotel block", "vendor", "Nov 12", "waiting"],
+    ["Save-the-date proofs", "Save-the-dates", "vendor", "Nov 20", "waiting"],
+    ["Countersigned catering contract", "Lock catering", "vendor", "Nov 1", "done"],
+    ["Menu B approved", "Lock catering", "couple", "Oct 30", "done"],
+    ["Guest estimate → 128", "Guest estimate set", "couple", "Oct 30", "done"],
+  ];
+  const COLS = [["next", "Up next"], ["motion", "In motion"], ["waiting", "Waiting on others"], ["done", "Done"]];
+  const OWN = { me: "Me", couple: "Couple", vendor: "Vendor" };
+  const AV = { me: '<span class="av av-sm av-ink">SW</span>', couple: '<span class="av av-sm av-clay">EM</span>', vendor: '<span class="av av-sm">V</span>' };
+  document.getElementById("board").innerHTML = COLS.map(([k, l]) => `
+    <div class="col" data-col="${l}"><div class="col-head">${l} <span class="count">${ITEMS.filter(i => i[4] === k).length}</span><button class="btn btn-ghost btn-sm btn-icon" title="Add">${icon("plus", 14)}</button></div>
+      <div class="col-cards">${ITEMS.filter(i => i[4] === k).map(i => `
+        <article class="kcard" draggable="true" data-owner="${i[2]}" ${i[0].startsWith("Pay catering") ? 'id="dep-card"' : ""}>
+          <div class="mtag">${i[1]}</div>
+          <div class="k-title" ${k === "done" ? 'style="color:var(--ink-3)"' : ""}>${i[0]}</div>
+          <div class="k-meta"><span class="owner o-${i[2]}">${OWN[i[2]]}</span><span>·</span><span>${i[3]}</span>${AV[i[2]]}</div>
+        </article>`).join("")}</div></div>`).join("");
+
+  // ---------- This week ----------
+  const WEEK = [
+    ["me", "Reply to Lowcountry Glam re: trial", "Attire & beauty", "Mon", 0],
+    ["me", "Draft florist inquiries", "Choose florist", "Wed", 0],
+    ["me", "Confirm hotel hold → Oct 15–17", "Hotel block", "Thu", 0],
+    ["me", "Attach preferred vendors", "Choose florist", "Mon", 1],
+    ["couple", "Pick florist A or B", "Choose florist", "Mon", 0],
+    ["couple", "Pay catering deposit", "Lock catering", "Fri", 0],
+    ["vendor", "Countersigned catering contract", "Lock catering", "Sun", 1],
+    ["vendor", "Menu B tasting slot", "Lock catering", "Tue", 1],
+  ];
+  document.getElementById("week-list").innerHTML = ["me", "couple", "vendor"].map(o => `
+    <div class="wk-group" data-owner-group="${o}"><span>${OWN[o]}</span><span>${WEEK.filter(w => w[0] === o && w[4]).length}/${WEEK.filter(w => w[0] === o).length}</span></div>
+    ${WEEK.filter(w => w[0] === o).map(w => `<div class="wk-item ${w[4] ? "done" : ""}" data-owner="${o}">
+      <label class="check"><input type="checkbox" ${w[4] ? "checked" : ""}></label>
+      <span class="t">${w[1]}</span><span class="mtag">${w[2]}</span><span class="owner o-${o}">${OWN[o]}</span><span class="faint text-sm">${w[3]}</span></div>`).join("")}`).join("");
+  document.getElementById("week-list").addEventListener("change", (e) => { const it = e.target.closest(".wk-item"); it.classList.toggle("done", e.target.checked); if (e.target.checked) toast("Checked off · <b>" + it.querySelector(".t").textContent + "</b>"); });
+
+  // ---------- Timeline ----------
+  const T0 = new Date("2026-09-01"), months = 14;
+  const T1 = new Date(2026 + Math.floor((8 + months) / 12), (8 + months) % 12, 1);
+  const pct = (d) => Math.max(0, Math.min(100, ((new Date(d) - T0) / (T1 - T0)) * 100));
+  const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const today = pct("2026-11-02");
+  const drawGantt = () => {
+    document.getElementById("gantt").innerHTML =
+      `<div class="gantt-row gantt-head"><div class="gantt-label">Milestone</div><div class="gantt-lane" style="grid-template-columns:repeat(${months},1fr)">${[...Array(months)].map((_, i) => { const m = (8 + i) % 12; return `<span>${MN[m]}${m === 0 || i === 0 ? " ’" + String(26 + Math.floor((8 + i) / 12)).slice(-2) : ""}</span>`; }).join("")}</div></div>` +
+      MS.map(m => {
+        const l = pct(m[2]), w = Math.max(1.2, pct(m[3]) - l);
+        const cls = m[1] === "d" ? "done" : m[1] === "m" ? "active" : "";
+        return `<div class="gantt-row"><div class="gantt-label"><span class="owner ${m[1] === "d" ? "o-me" : m[1] === "m" ? "o-couple" : "o-vendor"}" style="font-size:0"></span>${m[0]}</div>
+          <div class="gantt-lane" style="background-size:calc(100% / ${months}) 100%"><span class="gtoday" style="left:${today}%"></span>
+          <div class="gbar ${cls}" style="left:${l}%;width:${w}%">${cls === "active" ? `<span class="fill" style="width:60%"></span>` : ""}<span>${w > 7 ? m[0] : ""}</span></div>
+          ${m[1] !== "d" ? `<span class="gdiamond" style="left:${pct(m[3])}%" title="Due ${m[3]}"></span>` : ""}</div></div>`;
+      }).join("");
+  };
+  drawGantt();
+
+  // ---------- Risks & holds ----------
+  const RISKS = [
+    ["hold", "Harborline holding Oct 8–10 — wedding is Oct 16", 3, "me", "Nov 5", "Open", "Harborline thread"],
+    ["risk", "Catering date released if deposit is late", 3, "couple", "Nov 6", "Open", "Wildflour contract"],
+    ["decision", "Florist: Heron & Fern vs Marlowe", 2, "couple", "Nov 9", "Waiting on couple", "Compare"],
+    ["risk", "Videographer unbooked — October is peak season", 2, "me", "Dec 1", "Open", "Envoy insight"],
+    ["hold", "Tent hold at Coastal Rentals expires", 2, "me", "Dec 15", "Held", "Coastal thread"],
+    ["risk", "Rain on garden ceremony", 2, "vendor", "Sep 2027", "Mitigated · tent", "Venue call"],
+    ["hold", "Ashby Estate rehearsal dinner room", 1, "vendor", "Jan 10", "Held", "Ashby thread"],
+    ["decision", "Family-style service, Menu B", 1, "couple", "Oct 30", "Decided", "Couple portal"],
+    ["decision", "Guest estimate 128 (cap 140)", 1, "couple", "Oct 30", "Decided", "Couple portal"],
+  ];
+  const KL = { risk: "Risk", decision: "Decision", hold: "Hold" };
+  document.querySelector("#risk-table tbody").innerHTML = RISKS.map((r, i) => `<tr data-owner="${r[3]}" ${i === 1 ? 'id="risk-deposit"' : ""}>
+    <td><span class="kind k-${r[0]}">${KL[r[0]]}</span></td><td class="cell-main">${r[1]}</td>
+    <td><span class="impact" title="${["","Low","Medium","High"][r[2]]}">${[1,2,3].map(n => `<i class="${n <= r[2] ? "on" : ""}"></i>`).join("")}</span></td>
+    <td><span class="owner o-${r[3]}">${OWN[r[3]]}</span></td><td class="faint num">${r[4]}</td>
+    <td>${/Decided|Mitigated/.test(r[5]) ? `<span class="chip chip-ok">${r[5]}</span>` : r[5] === "Held" ? `<span class="chip chip-warn">${r[5]}</span>` : r[5] === "Open" ? `<span class="chip chip-risk">${r[5]}</span>` : `<span class="chip">${r[5]}</span>`}</td>
+    <td><span class="src">${icon(/insight/.test(r[6]) ? "spark" : "thread", 12)}${r[6]}</span></td></tr>`).join("");
+
+  // ---------- Sheet (editable grid) ----------
+  const SHEET = [
+    ["Lock catering", [["Menu B proposal", "Couple", "Oct 30", "Done", 26400, 0, "Family-style, 128"], ["Contract countersigned", "Vendor", "Nov 1", "Done", 0, 0, ""], ["Deposit 30%", "Couple", "Nov 6", "Due", 0, 7920, "Pay via Wildflour portal"], ["Tasting", "Couple", "Feb 12", "Planned", 0, 0, "Bring 4 guests"]]],
+    ["Choose florist", [["Shortlist 3 florists", "Me", "Oct 28", "Done", 0, 0, "H&F, Marlowe, Bloom"], ["Inquiries", "Me", "Nov 4", "Drafted", 0, 0, ""], ["Couple A/B pick", "Couple", "Nov 9", "Waiting", 0, 0, ""], ["Retainer", "Couple", "Dec 1", "Planned", 12000, 0, "Budget cap"]]],
+    ["Hotel block", [["Request 30 rooms", "Me", "Oct 24", "Done", 0, 0, ""], ["Fix hold dates", "Me", "Nov 5", "Open", 0, 0, "Oct 15–17"], ["Block agreement", "Vendor", "Nov 12", "Waiting", 0, 0, "No attrition fee"]]],
+  ];
+  const money = (n) => n ? "$" + n.toLocaleString() : "";
+  let r = 0;
+  const statusChip = (s) => ({ Done: "chip-ok", Due: "chip-risk", Open: "chip-risk", Waiting: "chip-warn", Drafted: "chip-info" }[s] || "");
+  document.getElementById("sheet").innerHTML = `<thead><tr><th class="idx"></th><th style="min-width:240px">Checklist item</th><th>Owner</th><th>Due</th><th>Status</th><th style="text-align:right">Budget</th><th style="text-align:right">Paid</th><th style="min-width:200px">Notes</th></tr></thead><tbody>` +
+    SHEET.map(([g, rows]) => `<tr class="group"><td class="idx">${icon("chevd", 12)}</td><td colspan="4"><div class="cell">${g} <span class="faint" style="font-weight:400">· ${rows.length} items</span></div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[4], 0))}</div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[5], 0))}</div></td><td></td></tr>` +
+      rows.map(x => `<tr><td class="idx">${++r}</td>
+        <td><div class="cell" contenteditable="true">${x[0]}</div></td>
+        <td><div class="cell" contenteditable="true"><span class="owner o-${x[1].toLowerCase()}">${x[1]}</span></div></td>
+        <td><div class="cell" contenteditable="true">${x[2]}</div></td>
+        <td><div class="cell"><span class="chip ${statusChip(x[3])}">${x[3]}</span></div></td>
+        <td class="num"><div class="cell" contenteditable="true">${money(x[4])}</div></td>
+        <td class="num"><div class="cell" contenteditable="true">${money(x[5])}</div></td>
+        <td><div class="cell faint" contenteditable="true">${x[6]}</div></td></tr>`).join("")).join("") +
+    `<tr><td class="idx">+</td><td colspan="7"><div class="cell faint" contenteditable="true" data-ph>Add a checklist item…</div></td></tr></tbody>`;
+  document.getElementById("sheet").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.isContentEditable) { e.preventDefault(); e.target.blur(); toast("Saved"); } });
+
+  // ---------- Owner filter ----------
+  document.querySelectorAll("[data-owner]").forEach(b => { if (b.tagName !== "BUTTON") return;
+    b.addEventListener("click", () => {
+      document.querySelectorAll("button[data-owner]").forEach(x => x.classList.toggle("is-on", x === b));
+      const o = b.dataset.owner;
+      document.querySelectorAll(".kcard[data-owner], .wk-item[data-owner], #risk-table tr[data-owner]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.owner !== o));
+      document.querySelectorAll("[data-owner-group]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.ownerGroup !== o));
+    }); });
+
+  // re-wire drag for dynamically rendered cards
+  (function wire() {
+    let drag = null;
+    document.querySelectorAll(".kcard").forEach(c => { c.addEventListener("dragstart", () => { drag = c; c.classList.add("dragging"); }); c.addEventListener("dragend", () => { c.classList.remove("dragging"); }); });
+    document.querySelectorAll(".col").forEach(col => {
+      col.addEventListener("dragover", e => { e.preventDefault(); col.classList.add("drop"); });
+      col.addEventListener("dragleave", () => col.classList.remove("drop"));
+      col.addEventListener("drop", e => { e.preventDefault(); col.classList.remove("drop"); if (!drag) return; col.querySelector(".col-cards").prepend(drag);
+        document.querySelectorAll(".col").forEach(x => x.querySelector(".count").textContent = x.querySelectorAll(".kcard").length); toast("Moved to <b>" + col.dataset.col + "</b>"); drag = null; });
+    });
+  })();
+
+  // ---------- Demo beat 5: Lock catering → Done ----------
+  document.getElementById("log-dep").addEventListener("click", function () {
+    const card = document.getElementById("lock");
+    const step = document.getElementById("dep-step");
+    step.classList.add("done"); step.innerHTML = icon("checkc", 15) + "30% deposit · $7,920 · paid Nov 2";
+    card.classList.add("is-done");
+    card.querySelector(".eyebrow").textContent = "Milestone · Done";
+    const chip = document.getElementById("lock-chip"); chip.className = "chip chip-ok"; chip.innerHTML = '<span class="dot"></span>Deposit paid';
+    this.outerHTML = `<span class="chip chip-outline">${icon("lock", 12)} Locked · Wildflour Catering</span>`;
+    MS[5][1] = "d"; drawSummary(); drawGantt();
+    document.getElementById("ms-count").textContent = "6 of 12 milestones done";
+    const dc = document.getElementById("dep-card"); if (dc) { document.querySelector('.col[data-col="Done"] .col-cards').prepend(dc); document.querySelectorAll(".col").forEach(x => x.querySelector(".count").textContent = x.querySelectorAll(".kcard").length); }
+    const rr = document.getElementById("risk-deposit"); if (rr) rr.querySelector("td:nth-child(6)").innerHTML = '<span class="chip chip-ok">Resolved</span>';
+    const rn = document.getElementById("risk-n"); rn.textContent = +rn.textContent - 1;
+    toast("<b>Lock catering</b> is Done — couple's portal updated");
+  });
+
+  if (location.hash === "#lock") document.getElementById("lock").scrollIntoView({ block: "center" });
+  document.getElementById("open-sheet").onclick = () => document.getElementById("sheet-tab").click();
+  const h = location.hash.slice(1); const t = document.querySelector(`[data-tab="${h}"]`); if (t) t.click();
+});
+</script>
+</body>
+</html>

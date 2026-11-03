@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Envoy 2.0 — Design Tokens ("Linen" system)
+   One accent (Clay). Warm paper neutrals. Deep ink. Fraunces + Geist.
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap");
+
+:root {
+  /* ---- Neutrals: paper → ink ---- */
+  --paper:        #F7F4EE;  /* app background */
+  --paper-2:      #F0EBE2;  /* sunken / hover */
+  --paper-3:      #E8E1D5;  /* pressed / track */
+  --surface:      #FFFDF9;  /* cards, inputs */
+  --line:         #E3DCD0;  /* hairline borders */
+  --line-strong:  #CFC6B7;  /* input borders, dividers that matter */
+  --ink:          #1C1A17;  /* primary text, primary buttons */
+  --ink-2:        #4B463F;  /* secondary text  (8.9:1 on paper) */
+  --ink-3:        #756E64;  /* tertiary / meta (4.7:1 on paper) */
+  --ink-4:        #A39B8F;  /* disabled, placeholder decoration only */
+
+  /* ---- The one accent: Clay ---- */
+  --clay:         #9A3B27;  /* 6.6:1 on paper — safe for text */
+  --clay-ink:     #7A2D1D;  /* hover/pressed */
+  --clay-2:       #C27A5F;  /* chart mid */
+  --clay-3:       #E3B9A6;  /* chart light */
+  --clay-soft:    #F5E6DF;  /* tint backgrounds */
+
+  /* ---- Semantic (muted, never neon) ---- */
+  --ok:           #3E6650;  --ok-soft:   #E4ECE5;
+  --warn:         #8C6216;  --warn-soft: #F4EAD5;
+  --risk:         #9A3B27;  --risk-soft: #F5E6DF;  /* risk = clay: accent carries urgency */
+  --info:         #3F5266;  --info-soft: #E5E9EE;
+
+  /* ---- Chart palette (ordered; monochrome-plus-one, no rainbow) ---- */
+  --chart-1: #1C1A17;  /* ink     – primary series */
+  --chart-2: #9A3B27;  /* clay    – highlight series */
+  --chart-3: #C27A5F;  /* clay 2 */
+  --chart-4: #8A8276;  /* stone */
+  --chart-5: #E3B9A6;  /* clay 3 */
+  --chart-6: #CFC6B7;  /* sand */
+  --chart-7: #5B564E;  /* graphite */
+  --chart-8: #E8E1D5;  /* linen – remainder / unallocated */
+
+  /* ---- Type ---- */
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans:    "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --text-xs:   11px;  --lh-xs:  16px;
+  --text-sm:   12.5px;--lh-sm:  18px;
+  --text-base: 14px;  --lh-base:21px;
+  --text-md:   15.5px;--lh-md:  23px;
+  --text-lg:   18px;  --lh-lg:  26px;
+  --text-xl:   24px;  --lh-xl:  30px;   /* display serif from here up */
+  --text-2xl:  32px;  --lh-2xl: 38px;
+  --text-3xl:  44px;  --lh-3xl: 50px;
+  --text-4xl:  64px;  --lh-4xl: 68px;
+  --tracking-tight: -0.015em;
+  --tracking-caps:  0.08em;
+
+  /* ---- Space (4px base) ---- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px; --s-16: 64px; --s-24: 96px;
+
+  /* ---- Radius ---- */
+  --r-xs: 4px; --r-sm: 6px; --r-md: 8px; --r-lg: 12px; --r-xl: 16px; --r-pill: 999px;
+
+  /* ---- Elevation (borders first; shadow only for floating layers) ---- */
+  --e-0: none;
+  --e-1: 0 1px 0 rgba(28,26,23,.04);
+  --e-2: 0 1px 2px rgba(28,26,23,.05), 0 4px 12px -4px rgba(28,26,23,.08);
+  --e-3: 0 2px 4px rgba(28,26,23,.06), 0 16px 40px -12px rgba(28,26,23,.18);
+  --focus: 0 0 0 2px var(--paper), 0 0 0 4px rgba(154,59,39,.45);
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --dur-1: 120ms; --dur-2: 200ms;
+
+  /* ---- Layout ---- */
+  --topbar-h: 56px;
+  --content-max: 1320px;
+}
+
+/* ---- Base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 var(--text-base)/var(--lh-base) var(--font-sans);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
+}
+h1,h2,h3,h4 { margin: 0; font-weight: 500; }
+p { margin: 0; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+::selection { background: var(--clay-soft); color: var(--clay-ink); }
+:focus-visible { outline: none; box-shadow: var(--focus); border-radius: var(--r-sm); }
+
+.display   { font-family: var(--font-display); font-weight: 400; letter-spacing: var(--tracking-tight); font-variation-settings: "opsz" 96; }
+.display-4 { font-size: var(--text-4xl); line-height: var(--lh-4xl); }
+.display-3 { font-size: var(--text-3xl); line-height: var(--lh-3xl); }
+.display-2 { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
+.display-1 { font-size: var(--text-xl);  line-height: var(--lh-xl); }
+.text-lg   { font-size: var(--text-lg); line-height: var(--lh-lg); }
+.text-md   { font-size: var(--text-md); line-height: var(--lh-md); }
+.text-sm   { font-size: var(--text-sm); line-height: var(--lh-sm); }
+.text-xs   { font-size: var(--text-xs); line-height: var(--lh-xs); }
+.eyebrow   { font-size: var(--text-xs); line-height: var(--lh-xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
+.mono      { font-family: var(--font-mono); font-size: .92em; font-feature-settings: "tnum"; }
+.num       { font-variant-numeric: tabular-nums; }
+.muted     { color: var(--ink-2); }
+.faint     { color: var(--ink-3); }
+.accent    { color: var(--clay); }
+.italic    { font-style: italic; }

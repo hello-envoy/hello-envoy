@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; overflow: visible; position: relative; z-index: 5; }
+  .hero-l { padding: var(--s-8); border-right: 1px solid var(--line); }
+  .hero-r { padding: var(--s-6) var(--s-8); display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6) var(--s-8); align-content: center; }
+  .count-big { font-family: var(--font-display); font-size: 88px; line-height: 84px; letter-spacing: -0.035em; font-variation-settings: "opsz" 144; font-weight: 300; }
+  .count-big em { font-style: italic; color: var(--clay); font-weight: 300; }
+  .stat .k { color: var(--ink-3); font-size: var(--text-sm); display:flex; gap:6px; align-items:center; }
+  .stat .v { font-family: var(--font-display); font-size: 28px; line-height: 34px; margin-top: 4px; letter-spacing: -0.01em; font-variant-numeric: lining-nums tabular-nums; }
+  .stat .v small { font-family: var(--font-sans); font-size: var(--text-sm); color: var(--ink-3); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-6); }
+  .budget-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); margin-bottom: var(--s-4); }
+  .budget-nums .v { font-family: var(--font-display); font-size: 24px; line-height: 30px; font-variant-numeric: lining-nums tabular-nums; }
+  .budget-nums .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .cat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat-chips .fchip { height: 28px; padding: 0 10px; }
+  .cat-chips .fchip i { width: 7px; height: 7px; border-radius: 2px; display: inline-block; }
+  .donut-wrap { position: relative; height: 200px; }
+  .donut-center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; pointer-events: none; }
+  .donut-center b { display:block; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 30px; }
+  .activity li { align-items: flex-start; }
+  .activity .when { color: var(--ink-3); font-size: var(--text-xs); margin-left: auto; white-space: nowrap; }
+  .flash { animation: flash 1.6s var(--ease) 1; }
+  @keyframes flash { 0%{ box-shadow: 0 0 0 0 rgba(154,59,39,.0);} 20% { box-shadow: 0 0 0 6px rgba(154,59,39,.18);} 100%{ box-shadow: 0 0 0 0 rgba(154,59,39,0);} }
+</style>
+</head>
+<body data-page="overview">
+<div data-topbar></div>
+
+<main class="page">
+  <!-- ============ Header ============ -->
+  <section class="card hero">
+    <div class="hero-l">
+      <div class="eyebrow">Wedding · Planning phase</div>
+      <h1 class="display display-3 mt-2">Elena &amp; Marcus</h1>
+      <div class="row wrap mt-3 muted" style="gap:var(--s-4)">
+        <span class="row gap-2"><i data-i="cal" data-s="15"></i>Saturday, October 16, 2027</span>
+        <span class="row gap-2"><i data-i="pin" data-s="15"></i>The Ashby Estate · Charleston, SC</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="contacts.html#compare"><i data-i="mail"></i>Email shortlist</a>
+        <button class="btn btn-primary" data-toast="Log a booking: pick vendor → status <b>Booked</b> → add deposit to reach <b>Deposit paid</b>"><i data-i="checkc"></i>Log a booking</button>
+        <details class="menu" id="cta-more">
+          <summary class="btn btn-secondary"><i data-i="more"></i>More<i data-i="chevd" data-s="14"></i></summary>
+          <div class="menu-pop" role="menu">
+            <a role="menuitem" href="couple-portal.html"><i data-i="share" data-s="15"></i><span>Share update with couple<span class="sub">Preview what Elena &amp; Marcus see</span></span></a>
+            <a role="menuitem" href="contacts.html#attach"><i data-i="upload" data-s="15"></i><span>Import vendors<span class="sub">From your directory, CSV or Gmail</span></span></a>
+            <a role="menuitem" href="project.html#timeline"><i data-i="gantt" data-s="15"></i><span>Open timeline<span class="sub">14-month view in Project</span></span></a>
+          </div>
+        </details>
+      </div>
+    </div>
+    <div class="hero-r">
+      <div style="grid-column: span 2">
+        <div class="stat"><div class="k"><i data-i="clock" data-s="14"></i>Countdown</div></div>
+        <div class="count-big num">348 <em>days</em></div>
+      </div>
+      <div class="stat"><div class="k"><i data-i="guests" data-s="14"></i>Guests</div><div class="v">128 <small>of 140 target</small></div></div>
+      <div class="stat"><div class="k"><i data-i="layers" data-s="14"></i>Milestones</div><div class="v">5 <small>of 12 done</small></div></div>
+    </div>
+  </section>
+
+  <!-- ============ Needs attention ============ -->
+  <div class="section-title" id="attention"><h2>Needs attention</h2><span class="faint text-sm">Updated 2 min ago · from 41 threads</span></div>
+  <section class="attn" id="attn-strip">
+    <a href="contacts.html?c=sweetgrass&amp;fix=email" class="hot" title="Opens Sweetgrass Stems with Add email / Retry send">
+      <span class="n">1</span>
+      <span><span class="t">Failed send</span><br><span class="d">Inquiry to Sweetgrass Stems bounced — email missing</span><br><span class="status sm s-none st">Not contacted</span> <span class="go">Add email &amp; retry →</span></span>
+    </a>
+    <a href="contacts.html?c=glam&amp;fix=reply" class="hot" title="Opens the Lowcountry Glam thread with Draft reply">
+      <span class="n">2</span>
+      <span><span class="t">Unanswered &gt; 3 days</span><br><span class="d">Lowcountry Glam (4d), Coastal Event Rentals (5d)</span><br><span class="status sm s-reply st">Needs reply</span> <span class="go">Draft reply →</span></span>
+    </a>
+    <a href="contacts.html?c=harborline&amp;fix=hold" title="Opens Harborline with Request date change">
+      <span class="n">1</span>
+      <span><span class="t">Date conflict</span><br><span class="d">Harborline Hotel holding Oct 9, not Oct 16</span><br><span class="status sm s-waiting st">Waiting</span> <span class="go">Request Oct 15–17 →</span></span>
+    </a>
+    <a href="project.html#lock" title="Opens Lock catering with Log deposit paid">
+      <span class="n">1</span>
+      <span><span class="t">Missing deposit</span><br><span class="d">Wildflour Catering · $7,920 due Fri, Nov 6</span><br><span class="status sm s-booked st">Booked</span> <span class="go">Log deposit → Deposit paid</span></span>
+    </a>
+  </section>
+
+  <!-- ============ Vendors + Budget ============ -->
+  <div class="g-12 mt-8">
+    <section class="card span-8">
+      <div class="card-head">
+        <h3>Vendors <span class="sub">13 on this wedding</span></h3>
+        <div class="seg" data-tabs="#vendor-table" id="vendor-seg">
+          <button data-tab="me" aria-selected="true">Needs me <span class="mono faint">5</span></button>
+          <button data-tab="them" aria-selected="false">Waiting on them <span class="mono faint">3</span></button>
+          <button data-tab="all" aria-selected="false">All</button>
+        </div>
+      </div>
+      <div class="table-wrap" id="vendor-table">
+        <table class="table">
+          <thead><tr><th>Vendor</th><th>Type</th><th>Status</th><th>Next action</th><th class="r">Last reply</th></tr></thead>
+          <tbody>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">W</span><div><div class="cell-main">Wildflour Catering</div><div class="cell-sub">Priya Natarajan</div></div></div></td><td>Caterer</td><td><span class="status s-booked">Booked</span></td><td><a class="btn-link" href="project.html#lock">Log $7,920 deposit</a></td><td class="r faint num">1d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">L</span><div><div class="cell-main">Lowcountry Glam</div><div class="cell-sub">Tasha Greene</div></div></div></td><td>Beauty</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?c=glam&amp;fix=reply">Draft reply · trial dates</a></td><td class="r num" style="color:var(--clay)">4d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">C</span><div><div class="cell-main">Coastal Event Rentals</div><div class="cell-sub">Dev Patel</div></div></div></td><td>Rentals</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?c=coastal&amp;fix=reply">Draft reply · chair count (128)</a></td><td class="r num" style="color:var(--clay)">5d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Heron &amp; Fern Florals</div><div class="cell-sub">Shortlist · A</div></div></div></td><td>Florist</td><td><span class="status s-none">Not contacted</span></td><td><a class="btn-link" href="contacts.html#compare">Draft inquiry</a></td><td class="r faint">—</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Harborline Hotel</div><div class="cell-sub">Room block · 30 rooms</div></div></div></td><td>Hotel block</td><td><span class="status s-waiting">Waiting</span></td><td><a class="btn-link" href="contacts.html?c=harborline&amp;fix=hold">Fix hold date → Oct 16</a></td><td class="r faint num">2d</td></tr>
+            <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">S</span><div><div class="cell-main">Saltmarsh Films</div><div class="cell-sub">Inquiry sent Oct 29</div></div></div></td><td>Video</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Nudge Thu if silent</td><td class="r faint num">—</td></tr>
+            <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">M</span><div><div class="cell-main">Marlowe Flower Co.</div><div class="cell-sub">Shortlist · B</div></div></div></td><td>Florist</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Awaiting proposal</td><td class="r faint num">—</td></tr>
+            <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">S</span><div><div class="cell-main">Sugar Hall Cakes</div><div class="cell-sub">Tasting request</div></div></div></td><td>Cake</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Tasting dates pending</td><td class="r faint num">—</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">A</span><div><div class="cell-main">The Ashby Estate</div><div class="cell-sub">Margaret Ashby</div></div></div></td><td>Venue</td><td><span class="status s-paid">Deposit paid</span></td><td class="muted">Send floor plan · Jan</td><td class="r faint num">2d</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">J</span><div><div class="cell-main">Juniper &amp; Vale Photo</div><div class="cell-sub">Ana Ortiz</div></div></div></td><td>Photo</td><td><span class="status s-paid">Deposit paid</span></td><td class="muted">Engagement shoot · Mar</td><td class="r faint num">6d</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">T</span><div><div class="cell-main">The Tidewater Six</div><div class="cell-sub">Band · 6 piece</div></div></div></td><td>Band/DJ</td><td><span class="status s-paid">Deposit paid</span></td><td class="muted">Song list · Aug</td><td class="r faint num">3w</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">P</span><div><div class="cell-main">Palmetto Coach Co.</div><div class="cell-sub">Shuttle quote</div></div></div></td><td>Transport</td><td><span class="status s-declined">Declined</span></td><td class="muted">Find alternative</td><td class="r faint num">1w</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot"><span>Sorted by what moves the wedding forward</span><a class="btn-link" href="contacts.html">All vendors →</a></div>
+    </section>
+
+    <section class="card span-4">
+      <div class="card-head"><h3>Budget</h3><a class="btn-link text-sm" href="#sankey">Where it goes ↓</a></div>
+      <div class="card-body">
+        <div class="budget-nums">
+          <div><div class="k">Budgeted</div><div class="v num">$120k</div></div>
+          <div><div class="k">Spent</div><div class="v num">$80.0k</div></div>
+          <div><div class="k">Remaining</div><div class="v num accent">$40.0k</div></div>
+        </div>
+        <div class="bar bar-lg" title="Spent $80,000 of $120,000 budgeted">
+          <i style="width:28.3%"></i><i class="c2" style="width:22%"></i><i class="c3" style="width:7%"></i><i class="c4" style="width:9.5%"></i><i class="rest" style="flex:1"></i>
+        </div>
+        <div class="donut-wrap mt-6"><canvas id="donut" aria-label="Budget by category"></canvas><div class="donut-center"><div><b class="num">67%</b><span class="faint text-sm">spent</span></div></div></div>
+        <div class="row-between mt-6 mb-2"><span class="eyebrow">Filter vendors by category</span><span class="faint text-xs">Spent / Budgeted</span></div>
+        <div class="cat-chips" id="cat-chips"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ Milestone timeline ============ -->
+  <section class="card mt-4">
+    <div class="card-head"><h3>Milestones <span class="sub">Booked · Deposit paid · Final · Day-of</span></h3>
+      <div class="legend"><span><i style="background:var(--ink);border-radius:50%"></i>Done</span><span><i style="background:var(--surface);border:2px solid var(--clay);border-radius:50%"></i>In motion</span><span><i style="background:var(--surface);border:2px solid var(--line-strong);border-radius:50%"></i>Upcoming</span></div>
+    </div>
+    <div class="card-body" style="padding-bottom:var(--s-2)">
+      <div class="mtl" id="mtl"></div>
+    </div>
+  </section>
+
+  <!-- ============ Sankey + activity ============ -->
+  <div class="g-12 mt-4">
+    <section class="card span-8" id="sankey">
+      <div class="card-head"><h3>Where the money goes <span class="sub">Total → Category → Booked vs remaining</span></h3>
+        <div class="legend"><span><i style="background:var(--ink)"></i>Booked</span><span><i style="background:var(--chart-6)"></i>Remaining</span></div></div>
+      <div class="card-body"><div id="sankey-el" style="width:100%"></div></div>
+    </section>
+    <section class="card span-4">
+      <div class="card-head"><h3>Recent</h3><span class="faint text-sm">Today</span></div>
+      <ul class="list activity">
+        <li><span class="av av-sm av-clay">EM</span><div><b>Elena</b> picked <b>Heron &amp; Fern</b> over Marlowe <div class="cell-sub">Florist A/B · couple portal</div></div><span class="when">12m</span></li>
+        <li><span class="av av-sm">W</span><div>Wildflour sent signed contract<div class="cell-sub">Catering · $26,400</div></div><span class="when">1h</span></li>
+        <li><span class="av av-sm av-ink">SW</span><div>You attached <b>4 preferred vendors</b><div class="cell-sub">From your directory</div></div><span class="when">3h</span></li>
+        <li><span class="av av-sm">A</span><div>The Ashby Estate confirmed rain plan<div class="cell-sub">Venue</div></div><span class="when">2d</span></li>
+        <li><span class="av av-sm av-clay">EM</span><div>Marcus updated guest estimate to <b>128</b></div><span class="when">3d</span></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { css, sankey } = Envoy;
+  const CATS = [
+    // name, budget, committed, contacts type filter
+    ["Venue",          34000, 34000, "Venue"],
+    ["Catering",       28000, 26400, "Caterer"],
+    ["Photo & video",  14000,  8400, "Photo"],
+    ["Florals",        12000,     0, "Florist"],
+    ["Music",           8000,  6200, "Band/DJ"],
+    ["Attire & beauty", 9000,  3800, "Beauty"],
+    ["Rentals",         6000,     0, "Rentals"],
+    ["Other & buffer",  9000,  1200, "Other"],
+  ];
+  const COL = ["--chart-1","--chart-2","--chart-3","--chart-4","--chart-5","--chart-7","--chart-6","--chart-8"].map(css);
+
+  // chips → filter contacts
+  document.getElementById("cat-chips").innerHTML = CATS.map((c, i) =>
+    `<a class="fchip" href="contacts.html?type=${encodeURIComponent(c[3])}"><i style="background:${COL[i]};${i===7?'border:1px solid var(--line-strong)':''}"></i>${c[0]} <span class="count" title="Spent $${c[2].toLocaleString()} of $${c[1].toLocaleString()} budgeted">$${+(c[2]/1000).toFixed(1)}k / $${(c[1]/1000).toFixed(0)}k</span></a>`).join("");
+
+  // donut
+  if (window.Chart) new Chart(document.getElementById("donut"), {
+    type: "doughnut",
+    data: { labels: CATS.map(c => c[0]), datasets: [{ data: CATS.map(c => c[1]), backgroundColor: COL, borderColor: css("--surface"), borderWidth: 2, hoverOffset: 4 }] },
+    options: { cutout: "74%", plugins: { tooltip: { callbacks: { label: (x) => ` ${x.label}: $${x.raw.toLocaleString()} budgeted · $${CATS[x.dataIndex][2].toLocaleString()} spent` } } } }
+  });
+
+  // milestone timeline (Nov 2026 → Oct 2027)
+  const start = new Date(2026, 9, 1), end = new Date(2027, 9, 20);
+  const pos = (d) => ((d - start) / (end - start)) * 100;
+  const M = [
+    ["Venue booked", "Booked · Oct 3", new Date(2026, 9, 3), "done"],
+    ["Photo & band", "Booked · Oct 21", new Date(2026, 9, 21), "done"],
+    ["Lock catering", "Booked → Deposit paid · Nov 6", new Date(2026, 10, 6), "now"],
+    ["Florist chosen", "Booked · Dec 1", new Date(2026, 11, 1), ""],
+    ["Save-the-dates", "Sent · Feb 15", new Date(2027, 1, 15), ""],
+    ["Attire & rentals", "Deposit paid by May", new Date(2027, 4, 10), ""],
+    ["Final numbers", "Final · Sep 16", new Date(2027, 8, 16), ""],
+    ["Day-of", "Oct 16, 2027", new Date(2027, 9, 16), ""],
+  ];
+  const today = new Date(2026, 10, 2);
+  // ordinal spacing: milestones are evenly spaced (dates live in the labels); "today" is interpolated between neighbours
+  const opos = (d) => { const t = +d; let i = M.findIndex(m => +m[2] > t); if (i <= 0) i = i === 0 ? 1 : M.length - 1;
+    const a = M[i - 1][2], b = M[i][2]; const f = Math.min(1, Math.max(0, (t - a) / (b - a))); return 5 + ((i - 1 + f) / (M.length - 1)) * 90; };
+  const pos2 = (d) => opos(d);
+  document.getElementById("mtl").innerHTML = `
+    <div class="mtl-track"><div class="mtl-fill" style="width:${pos2(today)}%"></div>
+      <span class="mtl-today" style="left:${pos2(today)}%">Today</span>
+      ${M.map(m => `<span class="mtl-pt ${m[3]}" style="left:${pos2(m[2])}%" title="${m[0]} — ${m[1]}"></span>`).join("")}
+    </div>
+    <div class="mtl-labels">${M.map((m, i) => `<div class="mtl-lab" style="left:${pos2(m[2])}%"><b>${m[0]}</b><span>${m[1]}</span></div>`).join("")}</div>`;
+  document.querySelector(".mtl-labels").style.height = "48px";
+
+  // sankey
+  const nodes = [{ id: "total", label: "Total budget", col: 0, color: css("--ink") }];
+  const links = [];
+  CATS.forEach((c, i) => {
+    nodes.push({ id: "c" + i, label: c[0], col: 1, color: COL[i] === css("--chart-8") ? css("--chart-6") : COL[i] });
+    links.push({ source: "total", target: "c" + i, value: c[1], color: COL[i] === css("--chart-8") ? css("--chart-6") : COL[i], opacity: .22 });
+    if (c[2]) links.push({ source: "c" + i, target: "booked", value: c[2], color: css("--ink"), opacity: .18 });
+    if (c[1] - c[2]) links.push({ source: "c" + i, target: "remain", value: c[1] - c[2], color: css("--chart-6"), opacity: .45 });
+  });
+  nodes.push({ id: "booked", label: "Booked", col: 2, color: css("--ink") }, { id: "remain", label: "Remaining", col: 2, color: css("--chart-6") });
+  const draw = () => sankey(document.getElementById("sankey-el"), { nodes: JSON.parse(JSON.stringify(nodes)), links }, { height: 380, gap: 8, labelSpace: 120, padL: 96, fmt: (v) => "$" + (v / 1000).toFixed(1) + "k", aria: "Budget flow from total to categories to booked and remaining" });
+  draw(); addEventListener("resize", draw);
+
+  // vendor segmented sort
+  addEventListener("envoy:tab", (e) => {
+    const v = e.detail; if (!["me","them","all"].includes(v)) return;
+    document.querySelectorAll("#vendor-table tbody tr").forEach(tr => tr.classList.toggle("hide", v !== "all" && tr.dataset.b !== v));
+  });
+
+  const more = document.getElementById("cta-more");
+  document.addEventListener("click", (e) => { if (more.open && !more.contains(e.target)) more.open = false; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") more.open = false; });
+  if (location.hash === "#attention") { const s = document.getElementById("attn-strip"); s.classList.add("flash"); }
+});
+</script>
+</body>
+</html>

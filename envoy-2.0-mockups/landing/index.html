@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Envoy — Plan the wedding, not the inbox</title>
+<meta name="description" content="Envoy is the calm control center for wedding planners: every vendor, every decision, and a beautiful portal for your couples.">
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .lw { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .lnav { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid transparent; }
+  .lnav.scrolled { border-color: var(--line); }
+  .lnav .lw { display: flex; align-items: center; height: 64px; gap: 32px; }
+  .lnav nav { display: flex; gap: 24px; }
+  .lnav nav a { text-decoration: none; color: var(--ink-2); font-weight: 500; }
+  .lnav nav a:hover { color: var(--ink); }
+  .lnav .r { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .hero { padding: 96px 0 56px; text-align: center; }
+  .hero .pill { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line-strong); border-radius: 99px; padding: 4px 12px 4px 4px; font-size: var(--text-sm); color: var(--ink-2); background: var(--surface); text-decoration: none; }
+  .hero .pill b { background: var(--clay-soft); color: var(--clay-ink); border-radius: 99px; padding: 2px 8px; font-weight: 500; }
+  .hero h1 { font-family: var(--font-display); font-weight: 300; font-size: 96px; line-height: 92px; letter-spacing: -0.04em; margin: 28px auto 0; max-width: 960px; font-variation-settings: "opsz" 144; }
+  .hero h1 em { font-style: italic; color: var(--clay); }
+  .hero p.lead { font-size: 20px; line-height: 30px; color: var(--ink-2); max-width: 620px; margin: 28px auto 0; }
+  .hero .ctas { display: flex; gap: 10px; justify-content: center; margin-top: 36px; }
+  .hero .fine { margin-top: 14px; color: var(--ink-3); font-size: var(--text-sm); }
+  .shot { margin: 64px auto 0; max-width: 1100px; border: 1px solid var(--line-strong); border-radius: 18px; background: var(--paper); box-shadow: 0 40px 80px -40px rgba(28,26,23,.28), 0 0 0 8px rgba(255,253,249,.7); overflow: hidden; text-align: left; }
+  .shot .chrome { height: 40px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-size: var(--text-sm); }
+  .shot .chrome .dots { display: flex; gap: 6px; } .shot .chrome .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--paper-3); }
+  .shot .chrome .tabs-m { display: flex; gap: 18px; color: var(--ink-3); font-weight: 500; margin-left: 20px; } .shot .chrome .tabs-m b { color: var(--ink); }
+  .shot .body { padding: 28px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+  .shot .mini-kpi { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; grid-column: span 2; }
+  .shot .mini-kpi .card { padding: 16px 18px; }
+  .shot .mini-kpi .v { font-family: var(--font-display); font-size: 32px; line-height: 36px; margin-top: 4px; }
+  .logos { padding: 56px 0; border-bottom: 1px solid var(--line); }
+  .logos .row { justify-content: center; gap: 40px; flex-wrap: wrap; opacity: .7; }
+  .logos .lg { font-family: var(--font-display); font-size: 22px; color: var(--ink-2); letter-spacing: -0.01em; }
+  .logos .lg.i { font-style: italic; } .logos .lg.c { font-family: var(--font-sans); font-weight: 600; letter-spacing: .14em; font-size: 14px; text-transform: uppercase; }
+  .sec { padding: 112px 0 0; }
+  .sec-head { max-width: 860px; }
+  .sec-head h2 { font-family: var(--font-display); font-weight: 300; font-size: 56px; line-height: 60px; letter-spacing: -0.03em; margin-top: 14px; font-variation-settings: "opsz" 144; }
+  .sec-head h2 em { color: var(--clay); font-style: italic; }
+  .sec-head p { font-size: var(--text-lg); line-height: 28px; color: var(--ink-2); margin-top: 18px; }
+  .story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 56px; border-top: 1px solid var(--ink); }
+  .story > div { padding: 28px 28px 0 0; }
+  .story > div + div { padding-left: 28px; border-left: 1px solid var(--line); }
+  .story .k { font-family: var(--font-mono); font-size: 12px; color: var(--clay); }
+  .story h3 { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 32px; margin-top: 12px; letter-spacing: -0.01em; }
+  .story p { color: var(--ink-2); margin-top: 10px; font-size: var(--text-md); line-height: 24px; }
+  .story .vis { margin-top: 24px; }
+  .feat { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 56px; border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; background: var(--surface); }
+  .feat > div { padding: 32px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .feat > div:nth-child(3n) { border-right: 0; } .feat > div:nth-last-child(-n+3) { border-bottom: 0; }
+  .feat .ic { width: 36px; height: 36px; border-radius: 10px; background: var(--clay-soft); color: var(--clay); display: grid; place-items: center; }
+  .feat h4 { font-weight: 600; font-size: var(--text-md); margin-top: 18px; }
+  .feat p { color: var(--ink-2); margin-top: 6px; }
+  .quote { margin-top: 112px; padding: 80px 0; background: var(--ink); color: var(--paper); }
+  .quote blockquote { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: 44px; line-height: 54px; letter-spacing: -0.02em; max-width: 920px; font-variation-settings: "opsz" 144; }
+  .quote blockquote em { color: var(--clay-3); }
+  .quote .who { display: flex; gap: 12px; align-items: center; margin-top: 32px; color: #CFC6B7; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; padding-top: 32px; border-top: 1px solid #3A3631; }
+  .stats .v { font-family: var(--font-display); font-size: 56px; line-height: 60px; font-weight: 300; }
+  .stats .l { color: #B8B0A4; margin-top: 4px; }
+  .price { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
+  .price .card { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
+  .price .card.hl { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .price .amt { font-family: var(--font-display); font-size: 48px; line-height: 52px; font-weight: 300; }
+  .price .amt small { font-family: var(--font-sans); font-size: var(--text-base); color: var(--ink-3); }
+  .price ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; color: var(--ink-2); }
+  .price li { display: flex; gap: 8px; } .price li svg { color: var(--clay); flex: none; margin-top: 3px; }
+  .final { margin: 112px 0 0; padding: 96px 0; text-align: center; border-top: 1px solid var(--line); }
+  .final h2 { font-family: var(--font-display); font-weight: 300; font-size: 72px; line-height: 74px; letter-spacing: -0.035em; font-variation-settings: "opsz" 144; }
+  .final h2 em { color: var(--clay); font-style: italic; }
+  .lfoot { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--ink-3); font-size: var(--text-sm); }
+  .lfoot .lw { display: flex; justify-content: space-between; }
+  .ph { position: relative; } .ph::after { content: "placeholder"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: .06em; }
+  @media (max-width: 900px) { .hero h1 { font-size: 56px; line-height: 58px; } .story, .feat, .price, .stats, .shot .body { grid-template-columns: 1fr; } .story > div + div { padding-left: 0; border-left: 0; } .feat > div { border-right: 0; } .lnav nav { display: none; } .sec-head h2 { font-size: 40px; line-height: 44px; } }
+</style>
+</head>
+<body data-rail="off">
+<header class="lnav" id="lnav"><div class="lw">
+  <a class="brand" href="#"><svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="#1C1A17" stroke-width="1.6"/><path d="M3.5 7.2 12 13l8.5-5.8" stroke="#9A3B27" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-word">Envoy</span></a>
+  <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#couples">For couples</a><a href="#pricing">Pricing</a></nav>
+  <div class="r"><a class="btn btn-ghost" href="../app/overview.html">Sign in</a><a class="btn btn-primary" href="../app/overview.html">Start free</a></div>
+</div></header>
+
+<main>
+  <section class="hero lw">
+    <a class="pill" href="#how"><b>New</b> Envoy 2.0 — built for wedding planners <i data-i="arrowr" data-s="14"></i></a>
+    <h1>Plan the wedding, <em>not</em> the&nbsp;inbox.</h1>
+    <p class="lead">Envoy keeps every vendor, deadline, and decision in one calm place — and gives your couple a beautiful window into it, without the group-chat chaos.</p>
+    <div class="ctas"><a class="btn btn-primary btn-lg" href="../app/overview.html">Start your first wedding</a><a class="btn btn-secondary btn-lg" href="../app/couple-portal.html"><i data-i="eye"></i>See the couple view</a></div>
+    <div class="fine">Free for your first two weddings · Imports from Gmail, HoneyBook &amp; spreadsheets</div>
+
+    <div class="shot" aria-label="Product preview">
+      <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><b style="font-family:var(--font-display);font-weight:400">Envoy</b><span class="faint">/ Elena &amp; Marcus</span><span class="tabs-m"><b>Overview</b><span>Contacts</span><span>Project</span></span></div>
+      <div class="body">
+        <div class="mini-kpi">
+          <div class="card"><div class="faint text-sm">Countdown</div><div class="v">348 <span class="italic accent" style="font-size:22px">days</span></div></div>
+          <div class="card"><div class="faint text-sm">Committed</div><div class="v">$80k <span class="faint" style="font-family:var(--font-sans);font-size:13px">of $120k</span></div></div>
+          <div class="card"><div class="faint text-sm">Vendors booked</div><div class="v">6 <span class="faint" style="font-family:var(--font-sans);font-size:13px">of 13</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head" style="min-height:44px;padding:10px 18px"><h3>Needs you</h3><span class="chip chip-risk">5</span></div>
+          <table class="table"><tbody>
+            <tr><td style="padding-left:18px"><span class="cell-main">Wildflour Catering</span></td><td><span class="status s-booked">Booked</span> <span class="faint text-xs">· deposit due Fri</span></td></tr>
+            <tr><td style="padding-left:18px"><span class="cell-main">Lowcountry Glam</span></td><td><span class="status s-reply">Needs reply</span> <span class="faint text-xs">· 4d</span></td></tr>
+            <tr><td style="padding-left:18px"><span class="cell-main">Harborline Hotel</span></td><td><span class="status s-waiting">Waiting</span> <span class="faint text-xs">· date conflict</span></td></tr>
+          </tbody></table>
+        </div>
+        <div class="card card-pad">
+          <div class="eyebrow">Couple decided</div>
+          <div style="font-family:var(--font-display);font-size:22px;line-height:28px;margin-top:8px">Heron &amp; Fern for florals</div>
+          <div class="faint text-sm mt-2">Elena picked option A · 12 min ago</div>
+          <div class="bar mt-4"><i style="width:67%"></i></div>
+          <div class="faint text-xs mt-2">5 of 12 milestones</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="logos"><div class="lw">
+    <div class="eyebrow" style="text-align:center;margin-bottom:24px">Planners in early access <span class="faint">(placeholder names)</span></div>
+    <div class="row"><span class="lg">Whitfield &amp; Co.</span><span class="lg i">Magnolia Lane</span><span class="lg c">Tidewater Events</span><span class="lg">Holloway House</span><span class="lg i">Oak &amp; Ember</span><span class="lg c">Ninth Bloom</span></div>
+  </div></section>
+
+  <section class="sec lw" id="how">
+    <div class="sec-head"><div class="eyebrow">How it works</div><h2>From forty threads to <em>one</em> clear next step.</h2>
+      <p>Planners don't need another chat app. They need to know who's booked, who's waiting, and what the couple still has to decide.</p></div>
+    <div class="story">
+      <div><div class="k">01 — Attach</div><h3>Bring your trusted vendors.</h3><p>Your preferred directory follows you wedding to wedding. Attach a florist you love in one click — their details, notes, and history come along.</p>
+        <div class="vis card" style="padding:14px"><div class="row"><span class="logo-sq">H</span><div class="grow"><div class="cell-main">Heron &amp; Fern Florals</div><div class="cell-sub">Florist · 6 weddings with you</div></div><span class="btn btn-secondary btn-sm"><i data-i="attach" data-s="13"></i>Attach</span></div></div></div>
+      <div><div class="k">02 — Know</div><h3>See what needs you.</h3><p>Envoy reads the replies so you don't miss the deposit, the bounced email, or the hotel that held the wrong weekend.</p>
+        <div class="vis card" style="padding:14px"><div class="row"><span class="display" style="font-size:28px;color:var(--clay)">4</span><div><div class="cell-main">Things need attention</div><div class="cell-sub">Deposit · unanswered · date conflict</div></div></div></div></div>
+      <div><div class="k">03 — Share</div><h3>Bring the couple in, gently.</h3><p>A private portal for the two people who matter: milestones, a budget glance, and simple A/B choices. Never your drafts or vendor threads.</p>
+        <div class="vis card" style="padding:14px"><div class="row"><span class="chip chip-ink">A</span><div class="grow cell-main">Heron &amp; Fern</div><span class="chip chip-outline">B</span><span class="faint text-sm">Marlowe</span></div></div></div>
+    </div>
+  </section>
+
+  <section class="sec lw" id="features">
+    <div class="sec-head"><div class="eyebrow">Built for the work</div><h2>Everything a planner juggles, <em>quietly</em> handled.</h2></div>
+    <div class="feat">
+      <div><span class="ic"><i data-i="home" data-s="18"></i></span><h4>An Overview that leads</h4><p>Countdown, budget, and vendor status at a glance — sorted by what moves the wedding forward.</p></div>
+      <div><span class="ic"><i data-i="users" data-s="18"></i></span><h4>Contacts, not chat</h4><p>Every venue, vendor, and person with their status, thread, and next action. Draft an inquiry in seconds.</p></div>
+      <div><span class="ic"><i data-i="layers" data-s="18"></i></span><h4>Milestones that close themselves</h4><p>“Lock catering” turns done when the caterer is booked and the deposit lands. No checkbox hunting.</p></div>
+      <div><span class="ic"><i data-i="star" data-s="18"></i></span><h4>Compare like a pro</h4><p>Put 2–4 florists side by side on price, style, availability, and response time. Send the couple an A/B.</p></div>
+      <div><span class="ic"><i data-i="shield" data-s="18"></i></span><h4>Risks &amp; holds, kept short</h4><p>Ten rows, not a spreadsheet. Envoy suggests risks from vendor threads; you decide what stays.</p></div>
+      <div><span class="ic"><i data-i="dollar" data-s="18"></i></span><h4>Budget you can explain</h4><p>Total to category to booked vs remaining — a single picture your couple will actually understand.</p></div>
+    </div>
+  </section>
+
+  <section class="quote" id="couples"><div class="lw">
+    <div class="eyebrow" style="color:#A39B8F">From early access <span style="opacity:.7">(placeholder testimonial)</span></div>
+    <blockquote class="mt-4">“I used to run three weddings out of my inbox and a color-coded spreadsheet. Now I open Envoy, see the <em>four things</em> that matter, and my couples stop texting me at midnight.”</blockquote>
+    <div class="who"><span class="av av-clay">SW</span><span><b style="color:var(--paper)">Sarah Whitfield</b> · Lead planner, Whitfield &amp; Co. · Charleston</span></div>
+    <div class="stats">
+      <div><div class="v">6 hrs</div><div class="l">saved per wedding, per week*</div></div>
+      <div><div class="v">0</div><div class="l">missed deposits across pilot weddings*</div></div>
+      <div><div class="v">3×</div><div class="l">faster couple decisions with A/B picks*</div></div>
+    </div>
+    <div class="text-xs mt-4" style="color:#8A8276">*Illustrative targets for demo purposes — not measured results.</div>
+  </div></section>
+
+  <section class="sec lw" id="pricing">
+    <div class="sec-head"><div class="eyebrow">Pricing</div><h2>Priced per wedding season, <em>not</em> per seat.</h2></div>
+    <div class="price">
+      <div class="card"><div class="eyebrow">Starter</div><div class="amt">Free</div><p class="muted">For your first two weddings.</p><ul><li><i data-i="check" data-s="14"></i>Overview, Contacts, Project</li><li><i data-i="check" data-s="14"></i>Couple portal</li><li><i data-i="check" data-s="14"></i>Gmail import</li></ul><a class="btn btn-secondary mt-4" href="../app/overview.html">Start free</a></div>
+      <div class="card hl"><div class="row-between"><div class="eyebrow">Studio</div><span class="chip chip-ink">Most planners</span></div><div class="amt">$49 <small>/ month</small></div><p class="muted">Unlimited weddings for an independent planner.</p><ul><li><i data-i="check" data-s="14"></i>Preferred vendor directory</li><li><i data-i="check" data-s="14"></i>Ask Envoy drafting</li><li><i data-i="check" data-s="14"></i>Vendor compare &amp; A/B</li><li><i data-i="check" data-s="14"></i>Budget flows</li></ul><a class="btn btn-primary mt-4" href="../app/overview.html">Try Studio for 30 days</a></div>
+      <div class="card"><div class="eyebrow">House</div><div class="amt">$129 <small>/ month</small></div><p class="muted">For teams with coordinators and assistants.</p><ul><li><i data-i="check" data-s="14"></i>Up to 6 teammates</li><li><i data-i="check" data-s="14"></i>Shared directory</li><li><i data-i="check" data-s="14"></i>Day-of handoff</li></ul><a class="btn btn-secondary mt-4" href="#">Talk to us</a></div>
+    </div>
+    <p class="faint text-xs mt-4">Pricing shown is a placeholder for the demo.</p>
+  </section>
+
+  <section class="final lw">
+    <h2>Your next wedding,<br><em>calmer</em>.</h2>
+    <div class="row mt-8" style="justify-content:center"><a class="btn btn-primary btn-lg" href="../app/overview.html">Start your first wedding</a><a class="btn btn-ghost btn-lg" href="../design-system/index.html">View the design system</a></div>
+  </section>
+</main>
+
+<footer class="lfoot"><div class="lw"><span>© 2026 Envoy</span><span>Made for planners, by people who've stood at the back of the aisle.</span></div></footer>
+
+<script src="../assets/app.js"></script>
+<script>
+  const nav = document.getElementById("lnav");
+  addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), { passive: true });
+</script>
+</body>
+</html>
