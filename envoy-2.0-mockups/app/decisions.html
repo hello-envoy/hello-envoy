@@ -19,10 +19,7 @@
   .sheet td { white-space: normal; vertical-align: middle; }
   .sheet td > .cell { height: auto; min-height: 44px; padding: 10px 12px; align-items: center; line-height: 1.45; }
   .sheet td.dec .cell { font-weight: 500; color: var(--ink); min-width: 260px; }
-  .sheet td.opt .cell { color: var(--ink-2); min-width: 220px; }
-  .preview-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  .preview-list li { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-  .preview-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .sheet td.opts .ed { outline: none; border-radius: 3px; padding: 1px 2px; } .sheet td.opts .ed:focus { box-shadow: 0 0 0 2px var(--clay); background: var(--surface); }
   .sheet td.due .cell { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
   .sheet td.due.late .cell { color: var(--risk); }
   .sheet td.pick { padding: 0 8px; white-space: nowrap; }
@@ -43,6 +40,16 @@
   .add-row button:hover { color: var(--ink); }
   .hint { font-size: var(--text-xs); color: var(--ink-3); margin-top: var(--s-3); display: flex; gap: 16px; }
   .hint kbd { font-family: var(--font-mono); font-size: 10.5px; border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 4px; background: var(--surface); }
+  .hidden { display: none !important; }
+  .sheet td.opts .cell { color: var(--ink-2); min-width: 220px; }
+  .sheet td.opts .cell b { color: var(--ink-3); font-weight: 500; font-family: var(--font-mono); font-size: 11px; margin-right: 2px; }
+  .cpv-head { display: flex; gap: 12px; align-items: center; margin-bottom: var(--s-4); }
+  .cpv { background: var(--paper-2); border-radius: var(--r-lg); padding: var(--s-8); display: grid; gap: var(--s-4); max-width: 760px; }
+  .cpv .cd { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5) var(--s-6); }
+  .cpv .cd .t { font-family: var(--font-display); font-size: 21px; line-height: 27px; }
+  .cpv .cd .o { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .cpv .cd .o span { border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 12px; font-size: var(--text-sm); }
+  .cpv .cd .m { margin-top: 10px; font-size: var(--text-sm); color: var(--ink-3); display: flex; gap: 12px; }
   .empty { padding: var(--s-10); text-align: center; color: var(--ink-3); }
 </style>
 </head>
@@ -54,11 +61,11 @@
     <div>
       <div class="eyebrow">Elena &amp; Marcus · Decisions &amp; insights</div>
       <h1>Decisions</h1>
-      <div class="meta"><span><i data-i="edit" data-s="14"></i>Click any cell to edit — it saves as you go</span><span><i data-i="eye" data-s="14"></i>You choose what the couple sees</span></div>
+      <div class="meta"><span><i data-i="edit" data-s="14"></i>Click any cell to edit — it saves as you go</span><span><i data-i="lock" data-s="14"></i>Private by default — share a row only when you choose</span></div>
     </div>
     <div style="display:flex;gap:8px">
       <a class="btn btn-ghost" href="project.html#risks"><i data-i="shield" data-s="14"></i>Risks in Project</a>
-      <button class="btn btn-secondary" type="button" id="preview-toggle" aria-pressed="false" aria-controls="preview"><i data-i="eye" data-s="14"></i>Preview as couple</button>
+      <button class="btn btn-secondary" id="pv-btn" aria-pressed="false"><i data-i="eye" data-s="14"></i><span>Preview as couple</span></button>
     </div>
   </header>
 
@@ -100,37 +107,38 @@
     </div>
   </div>
 
-  <section class="card" id="preview" hidden style="margin-bottom:var(--s-4)">
-    <div class="card-head"><h3>What Elena &amp; Marcus see</h3><span class="faint" style="font-size:var(--text-sm)">Couple-visible is off until you share a row</span></div>
-    <div class="card-body" id="preview-body"></div>
-  </section>
-
+  <div id="planner-view">
   <div class="sheet">
     <table>
-      <thead><tr><th class="idx">#</th><th>Decision</th><th>Options</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead>
+      <thead><tr><th class="idx">#</th><th>Decision</th><th>Options · A / B</th><th>Owner</th><th>Due</th><th>Status</th><th style="text-align:center">Couple sees</th></tr></thead>
       <tbody id="rows"></tbody>
-      <tbody><tr class="add-row"><td class="idx">+</td><td colspan="5"><button id="add"><i data-i="plus" data-s="14"></i>Add a decision</button></td></tr></tbody>
+      <tbody><tr class="add-row"><td class="idx">+</td><td colspan="6"><button id="add"><i data-i="plus" data-s="14"></i>Add a decision</button></td></tr></tbody>
     </table>
   </div>
-  <div class="hint"><span><kbd>Enter</kbd> save cell</span><span><kbd>Esc</kbd> cancel</span><span><kbd>Tab</kbd> next cell</span><span>Changes to couple-visible rows appear in their portal under <b>This week</b>.</span></div>
+  <div class="hint"><span><kbd>Enter</kbd> save cell</span><span><kbd>Esc</kbd> cancel</span><span><kbd>Tab</kbd> next cell</span><span>Rows you share appear in their portal under <b>Decisions</b> — nothing else from this table does.</span></div>
+  </div>
+  <section id="couple-view" class="hidden">
+    <div class="cpv-head"><span class="chip chip-outline"><i data-i="eye" data-s="12"></i>Exactly what Elena &amp; Marcus see</span><span class="faint" style="font-size:var(--text-sm)">Only rows with “Couple sees” on — nothing else from this table</span></div>
+    <div class="cpv" id="cpv"></div>
+  </section>
 </main>
 
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const OWNERS = { "Sarah": "var(--ink)", "Elena & Marcus": "var(--clay)", "Vendor": "var(--ink-4)" };
+  const OWNERS = { "Me": "var(--ink)", "Couple": "var(--clay)", "Vendor": "var(--ink-4)" };
   const STATUSES = [["open", "Open"], ["couple", "Waiting on couple"], ["decided", "Decided"]];
   let rows = [
-    { d: "Florist", opt: "Hartley & Fern · Marlowe Studio", o: "Elena & Marcus", s: "couple", due: "Nov 9", v: false },
-    { d: "Harborline hold", opt: "Keep Oct 8–10 · Move to Oct 15–17", o: "Sarah", s: "open", due: "Nov 4", v: false, late: true },
-    { d: "Ceremony rain plan", opt: "Tent · Ashby ballroom", o: "Elena & Marcus", s: "open", due: "Dec 1", v: false },
-    { d: "Rehearsal dinner room", opt: "Ashby library · Offsite", o: "Sarah", s: "open", due: "Dec 15", v: false },
-    { d: "Hair & makeup trial", opt: "Sat Aug 21 · Sun Aug 29", o: "Vendor", s: "open", due: "Nov 5", v: false, link: "approve-send.html?to=glam" },
-    { d: "Catering menu", opt: "Menu B, plated", o: "Elena & Marcus", s: "decided", due: "Oct 24", v: false },
-    { d: "Guest count", opt: "128 · cap 140", o: "Elena & Marcus", s: "decided", due: "Oct 20", v: false },
-    { d: "Wildflour deposit", opt: "Pay $7,920 by Nov 6", o: "Sarah", s: "decided", due: "Nov 6", v: false, link: "approve-send.html?to=wild" },
+    { d: "Florist", a: "Heron & Fern Florals", b: "Marlowe Flower Co.", o: "Couple", s: "couple", due: "Nov 9", v: false },
+    { d: "Harborline hold for Oct 8–10", a: "Release it", b: "Move to Oct 15–17", o: "Me", s: "open", due: "Nov 4", v: false, late: true },
+    { d: "Ceremony rain plan", a: "Tent on the allée", b: "Ashby ballroom", o: "Couple", s: "open", due: "Dec 1", v: false },
+    { d: "Rehearsal dinner room", a: "Ashby library (40)", b: "Harborline terrace", o: "Me", s: "open", due: "Dec 15", v: false },
+    { d: "Hair & makeup trial date", a: "Sat Aug 21", b: "Sun Aug 29", o: "Vendor", s: "open", due: "Nov 5", v: false, link: "approve-send.html?to=glam" },
+    { d: "Catering menu", a: "Menu A · stations", b: "Menu B · plated", o: "Couple", s: "decided", due: "Oct 24", v: false, pick: "b" },
+    { d: "Guest count", a: "128", b: "140", o: "Couple", s: "decided", due: "Oct 20", v: false, pick: "a" },
+    { d: "Wildflour deposit $7,920", a: "Pay now", b: "Pay on Nov 6", o: "Me", s: "decided", due: "Nov 6", v: false, pick: "a", link: "approve-send.html?to=wild" },
   ];
-  let filter = "open", onlyCouple = false, previewOn = false;
+  let filter = "open", onlyCouple = false;
   const $ = (id) => document.getElementById(id);
   const body = $("rows");
   const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -138,13 +146,13 @@ window.addEventListener("envoy:ready", () => {
     const c = { open: rows.filter((r) => r.s !== "decided").length, decided: rows.filter((r) => r.s === "decided").length, all: rows.length };
     document.querySelectorAll("[data-c]").forEach((e) => (e.textContent = c[e.dataset.c]));
     $("vis-n").textContent = rows.filter((r) => r.v).length; $("all-n").textContent = rows.length;
-    if (previewOn) renderPreview();
   }
-  function renderPreview() {
-    const shared = rows.filter((r) => r.v);
-    $("preview-body").innerHTML = shared.length
-      ? `<ul class="preview-list">${shared.map((r) => `<li><b>${esc(r.d)}</b><div class="faint">${esc(r.opt)} · due ${esc(r.due)}</div></li>`).join("")}</ul>`
-      : `<p class="faint" style="margin:0">Nothing is shared yet. Couple-visible stays off until you turn a row on.</p>`;
+  function couple() {
+    const vis = rows.filter((r) => r.v);
+    $("cpv").innerHTML = vis.length ? vis.map((r) => `<article class="cd"><div class="t">${esc(r.d)}</div>
+      <div class="o"><span>${r.pick === "a" ? "✓ " : "A · "}${esc(r.a)}</span><span>${r.pick === "b" ? "✓ " : "B · "}${esc(r.b)}</span></div>
+      <div class="m"><span>${r.s === "decided" ? "Decided" : r.o === "Couple" ? "Your pick" : "Sarah is on it"}</span><span>${r.s === "decided" ? "" : "By " + esc(r.due)}</span></div></article>`).join("")
+      : `<div class="empty">Nothing shared yet. Turn on “Couple sees” for a row to put it here.</div>`;
   }
   function render(flashIdx) {
     const list = rows.map((r, i) => [r, i]).filter(([r]) => (filter === "all" || (filter === "open" ? r.s !== "decided" : r.s === "decided")) && (!onlyCouple || r.v));
@@ -152,28 +160,29 @@ window.addEventListener("envoy:ready", () => {
       <tr data-i="${i}" class="${r.s === "decided" ? "is-decided" : ""} ${i === flashIdx ? "flash" : ""}">
         <td class="idx">${n + 1}</td>
         <td class="dec"><div class="cell" contenteditable="true" data-k="d">${esc(r.d)}</div></td>
-        <td class="opt"><div class="cell" contenteditable="true" data-k="opt">${esc(r.opt || "")}${r.link ? ` <a class="btn-link" href="${r.link}" contenteditable="false" style="white-space:nowrap">Open draft →</a>` : ""}</div></td>
-        <td class="pick"><span class="owner-dot" style="background:${OWNERS[r.o]}"></span><select class="psel" data-k="o" aria-label="Owner">${Object.keys(OWNERS).map((o) => `<option ${o === r.o ? "selected" : ""}>${esc(o)}</option>`).join("")}</select></td>
+        <td class="opts"><div class="cell" style="display:block"><b>A</b> <span contenteditable="true" data-k="a" class="ed">${esc(r.a)}</span> <span class="faint">/</span> <b>B</b> <span contenteditable="true" data-k="b" class="ed">${esc(r.b)}</span>${r.link ? ` <a class="btn-link" href="${r.link}" style="white-space:nowrap;margin-left:6px">Draft →</a>` : ""}</div></td>
+        <td class="pick"><span class="owner-dot" style="background:${OWNERS[r.o]}"></span><select class="psel" data-k="o" aria-label="Owner">${Object.keys(OWNERS).map((o) => `<option ${o === r.o ? "selected" : ""}>${o}</option>`).join("")}</select></td>
         <td class="due ${r.late && r.s !== "decided" ? "late" : ""}"><div class="cell" contenteditable="true" data-k="due">${esc(r.due)}</div></td>
-        <td class="pick"><select class="psel st-${r.s}" data-k="s" aria-label="Status">${STATUSES.map(([v, l]) => `<option value="${v}" ${v === r.s ? "selected" : ""}>${l}</option>`).join("")}</select><label class="vis"><input type="checkbox" class="toggle" data-k="v" ${r.v ? "checked" : ""} aria-label="Visible to couple"><span class="lbl">${r.v ? "Shared" : "Private"}</span></label></td>
-      </tr>`).join("") : `<tr><td colspan="6"><div class="empty">Nothing ${filter === "decided" ? "decided" : "open"} here${onlyCouple ? " that the couple can see" : ""}.</div></td></tr>`;
-    counts();
+        <td class="pick"><select class="psel st-${r.s}" data-k="s" aria-label="Status">${STATUSES.map(([v, l]) => `<option value="${v}" ${v === r.s ? "selected" : ""}>${l}</option>`).join("")}</select></td>
+        <td><div class="vis"><input type="checkbox" class="toggle" data-k="v" ${r.v ? "checked" : ""} aria-label="Visible to couple"><span class="lbl">${r.v ? "Shared" : "Private"}</span></div></td>
+      </tr>`).join("") : `<tr><td colspan="7"><div class="empty">Nothing ${filter === "decided" ? "decided" : "open"} here${onlyCouple ? " that the couple can see" : ""}.</div></td></tr>`;
+    counts(); couple();
   }
   body.addEventListener("keydown", (e) => {
-    const c = e.target.closest(".cell[contenteditable]"); if (!c) return;
+    const c = e.target.closest("[contenteditable=true]"); if (!c) return;
     if (e.key === "Enter") { e.preventDefault(); c.blur(); }
     if (e.key === "Escape") { const r = rows[+c.closest("tr").dataset.i]; c.textContent = r[c.dataset.k]; c.blur(); }
   });
   body.addEventListener("focusout", (e) => {
-    const c = e.target.closest(".cell[contenteditable]"); if (!c) return;
+    const c = e.target.closest("[contenteditable=true]"); if (!c) return;
     const r = rows[+c.closest("tr").dataset.i], k = c.dataset.k;
-    const v = (c.firstChild && c.firstChild.nodeType === 3 ? c.firstChild.textContent : c.textContent).trim();
-    if (v && v !== r[k]) { r[k] = v; Envoy.toast(r.v ? "Saved · couple will see this update" : "Saved"); }
+    const v = c.textContent.trim();
+    if (v && v !== r[k]) { r[k] = v; couple(); Envoy.toast(r.v ? "Saved · couple will see this update" : "Saved · private"); }
   });
   body.addEventListener("change", (e) => {
     const t = e.target, tr = t.closest("tr"); if (!tr) return;
     const i = +tr.dataset.i, r = rows[i], k = t.dataset.k;
-    if (k === "v") { r.v = t.checked; Envoy.toast(t.checked ? "Now visible in Elena &amp; Marcus’s portal" : "Hidden from the couple"); }
+    if (k === "v") { r.v = t.checked; Envoy.toast(t.checked ? "Shared · now in Elena &amp; Marcus’s portal" : "Private again · removed from their portal"); }
     else if (k === "s") { r.s = t.value; Envoy.toast(t.value === "decided" ? `<b>Decided</b> · moved out of Open` : `Status · <b>${t.selectedOptions[0].text}</b>`); }
     else if (k === "o") { r.o = t.value; }
     render(i);
@@ -187,23 +196,25 @@ window.addEventListener("envoy:ready", () => {
     render(0);
     return body.querySelector('tr[data-i="0"] td.dec .cell');
   }
-  $("add").addEventListener("click", () => { const c = addRow({ d: "New decision", opt: "Option A · Option B", o: "Sarah", s: "open", due: "—", v: false }); c.focus(); document.getSelection().selectAllChildren(c); });
-  $("preview-toggle").addEventListener("click", () => {
-    previewOn = !previewOn;
-    $("preview").hidden = !previewOn;
-    $("preview-toggle").setAttribute("aria-pressed", String(previewOn));
-    renderPreview();
-  });
+  $("add").addEventListener("click", () => { const c = addRow({ d: "New decision", a: "Option A", b: "Option B", o: "Me", s: "open", due: "—", v: false }); c.focus(); document.getSelection().selectAllChildren(c); });
   const INS = [
-    { d: "Book videographer", opt: "Lumen Reel · Saltmarsh Films", o: "Sarah", s: "open", due: "Dec 1", v: false },
-    { d: "Harborline room block", opt: "Confirm 20 rooms · Release the hold", o: "Elena & Marcus", s: "couple", due: "Dec 15", v: false },
-    { d: "Tent hold", opt: "Firm hold, $600 · Leave it soft", o: "Elena & Marcus", s: "open", due: "Jan 15", v: false },
+    { d: "Videographer", a: "Lumen Reel", b: "Saltmarsh Films", o: "Me", s: "open", due: "Dec 1", v: false },
+    { d: "Harborline room block", a: "Confirm 20 rooms", b: "Release the hold", o: "Couple", s: "couple", due: "Dec 15", v: false },
+    { d: "Firm tent hold ($600)", a: "Hold now", b: "Wait to Sep 1", o: "Couple", s: "open", due: "Jan 15", v: false },
   ];
   document.querySelectorAll(".ins").forEach((card) => card.querySelector("button").addEventListener("click", (e) => {
     addRow({ ...INS[+card.dataset.ins] });
     card.classList.add("added"); e.currentTarget.disabled = true; e.currentTarget.innerHTML = Envoy.icon("check", 13) + " Added";
     Envoy.toast("Added to Open decisions");
   }));
+  $("pv-btn").addEventListener("click", (e) => {
+    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", on);
+    e.currentTarget.querySelector("span").textContent = on ? "Back to planner view" : "Preview as couple";
+    e.currentTarget.classList.toggle("btn-primary", on); e.currentTarget.classList.toggle("btn-secondary", !on);
+    $("planner-view").classList.toggle("hidden", on); $("couple-view").classList.toggle("hidden", !on);
+    document.querySelector(".bar-row .l").style.visibility = on ? "hidden" : "";
+  });
   render();
 });
 </script>

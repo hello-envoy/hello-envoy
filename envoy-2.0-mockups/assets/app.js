@@ -82,10 +82,12 @@
         ${tab("contacts", "Contacts", "contacts.html")}
         ${tab("project", "Project", "project.html")}
         <details class="menu nav-more">
-          <summary class="${["decisions", "approve"].includes(page) ? "is-cur" : ""}">More ${icon("chevd", 13)}</summary>
+          <summary class="${["decisions", "approve", "dayof", "share"].includes(page) ? "is-cur" : ""}">More ${icon("chevd", 13)}</summary>
           <div class="menu-pop" role="menu">
             <a role="menuitem" href="decisions.html" ${page === "decisions" ? 'aria-current="page"' : ""}>${icon("listi", 15)}<span>Decisions<span class="sub">Open &amp; decided, couple-visible</span></span></a>
             <a role="menuitem" href="approve-send.html" ${page === "approve" ? 'aria-current="page"' : ""}>${icon("send", 15)}<span>Approve &amp; send<span class="sub">2 drafts waiting for you</span></span></a>
+            <a role="menuitem" href="day-of.html" ${page === "dayof" ? 'aria-current="page"' : ""}>${icon("cal", 15)}<span>Day-of packet<span class="sub">Run of show, call times, rain plan</span></span></a>
+            <a role="menuitem" href="share-update.html" ${page === "share" ? 'aria-current="page"' : ""}>${icon("share", 15)}<span>Share update<span class="sub">Choose what the couple sees</span></span></a>
             <a role="menuitem" href="portfolio.html">${icon("grid", 15)}<span>All weddings<span class="sub">24 active · start your day here</span></span></a>
           </div>
         </details>
@@ -205,6 +207,8 @@
     ["portfolio.html", "All weddings — start the day across 24"],
     ["approve-send.html", "Approve & send — nothing leaves without you"],
     ["decisions.html", "Decisions — open vs decided, couple-visible"],
+    ["day-of.html", "Day-of packet — calm, printable"],
+    ["share-update.html", "Share update — thin couple share"],
   ];
   function mountRail() {
     if (document.body.dataset.rail === "off") return;
@@ -212,7 +216,7 @@
     const d = document.createElement("details");
     d.className = "demo-rail"; d.open = sessionStorage.getItem("envoy-rail") === "open";
     d.addEventListener("toggle", () => sessionStorage.setItem("envoy-rail", d.open ? "open" : "closed"));
-    d.innerHTML = `<summary><span class="pulse"></span> Demo story <span class="faint" style="font-weight:400;margin-left:auto">5 beats + ideas</span></summary><ol>${STORY.map(([h, t]) => `<li class="${h.split("#")[0] === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ol><div class="rail-ideas"><div class="eyebrow">Ideas · round 3</div><ul>${IDEAS.map(([h, t]) => `<li class="${h === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ul></div>`;
+    d.innerHTML = `<summary><span class="pulse"></span> Demo story <span class="faint" style="font-weight:400;margin-left:auto">5 beats + ideas</span></summary><ol>${STORY.map(([h, t]) => `<li class="${h.split("#")[0] === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ol><div class="rail-ideas"><div class="eyebrow">Ideas · rounds 3–4</div><ul>${IDEAS.map(([h, t]) => `<li class="${h === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ul></div>`;
     document.body.appendChild(d);
   }
 

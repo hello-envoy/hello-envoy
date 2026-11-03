@@ -7,6 +7,22 @@
 <link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/components.css">
 <style>
+  .from-hero { padding: var(--s-5) var(--s-6); border-bottom: 1px solid var(--line); background: var(--paper-2); border-radius: var(--r-lg) var(--r-lg) 0 0; }
+  .from-hero .fk { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .from-hero .fv { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; margin-top: 8px; }
+  .from-hero .g { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; color: var(--ink-2); }
+  .from-hero .addr { font-family: var(--font-display); font-size: 22px; line-height: 28px; letter-spacing: -0.01em; }
+  .from-hero .inbox { color: var(--ink-2); font-size: var(--text-sm); }
+  .from-hero .inbox b { color: var(--ink); font-weight: 600; }
+  .from-hero.personal .g { background: var(--warn-soft); color: var(--warn); }
+  .from-warn { margin-top: 10px; font-size: var(--text-sm); color: var(--warn); display: flex; gap: 6px; align-items: center; }
+  .hidden { display: none !important; }
+  .review { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 14px var(--s-6); border-top: 1px solid var(--line); align-items: start; }
+  .review input { width: 18px; height: 18px; accent-color: var(--ink); margin-top: 2px; cursor: pointer; }
+  .review label { cursor: pointer; }
+  .review .rl { font-weight: 500; }
+  .review .snip { margin-top: 6px; padding: 10px 12px; background: var(--paper-2); border-radius: var(--r-md); font-size: var(--text-sm); color: var(--ink-2); line-height: 1.5; }
+  .review .snip b { color: var(--ink); font-weight: 500; display: block; }
   .layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: var(--s-6); align-items: start; }
   .queue { display: flex; gap: 8px; margin-bottom: var(--s-4); }
   .qitem { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); cursor: pointer; text-align: left; font: inherit; color: var(--ink-2); flex: 1; }
@@ -20,12 +36,8 @@
   .hdr > div:nth-last-child(-n+2) { border-bottom: 0; }
   .hdr .k { color: var(--ink-3); font-size: var(--text-sm); padding-left: var(--s-6); }
   .hdr .v { padding-right: var(--s-6); }
-  .from-hero { display: flex; justify-content: space-between; gap: var(--s-6); align-items: flex-end; padding: var(--s-5) var(--s-6); border-bottom: 1px solid var(--line); background: var(--paper); }
-  .from-addr { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 32px; letter-spacing: -0.02em; margin-top: 4px; }
-  .from-meta { color: var(--ink-2); font-size: var(--text-sm); margin-top: 6px; }
-  .from-controls { display: flex; gap: 8px; align-items: center; flex: none; }
-  .from-change { display: flex; gap: 8px; align-items: center; padding: 12px var(--s-6); border-bottom: 1px solid var(--line); background: var(--surface); }
-  .from-change .input { max-width: 360px; }
+  .from-pill { display: inline-flex; align-items: center; gap: 8px; padding: 3px 10px 3px 4px; border-radius: 99px; background: var(--paper-2); font-size: var(--text-sm); }
+  .from-pill .g { width: 20px; height: 20px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 700; font-size: 11px; color: var(--ink-2); border: 1px solid var(--line); }
   .subj { border: 0; outline: 0; font: inherit; font-weight: 500; width: 100%; background: none; color: var(--ink); }
   .body { padding: var(--s-6); min-height: 300px; outline: none; line-height: 1.65; font-size: 15px; color: var(--ink); }
   .body p { margin: 0 0 14px; }
@@ -43,7 +55,7 @@
   .sent { display: none; padding: var(--s-6); border-top: 1px solid var(--line); background: var(--ok-soft); }
   .sent.on { display: flex; gap: 14px; align-items: center; }
   .sent .ck { width: 34px; height: 34px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; flex: none; }
-  .is-sent .guard, .is-sent .actions { display: none; }
+  .is-sent .guard, .is-sent .actions, .is-sent .review { display: none; }
   .is-sent .body { color: var(--ink-2); }
   .side .card + .card { margin-top: var(--s-5); }
   .ask-head { display: flex; align-items: center; gap: 10px; }
@@ -89,24 +101,20 @@
 
   <div class="layout">
     <section class="card" id="composer">
-      <div class="from-hero">
-        <div>
-          <div class="eyebrow">From · Gmail</div>
-          <div class="from-addr" id="from-addr">sarah@whitfieldco.com</div>
-          <div class="from-meta" id="from-meta">Sarah Whitfield · Business</div>
+      <div class="from-hero" id="from-hero">
+        <div class="fk">Sending as</div>
+        <div class="fv">
+          <span class="g">G</span>
+          <div><div class="addr" id="from-addr">sarah@whitfieldco.com</div><div class="inbox" id="from-inbox"><b>Business inbox</b> · Whitfield &amp; Co · Gmail</div></div>
+          <details class="menu from-menu">
+            <summary class="btn btn-secondary btn-sm">Change</summary>
+            <div class="menu-pop" role="menu" style="right:0;left:auto;min-width:300px">
+              <button role="menuitemradio" data-from="biz"><span><b>Business</b> · sarah@whitfieldco.com<span class="sub">Whitfield &amp; Co · Gmail · used for all vendors</span></span></button>
+              <button role="menuitemradio" data-from="personal"><span><b>Personal</b> · sarah.whitfield@gmail.com<span class="sub">Gmail · not recommended for vendors</span></span></button>
+            </div>
+          </details>
         </div>
-        <div class="from-controls">
-          <div class="seg" id="from-kind" role="group" aria-label="Mailbox">
-            <button type="button" aria-selected="true" data-kind="business">Business</button>
-            <button type="button" aria-selected="false" data-kind="personal">Personal</button>
-          </div>
-          <button class="btn btn-secondary btn-sm" type="button" id="change-from" aria-expanded="false" aria-controls="from-change">Change</button>
-        </div>
-      </div>
-      <div class="from-change" id="from-change" hidden>
-        <label class="faint" for="from-input" style="font-size:var(--text-sm)">Full address</label>
-        <input class="input" id="from-input" type="email" value="sarah@whitfieldco.com" autocomplete="email">
-        <button class="btn btn-primary btn-sm" type="button" id="from-save">Use this address</button>
+        <div class="from-warn hidden" id="from-warn"><i data-i="alert" data-s="13"></i>Tasha has only heard from your business address. Replies would land in your personal inbox.</div>
       </div>
       <div class="hdr">
         <div class="k">To</div><div class="v" id="to"></div>
@@ -116,8 +124,13 @@
       <div class="body" id="body" contenteditable="true" spellcheck="true" aria-label="Email body"></div>
       <div class="attachments" id="att"></div>
       <div class="guard"><span class="lock"><i data-i="lock" data-s="15"></i></span><span><b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.</span></div>
+      <div class="review">
+        <input type="checkbox" id="ok">
+        <label for="ok"><div class="rl">I reviewed this note to <span id="rv-name">Tasha Greene at Lowcountry Glam</span></div>
+          <div class="snip"><b id="rv-subj"></b><span id="rv-lines"></span></div></label>
+      </div>
       <div class="actions">
-        <label class="confirm"><input type="checkbox" id="ok"> I reviewed this note to <b id="tick-vendor">Lowcountry Glam</b></label>
+        <span class="faint" style="font-size:var(--text-sm)">Approve stays off until you tick the review.</span>
         <span class="spacer"></span>
         <button class="btn btn-ghost" data-toast="Draft saved — still waiting for you">Save draft</button>
         <button class="btn btn-primary" id="send" disabled><i data-i="send" data-s="14"></i>Approve &amp; send</button>
@@ -125,7 +138,6 @@
       <div class="sent" id="sent">
         <span class="ck"><i data-i="check" data-s="18"></i></span>
         <div style="flex:1"><b id="sent-t">Sent from sarah@whitfieldco.com</b><div style="font-size:var(--text-sm);color:var(--ink-2);margin-top:2px" id="sent-d"></div></div>
-        <span class="faint" style="font-size:var(--text-sm)">Sent from your Gmail. Undo only reverts an Envoy edit, not a send.</span>
       </div>
     </section>
 
@@ -140,7 +152,7 @@
             <button class="btn btn-secondary btn-sm" id="apply"><i data-i="check" data-s="13"></i>Apply to draft</button>
             <button class="btn btn-ghost btn-sm" id="dismiss">Dismiss</button>
           </div>
-          <div class="applied-note" style="display:none;gap:8px;margin-top:14px;align-items:center;font-size:var(--text-sm);color:var(--ink-2)"><i data-i="checkc" data-s="14"></i>Applied — highlighted in your draft. Still not sent. <button class="btn btn-ghost btn-sm" type="button" id="undo-edit">Undo edit</button></div>
+          <div class="applied-note" style="display:none;gap:8px;margin-top:14px;align-items:center;font-size:var(--text-sm);color:var(--ink-2)"><i data-i="checkc" data-s="14"></i><span style="flex:1">Applied — highlighted in your draft. Still not sent.</span><button class="btn btn-ghost btn-sm" id="undo-edit">Undo Envoy edit</button></div>
         </div>
         <form class="ask-in" onsubmit="event.preventDefault(); Envoy.toast('Envoy would rewrite on request — you still approve'); this.reset();">
           <input class="input" placeholder="Make it warmer, shorter, add the address…" aria-label="Ask Envoy about this draft">
@@ -166,7 +178,7 @@
 window.addEventListener("envoy:ready", () => {
   const D = {
     glam: {
-      vendor: "Lowcountry Glam",
+      who: "Tasha Greene at Lowcountry Glam", first: "Tasha",
       to: "Tasha Greene &lt;tasha@lowcountryglam.com&gt;", from: "Needs reply", fromCls: "s-reply", toSt: "Waiting", toCls: "s-waiting",
       subj: "Re: Hair & makeup trial — Elena (Oct 16, 2027)",
       body: `<p>Hi Tasha,</p><p>Thank you for the quick note — Elena is thrilled you’re holding October 16 for her.</p><p>For the trial, we could do <span data-fix>either Saturday or Sunday later in August</span>, at your Mount Pleasant studio. Elena would like to bring her veil and a photo of the neckline so you can plan around it.</p><p>Could you also send over the retainer details so we can get that settled?</p><p>Warmly,<br>Sarah<br><span style="color:var(--ink-3)">Whitfield &amp; Co · Charleston</span></p>`,
@@ -181,7 +193,7 @@ window.addEventListener("envoy:ready", () => {
       done: "Logged to the Lowcountry Glam thread · status <b>Needs reply → Waiting</b> · reminder set for Nov 5 if no reply.",
     },
     wild: {
-      vendor: "Wildflour Catering",
+      who: "Priya Natarajan at Wildflour Catering", first: "Priya",
       to: "Priya Natarajan &lt;priya@wildflourcatering.com&gt;", from: "Booked", fromCls: "s-booked", toSt: "Deposit paid", toCls: "s-paid",
       subj: "Elena & Marcus · Menu B confirmed + deposit",
       body: `<p>Hi Priya,</p><p>Happy to confirm Elena and Marcus have chosen <b>Menu B</b> for 128 guests on October 16, 2027 at The Ashby Estate.</p><p>The deposit of <b>$7,920</b> is going out today, ahead of the November 6 due date — <span data-fix>I’ll send the receipt when I have it</span>.</p><p>We’re looking forward to the tasting on February 12.</p><p>All best,<br>Sarah<br><span style="color:var(--ink-3)">Whitfield &amp; Co · Charleston</span></p>`,
@@ -198,81 +210,63 @@ window.addEventListener("envoy:ready", () => {
   };
   const $ = (id) => document.getElementById(id);
   const comp = $("composer"), ask = $("ask"), ok = $("ok"), send = $("send");
-  const BOXES = {
-    business: { addr: "sarah@whitfieldco.com", meta: "Sarah Whitfield · Business · Gmail" },
-    personal: { addr: "sarah.whitfield@gmail.com", meta: "Sarah Whitfield · Personal · Gmail" },
-  };
-  let cur = "glam", mailbox = "business", beforeEdit = null;
+  let cur = "glam", before = null;
   const sentState = {};
-  function setFrom(addr, meta, kind) {
-    $("from-addr").textContent = addr;
-    $("from-meta").textContent = meta;
-    $("from-input").value = addr;
-    if (kind) {
-      mailbox = kind;
-      document.querySelectorAll("#from-kind button").forEach((b) => b.setAttribute("aria-selected", b.dataset.kind === kind));
-    }
+  function snippet() {
+    $("rv-subj").textContent = $("subj").value;
+    const t = $("body").innerText.replace(/\s+/g, " ").trim();
+    $("rv-lines").textContent = t.slice(0, 150) + (t.length > 150 ? "…" : "");
   }
+  function unreview() { ok.checked = false; send.disabled = true; }
   function load(k) {
-    cur = k; const d = D[k];
+    cur = k; const d = D[k]; before = null;
     document.querySelectorAll(".qitem").forEach((q) => q.setAttribute("aria-selected", q.dataset.draft === k));
     $("to").innerHTML = `<span class="chip chip-outline">${d.to}</span>`;
     $("subj").value = d.subj; $("body").innerHTML = d.body;
     $("att").innerHTML = d.att.join("");
+    $("rv-name").textContent = d.who;
+    $("from-warn").lastChild.textContent = ` ${d.first} has only heard from your business address. Replies would land in your personal inbox.`;
     $("sugg-t").textContent = d.sugg; $("sugg-del").textContent = d.del; $("sugg-add").textContent = d.add;
     $("sugg-why").innerHTML = d.why.join("");
     $("checks").innerHTML = d.checks.map(([t, s]) => `<li><span class="${t}"><i data-i="${t === "ok" ? "checkc" : "alert"}" data-s="15"></i></span><span>${s}</span></li>`).join("");
     $("quote").textContent = d.quote; $("q-when").textContent = d.when;
-    $("tick-vendor").textContent = d.vendor;
     ask.classList.remove("applied"); ask.style.display = "";
-    beforeEdit = null;
-    ok.checked = false; send.disabled = true;
+    unreview();
     comp.classList.toggle("is-sent", !!sentState[k]); $("sent").classList.toggle("on", !!sentState[k]);
     $("body").contentEditable = !sentState[k];
     if (sentState[k]) $("sent-d").innerHTML = d.done;
+    snippet();
     Envoy.hydrateIcons(document.querySelector(".layout"));
   }
   document.querySelectorAll(".qitem").forEach((q) => q.addEventListener("click", () => load(q.dataset.draft)));
-  document.querySelectorAll("#from-kind button").forEach((b) => b.addEventListener("click", () => {
-    const box = BOXES[b.dataset.kind];
-    setFrom(box.addr, box.meta, b.dataset.kind);
-  }));
-  $("change-from").addEventListener("click", () => {
-    const panel = $("from-change");
-    const open = panel.hidden;
-    panel.hidden = !open;
-    $("change-from").setAttribute("aria-expanded", String(open));
-    if (open) $("from-input").focus();
-  });
-  $("from-save").addEventListener("click", () => {
-    const addr = $("from-input").value.trim();
-    if (!addr.includes("@")) { Envoy.toast("Enter the full email address"); return; }
-    $("from-addr").textContent = addr;
-    $("from-meta").textContent = `Sarah Whitfield · ${mailbox === "personal" ? "Personal" : "Business"} · Gmail`;
-    $("from-change").hidden = true;
-    $("change-from").setAttribute("aria-expanded", "false");
-    Envoy.toast("Sending address updated · still your Gmail");
-  });
   ok.addEventListener("change", () => (send.disabled = !ok.checked));
+  $("body").addEventListener("input", () => { snippet(); unreview(); });
+  $("subj").addEventListener("input", () => { snippet(); unreview(); });
+  // From: Business vs Personal
+  const FROM = { biz: ["sarah@whitfieldco.com", "<b>Business inbox</b> · Whitfield &amp; Co · Gmail"], personal: ["sarah.whitfield@gmail.com", "<b>Personal inbox</b> · Gmail"] };
+  document.querySelectorAll("[data-from]").forEach((b) => b.addEventListener("click", () => {
+    const f = b.dataset.from; $("from-addr").textContent = FROM[f][0]; $("from-inbox").innerHTML = FROM[f][1];
+    $("from-hero").classList.toggle("personal", f === "personal"); $("from-warn").classList.toggle("hidden", f !== "personal");
+    b.closest("details").open = false; unreview();
+    Envoy.toast(`Sending as <b>${FROM[f][0]}</b>`);
+  }));
+  // Ask Envoy apply + undo (Envoy edit only)
+  let checksBefore = null;
   $("apply").addEventListener("click", () => {
-    const span = $("body").querySelector("[data-fix]");
-    if (!span) return;
-    beforeEdit = $("body").innerHTML;
-    span.outerHTML = `<mark>${D[cur].add}</mark>`;
+    const span = $("body").querySelector("[data-fix]"); if (!span) return;
+    before = span.outerHTML; checksBefore = $("checks").innerHTML;
+    span.outerHTML = `<mark data-envoy>${D[cur].add}</mark>`;
     ask.classList.add("applied");
     const li = [...$("checks").querySelectorAll("li")].find((l) => l.querySelector(".warn"));
     if (li) { li.querySelector(".warn").outerHTML = `<span class="ok">${Envoy.icon("checkc", 15)}</span>`; li.lastElementChild.textContent = "Suggestion applied — read it once more"; }
-    ok.checked = false; send.disabled = true;
+    unreview(); snippet();
   });
   $("undo-edit").addEventListener("click", () => {
-    if (!beforeEdit) return;
-    $("body").innerHTML = beforeEdit;
-    beforeEdit = null;
-    ask.classList.remove("applied");
-    $("checks").innerHTML = D[cur].checks.map(([t, s]) => `<li><span class="${t}"><i data-i="${t === "ok" ? "checkc" : "alert"}" data-s="15"></i></span><span>${s}</span></li>`).join("");
-    Envoy.hydrateIcons($("checks"));
-    ok.checked = false; send.disabled = true;
-    Envoy.toast("Envoy’s edit undone. Your wording is back — nothing was sent.");
+    const m = $("body").querySelector("mark[data-envoy]");
+    if (m && before) m.outerHTML = before;
+    if (checksBefore) $("checks").innerHTML = checksBefore;
+    before = null; ask.classList.remove("applied"); unreview(); snippet();
+    Envoy.toast("Envoy’s edit removed — your words are back");
   });
   $("dismiss").addEventListener("click", () => { ask.style.display = "none"; Envoy.toast("Suggestion dismissed"); });
   send.addEventListener("click", () => {

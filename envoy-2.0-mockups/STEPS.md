@@ -99,13 +99,6 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
   - Approve: send disabled → apply → enabled after tick → Waiting → Undo → Needs reply; switching to Wildflour works.
   - Decisions: Open shows 5, deciding a row leaves 4, Decided shows 4; the visible counter updates; inline edit saves; the insight adds a row; the couple-only filter works.
 
-## Round 3 trust pass
-Additive to the idea pages. Linen and round 2 are unchanged.
-
-- **Portfolio.** Needs-you rows are actions: Confirm times, Log deposit, Review draft, Send nudge, Mark booked. A finished row leaves the list. Wedding cards show the date, a clay count, and the next action. Quiet weddings stay hidden until “Show 18 quiet weddings”. The card grid opens on Needs attention, so zero-count weddings stay out of the first view.
-- **Approve & send.** The From block shows the full Gmail address, Business or Personal, and Change. The tick reads “I reviewed this note to [Vendor]”. Undo puts back only Envoy’s suggested wording. A send is not undone.
-- **Decisions.** Couple-visible starts off, including rows added from insights. Columns are Decision, Options, Owner, Due, Status. Preview as couple lists only shared rows, and it is empty until one is turned on.
-
 ## Verification
 - Headless Chrome (puppeteer-core) loaded all 7 pages over `file://` with 0 page errors, 0 console errors and 0 failed requests. Fonts and Chart.js loaded.
 - Smoke tests passed: Lock catering goes 5 → 6 of 12, attach goes 16 → 19 contacts, the couple A/B pick works with a toast.
@@ -122,3 +115,44 @@ Additive to the idea pages. Linen and round 2 are unchanged.
 - Responsive layout is basic, tuned for desktop at 1280–1440. Landing has a simple mobile breakpoint, but the app pages aren't mobile-polished.
 - Logos, testimonial, stats and pricing on the landing page are labelled placeholders.
 - Accessibility: there's a focus ring and contrast is AA, but keyboard support for drag and drop and the ARIA patterns for tabs are only partial.
+
+## Round 4 — Day-of packet + Share update (local only, no git)
+
+- **`app/day-of.html`** — Planner-facing day-of packet for Elena & Marcus (Sat Oct 16, 2027). It includes:
+  - A cover showing ceremony at 4:30, sunset at 6:44 and last song at 10:45.
+  - A run-of-show timeline running ceremony → cocktail → dinner → dancing, with a clay dot on each key event.
+  - Vendor call times with honest statuses. Unbooked vendors are marked as unbooked, not guessed.
+  - A rain-plan hold card (decide by Oct 14 → Decisions).
+  - Quick-dial `tel:` cards.
+  - A print stylesheet: "Print packet" hides the chrome.
+  - It is deliberately not a minute-by-minute checklist.
+- **`app/share-update.html`** — "Share update with couple" composer.
+  - Toggles choose what's in the update: milestones (on), florist A/B (on), decisions you've shared (off), budget glance (off) and day-of outline (off).
+  - A note from Sarah, plus a live preview of the couple portal.
+  - A "Never shared" box: threads, drafts, markup, private decisions, other clients.
+  - Send update shows a demo toast and a banner.
+  - This is a thin share, not a co-inbox.
+- Linked from index ("Ideas · round 4"), the More menu (Day-of packet, Share update) and the demo rail.
+
+## Round 3 polish (portfolio · approve & send · decisions)
+
+- **Portfolio**
+  - KPI counts are replaced by **Needs you** rows. Each row shows wedding + vendor + what happened + one button (Fix email / Reply / Log deposit). Clicking a button marks the row done and decrements the count.
+  - Cards show the date, a red "N need(s) you" and the next action ("Next: catering deposit Fri"). Budget and % complete are removed.
+  - The quiet-weddings table is hidden by default behind a "Show quiet · 18" toggle.
+- **Approve & send**
+  - **From is the hero, above the body:** full address + inbox name (Business inbox · Whitfield & Co · Gmail) + Change. Switching to Personal warns that the vendor has only heard from the business address.
+  - A review tick reads "I reviewed this note to Tasha Greene at Lowcountry Glam", with the subject and first lines shown. Approve stays disabled until it's ticked. Any edit, apply/undo or From change clears the tick.
+  - Undo is now **"Undo Envoy edit"** only. It reverts the last Ask Envoy apply, not the whole draft. Post-send undo is removed.
+- **Decisions**
+  - Columns: Decision · Options (A / B, editable inline) · Owner (Me / Couple / Vendor) · Due · Status (Open / Waiting on couple / Decided) · Couple sees.
+  - **Couple sees defaults OFF** on every row, including rows added from insights. The couple opts in per row.
+  - **Preview as couple** swaps the table for portal-style cards showing only rows that are toggled on. It shows an empty state when nothing is shared.
+  - Florist names now match the portal: Heron & Fern Florals / Marlowe Flower Co.
+- Share update's "Decisions you've shared" now defaults off to match.
+
+### Files (round 4)
+| File | What |
+|---|---|
+| `app/day-of.html` | Day-of packet, printable |
+| `app/share-update.html` | Share-update composer + portal preview |
