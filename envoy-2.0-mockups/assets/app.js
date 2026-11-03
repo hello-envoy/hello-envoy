@@ -147,7 +147,7 @@
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
       <a class="brand" href="${withW("portfolio.html")}" title="Envoy">${BRAND}</a>
-      <nav class="navtabs navtabs-end" aria-label="Primary">${topbarNavHtml(page)}</nav>
+      <nav class="mastertabs mastertabs-top navtabs-end" aria-label="Primary">${topbarNavHtml(page)}</nav>
       <div class="topbar-right">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
         <details class="menu account-menu">
@@ -563,13 +563,14 @@
     panel.className = "project-panel";
     panel.setAttribute("aria-label", "Weddings");
     const page = document.body.dataset.page;
+    const dirScope = page === "contacts" && new URLSearchParams(location.search).get("scope") === "dir";
     const collapsed = sessionStorage.getItem("envoy-sidebar") === "collapsed";
     panel.classList.toggle("is-collapsed", collapsed);
     panel.innerHTML =
       `<button type="button" class="sidebar-toggle" aria-expanded="${!collapsed}" aria-label="${collapsed ? "Expand sidebar" : "Collapse sidebar"}">${icon("chevr", 14)}</button>` +
       `<div class="sidebar-shortcuts">` +
       `<a href="portfolio.html"${page === "portfolio" && !wid ? ' aria-current="page"' : ""} title="Dashboard">${icon("home", 16)}<span>Dashboard</span></a>` +
-      `<a href="${withW("contacts.html")}${weddingQueryString() ? "&" : "?"}scope=dir" title="Contact book">${icon("users", 16)}<span>Contact book</span></a>` +
+      `<a href="contacts.html?scope=dir"${dirScope ? ' aria-current="page"' : ""} title="Contact book — all account contacts">${icon("users", 16)}<span>Contact book</span></a>` +
       `</div><div class="panel-divider"></div><div class="eyebrow">Weddings</div>` +
       WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""} title="${w.label}"><span class="ini">${w.ini}</span><span class="w-label">${w.label}</span></a>`).join("");
     panel.querySelector(".sidebar-toggle").addEventListener("click", () => {

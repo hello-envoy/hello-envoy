@@ -106,12 +106,12 @@
 
   <!-- ============ Views ============ -->
   <div class="row-between mt-8" style="border-bottom:1px solid var(--line)">
-    <div class="tabs" data-tabs="#views" data-hash style="border:0">
-      <button class="tab" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
-      <button class="tab" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
-      <button class="tab" data-tab="decisions" aria-selected="false"><i data-i="edit" data-s="15"></i>Decisions</button>
-      <button class="tab" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
-      <button class="tab hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
+    <div class="mastertabs" role="tablist" data-tabs="#views" data-hash>
+      <button type="button" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
+      <button type="button" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
+      <button type="button" data-tab="decisions" aria-selected="false"><i data-i="edit" data-s="15"></i>Decisions</button>
+      <button type="button" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
+      <button type="button" class="hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
     </div>
     <div class="row owner-filter" style="padding-bottom:6px">
       <span class="faint text-sm">Owner</span>
