@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approve &amp; send · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .from-hero { padding: var(--s-5) var(--s-6); border-bottom: 1px solid var(--line); background: var(--paper-2); border-radius: var(--r-lg) var(--r-lg) 0 0; }
+  .from-hero .fk { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .from-hero .fv { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; margin-top: 8px; }
+  .from-hero .g { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; color: var(--ink-2); }
+  .from-hero .addr { font-family: var(--font-display); font-size: 22px; line-height: 28px; letter-spacing: -0.01em; }
+  .from-hero .inbox { color: var(--ink-2); font-size: var(--text-sm); }
+  .from-hero .inbox b { color: var(--ink); font-weight: 600; }
+  .from-hero.personal .g { background: var(--warn-soft); color: var(--warn); }
+  .from-warn { margin-top: 10px; font-size: var(--text-sm); color: var(--warn); display: flex; gap: 6px; align-items: center; }
+  .hidden { display: none !important; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: var(--s-6); align-items: start; }
+  .queue { display: flex; gap: 8px; margin-bottom: var(--s-4); }
+  .qitem { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); cursor: pointer; text-align: left; font: inherit; color: var(--ink-2); flex: 1; }
+  .qitem:hover { border-color: var(--line-strong); }
+  .qitem[aria-selected="true"] { border-color: var(--ink); color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .qitem .t { font-weight: 500; color: var(--ink); display: block; }
+  .qitem .d { font-size: var(--text-xs); color: var(--ink-3); }
+  .qitem .state { margin-left: auto; }
+  .hdr { display: grid; grid-template-columns: 76px 1fr; border-bottom: 1px solid var(--line); }
+  .hdr > div { padding: 11px 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; min-height: 44px; }
+  .hdr > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .hdr .k { color: var(--ink-3); font-size: var(--text-sm); padding-left: var(--s-6); }
+  .hdr .v { padding-right: var(--s-6); }
+  .from-pill { display: inline-flex; align-items: center; gap: 8px; padding: 3px 10px 3px 4px; border-radius: 99px; background: var(--paper-2); font-size: var(--text-sm); }
+  .from-pill .g { width: 20px; height: 20px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 700; font-size: 11px; color: var(--ink-2); border: 1px solid var(--line); }
+  .subj { border: 0; outline: 0; font: inherit; font-weight: 500; width: 100%; background: none; color: var(--ink); }
+  .body { padding: var(--s-6); min-height: 300px; outline: none; line-height: 1.65; font-size: 15px; color: var(--ink); }
+  .body p { margin: 0 0 14px; }
+  .body:focus { background: #FFFFFF; }
+  .body mark { background: var(--clay-soft); color: inherit; padding: 1px 2px; border-radius: 3px; transition: background 1.2s; }
+  .attachments { padding: 0 var(--s-6) var(--s-5); display: flex; gap: 8px; flex-wrap: wrap; }
+  .guard { display: flex; align-items: center; gap: 12px; padding: 14px var(--s-6); background: var(--paper-2); border-top: 1px solid var(--line); color: var(--ink-2); font-size: var(--text-sm); }
+  .guard .lock { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink); flex: none; }
+  .guard b { color: var(--ink); font-weight: 600; }
+  .actions { display: flex; align-items: center; gap: 8px; padding: 14px var(--s-6); border-top: 1px solid var(--line); }
+  .actions .spacer { flex: 1; }
+  .confirm { display: flex; align-items: center; gap: 8px; font-size: var(--text-sm); color: var(--ink-2); cursor: pointer; user-select: none; }
+  .confirm input:not(.toggle) { accent-color: var(--ink); width: 16px; height: 16px; }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
+  .sent { display: none; padding: var(--s-6); border-top: 1px solid var(--line); background: var(--ok-soft); }
+  .sent.on { display: flex; gap: 14px; align-items: center; }
+  .sent .ck { width: 34px; height: 34px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; flex: none; }
+  .is-sent .guard, .is-sent .actions { display: none; }
+  .is-sent .body { color: var(--ink-2); }
+  .side .card + .card { margin-top: var(--s-5); }
+  .ask-head { display: flex; align-items: center; gap: 10px; }
+  .ask-head .mark { width: 26px; height: 26px; border-radius: 50%; background: var(--clay-soft); color: var(--clay-ink); display: grid; place-items: center; }
+  .sugg { font-size: var(--text-sm); line-height: 1.6; color: var(--ink-2); }
+  .diff { margin-top: 12px; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; font-size: var(--text-sm); line-height: 1.55; }
+  .diff div { padding: 8px 12px; }
+  .diff .del { background: var(--risk-soft); color: var(--ink-2); text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+  .diff .add { background: var(--ok-soft); color: var(--ink); }
+  .why { margin-top: 12px; font-size: var(--text-xs); color: var(--ink-3); display: grid; gap: 4px; }
+  .why span { display: flex; gap: 6px; align-items: center; }
+  .checks { list-style: none; margin: 0; padding: 0; }
+  .checks li { display: flex; gap: 10px; align-items: flex-start; padding: 10px var(--s-6); border-bottom: 1px solid var(--line); font-size: var(--text-sm); }
+  .checks li:last-child { border-bottom: 0; }
+  .checks .ok { color: var(--ok); } .checks .warn { color: var(--warn); }
+  .quote { font-size: var(--text-sm); color: var(--ink-2); line-height: 1.6; border-left: 2px solid var(--line-strong); padding-left: 12px; }
+  .ask-in { display: flex; gap: 8px; padding: 12px var(--s-6); border-top: 1px solid var(--line); }
+  .applied .apply-row { display: none !important; }
+  .applied .applied-note { display: flex !important; }
+  .scope-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .scope-list li label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--text-sm); color: var(--ink-2); cursor: pointer; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+  .scope-list li label span b { display: block; color: var(--ink); font-weight: 500; }
+  .scope-list li label span em { display: block; font-style: normal; font-size: var(--text-xs); color: var(--ink-3); margin-top: 2px; }
+  .guard.is-autosend { background: var(--warn-soft); border-top-color: var(--clay-3); }
+</style>
+</head>
+<body data-shell="planner" data-page="approve">
+<div data-topbar></div>
+
+<main class="page">
+  <header class="page-head">
+    <div>
+      <div class="eyebrow">Elena &amp; Marcus · Outbox</div>
+      <h1>Approve &amp; send</h1>
+      <div class="meta"><span><i data-i="lock" data-s="14"></i>Nothing leaves Envoy without your approval</span><span><i data-i="mail" data-s="14"></i>Sends from your Gmail, lands in your Sent folder</span><span><i data-i="spark" data-s="14"></i>Auto-send scopes live in your <b>account menu</b> (avatar) — default off</span></div>
+    </div>
+    <a class="btn btn-ghost" href="contacts.html"><i data-i="users" data-s="14"></i>Back to contacts</a>
+  </header>
+
+  <div class="queue" role="tablist" aria-label="Drafts waiting">
+    <button class="qitem" data-draft="glam" aria-selected="true">
+      <span class="logo-sq">LG</span><span><span class="t">Lowcountry Glam</span><span class="d">Reply · trial dates · Tasha Greene</span></span><span class="state status s-reply sm" data-st>Needs reply</span>
+    </button>
+    <button class="qitem" data-draft="wild" aria-selected="false">
+      <span class="logo-sq">WF</span><span><span class="t">Wildflour Catering</span><span class="d">Deposit &amp; Menu B confirmation · Priya Natarajan</span></span><span class="state status s-booked sm" data-st>Booked</span>
+    </button>
+  </div>
+
+  <div class="layout">
+    <div class="main-col" style="display:grid;gap:var(--s-5)">
+    <section class="card" id="thread">
+      <div class="card-head"><h3>Their last message</h3><span class="faint" style="font-size:var(--text-xs)" id="q-when"></span></div>
+      <div class="card-body"><div class="quote" id="quote"></div></div>
+    </section>
+    <section class="card" id="composer">
+      <div class="from-hero" id="from-hero">
+        <div class="fk">Sending as</div>
+        <div class="fv">
+          <span class="g">G</span>
+          <div><div class="addr" id="from-addr">sarah@whitfieldco.com</div><div class="inbox" id="from-inbox"><b>Business inbox</b> · Whitfield &amp; Co · Gmail</div></div>
+          <details class="menu from-menu">
+            <summary class="btn btn-secondary btn-sm">Change</summary>
+            <div class="menu-pop" role="menu" style="right:0;left:auto;min-width:300px">
+              <button role="menuitemradio" data-from="biz"><span><b>Business</b> · sarah@whitfieldco.com<span class="sub">Whitfield &amp; Co · Gmail · used for all vendors</span></span></button>
+              <button role="menuitemradio" data-from="personal"><span><b>Personal</b> · sarah.whitfield@gmail.com<span class="sub">Gmail · not recommended for vendors</span></span></button>
+            </div>
+          </details>
+        </div>
+        <div class="from-warn hidden" id="from-warn"><i data-i="alert" data-s="13"></i>Tasha has only heard from your business address. Replies would land in your personal inbox.</div>
+      </div>
+      <div class="hdr">
+        <div class="k">To</div><div class="v" id="to"></div>
+        <div class="k">Cc</div><div class="v"><label class="confirm" style="color:var(--ink-2)"><input type="checkbox" class="toggle" id="cc"> Copy Elena &amp; Marcus</label></div>
+        <div class="k">Subject</div><div class="v"><input class="subj" id="subj" aria-label="Subject"></div>
+      </div>
+      <div class="body" id="body" contenteditable="true" spellcheck="true" aria-label="Email body"></div>
+      <div class="attachments" id="att"></div>
+      <div class="guard" id="send-guard"><span class="lock"><i data-i="lock" data-s="15"></i></span><span id="guard-copy"><b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.</span></div>
+      <div class="actions">
+        <span class="faint" style="font-size:var(--text-sm)">Read their note above, then approve once.</span>
+        <span class="spacer"></span>
+        <button class="btn btn-ghost" data-toast="Draft saved — still waiting for you">Save draft</button>
+        <button class="btn btn-primary" id="send"><i data-i="send" data-s="14"></i>Approve &amp; send</button>
+      </div>
+      <div class="sent" id="sent">
+        <span class="ck"><i data-i="check" data-s="18"></i></span>
+        <div style="flex:1"><b id="sent-t">Sent from sarah@whitfieldco.com</b><div style="font-size:var(--text-sm);color:var(--ink-2);margin-top:2px" id="sent-d"></div></div>
+      </div>
+    </section>
+    </div>
+
+    <aside class="side">
+      <section class="card" id="ask">
+        <div class="card-head"><div class="ask-head"><span class="mark"><i data-i="spark" data-s="14"></i></span><div><h3>Ask Envoy</h3><div class="faint" style="font-size:var(--text-xs)">A suggestion, side by side — you decide</div></div></div></div>
+        <div class="card-body">
+          <div class="sugg" id="sugg-t"></div>
+          <div class="diff"><div class="del" id="sugg-del"></div><div class="add" id="sugg-add"></div></div>
+          <div class="why" id="sugg-why"></div>
+          <div class="apply-row" style="display:flex;gap:8px;margin-top:14px">
+            <button class="btn btn-secondary btn-sm" id="apply"><i data-i="check" data-s="13"></i>Apply to draft</button>
+            <button class="btn btn-ghost btn-sm" id="dismiss">Dismiss</button>
+          </div>
+          <div class="applied-note" style="display:none;gap:8px;margin-top:14px;align-items:center;font-size:var(--text-sm);color:var(--ink-2)"><i data-i="checkc" data-s="14"></i><span style="flex:1">Applied — highlighted in your draft. Still not sent.</span><button class="btn btn-ghost btn-sm" id="undo-edit">Undo Envoy edit</button></div>
+        </div>
+        <form class="ask-in" onsubmit="event.preventDefault(); Envoy.toast('Envoy would rewrite on request — you still approve'); this.reset();">
+          <input class="input" placeholder="Make it warmer, shorter, add the address…" aria-label="Ask Envoy about this draft">
+          <button class="btn btn-secondary btn-icon" aria-label="Ask"><i data-i="arrowr" data-s="14"></i></button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h3>Before you send</h3></div>
+        <ul class="checks" id="checks"></ul>
+      </section>
+
+    </aside>
+  </div>
+</main>
+
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const D = {
+    glam: {
+      who: "Tasha Greene at Lowcountry Glam", first: "Tasha",
+      to: "Tasha Greene &lt;tasha@lowcountryglam.com&gt;", from: "Needs reply", fromCls: "s-reply", toSt: "Waiting", toCls: "s-waiting",
+      subj: "Re: Hair & makeup trial — Elena (Oct 16, 2027)",
+      body: `<p>Hi Tasha,</p><p>Thank you for the quick note — Elena is thrilled you’re holding October 16 for her.</p><p>For the trial, we could do <span data-fix>either Saturday or Sunday later in August</span>, at your Mount Pleasant studio. Elena would like to bring her veil and a photo of the neckline so you can plan around it.</p><p>Could you also send over the retainer details so we can get that settled?</p><p>Warmly,<br>Sarah<br><span style="color:var(--ink-3)">Whitfield &amp; Co · Charleston</span></p>`,
+      att: ['<span class="chip chip-outline"><i data-i="attach" data-s="12"></i>Elena — inspiration board.pdf</span>'],
+      sugg: "Be specific — Tasha offered two dates, and her contract asks for a 30% retainer. Naming both saves a round-trip.",
+      del: "either Saturday or Sunday later in August",
+      add: "Sat Aug 21 or Sun Aug 29 — whichever suits you — and we’re ready to send the 30% retainer once you share the invoice",
+      why: ['<span><i data-i="thread" data-s="12"></i>Tasha’s email, Oct 29 · offered Aug 21 / Aug 29</span>', '<span><i data-i="note" data-s="12"></i>Lowcountry Glam contract · §3 retainer 30%</span>'],
+      checks: [["ok", "Wedding date matches the project · Oct 16, 2027"], ["ok", "No internal notes or budget figures in the body"], ["warn", "Dates are vague — Tasha offered two specific days"], ["ok", "Attachment is couple-approved (shared Oct 22)"]],
+      quote: "Hi Sarah! So excited for Elena. I’m holding Oct 16. For the trial I have Sat Aug 21 or Sun Aug 29 open at the studio — let me know which works and I’ll send the retainer invoice (30%). — Tasha",
+      when: "Oct 29 · 3 days ago",
+      done: "Logged to the Lowcountry Glam thread · status <b>Needs reply → Waiting</b> · reminder set for Nov 5 if no reply.",
+    },
+    wild: {
+      who: "Priya Natarajan at Wildflour Catering", first: "Priya",
+      to: "Priya Natarajan &lt;priya@wildflourcatering.com&gt;", from: "Booked", fromCls: "s-booked", toSt: "Deposit paid", toCls: "s-paid",
+      subj: "Elena & Marcus · Menu B confirmed + deposit",
+      body: `<p>Hi Priya,</p><p>Happy to confirm Elena and Marcus have chosen <b>Menu B</b> for 128 guests on October 16, 2027 at The Ashby Estate.</p><p>The deposit of <b>$7,920</b> is going out today, ahead of the November 6 due date — <span data-fix>I’ll send the receipt when I have it</span>.</p><p>We’re looking forward to the tasting on February 12.</p><p>All best,<br>Sarah<br><span style="color:var(--ink-3)">Whitfield &amp; Co · Charleston</span></p>`,
+      att: ['<span class="chip chip-outline"><i data-i="attach" data-s="12"></i>Signed proposal — Menu B.pdf</span>'],
+      sugg: "Priya asked for dietary counts by the tasting. Adding them now closes her open question and avoids another thread.",
+      del: "I’ll send the receipt when I have it",
+      add: "the receipt is attached. Dietary counts so far: 6 vegetarian, 3 gluten-free, 1 nut allergy — final by Feb 1",
+      why: ['<span><i data-i="thread" data-s="12"></i>Priya’s email, Oct 27 · “dietary counts before tasting”</span>', '<span><i data-i="guests" data-s="12"></i>Guest list · RSVP dietary column, 10 flagged</span>'],
+      checks: [["ok", "Guest count matches the guest list · 128"], ["ok", "Amount matches the invoice · $7,920"], ["warn", "Priya’s dietary question is still unanswered"], ["ok", "Payment approved by Elena · Oct 30"]],
+      quote: "Thanks Sarah — proposal attached for Menu B. Deposit of $7,920 holds the date; we’d love dietary counts ahead of the Feb 12 tasting. — Priya",
+      when: "Oct 27 · 6 days ago",
+      done: "Logged to the Wildflour thread · status <b>Booked → Deposit paid</b> · milestone “Lock catering” marked done.",
+    },
+  };
+  const $ = (id) => document.getElementById(id);
+  const comp = $("composer"), ask = $("ask"), send = $("send");
+  const guardCopy = $("guard-copy"), guardBar = $("send-guard");
+  function syncGuard() {
+    const on = Envoy.autoSendAnyOn && Envoy.autoSendAnyOn();
+    guardBar.classList.toggle("is-autosend", on);
+    guardCopy.innerHTML = on
+      ? "<b>This draft still needs Approve &amp; send.</b> Auto-send is on for some scopes (demo) — matching future drafts could skip your tap; nothing leaves from this screen until you approve."
+      : "<b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.";
+  }
+  let cur = "glam", before = null;
+  const sentState = {};
+  function load(k) {
+    cur = k; const d = D[k]; before = null;
+    document.querySelectorAll(".qitem").forEach((q) => q.setAttribute("aria-selected", q.dataset.draft === k));
+    $("to").innerHTML = `<span class="chip chip-outline">${d.to}</span>`;
+    $("subj").value = d.subj; $("body").innerHTML = d.body;
+    $("att").innerHTML = d.att.join("");
+    $("from-warn").lastChild.textContent = ` ${d.first} has only heard from your business address. Replies would land in your personal inbox.`;
+    $("sugg-t").textContent = d.sugg; $("sugg-del").textContent = d.del; $("sugg-add").textContent = d.add;
+    $("sugg-why").innerHTML = d.why.join("");
+    $("checks").innerHTML = d.checks.map(([t, s]) => `<li><span class="${t}"><i data-i="${t === "ok" ? "checkc" : "alert"}" data-s="15"></i></span><span>${s}</span></li>`).join("");
+    $("quote").textContent = d.quote; $("q-when").textContent = d.when;
+    ask.classList.remove("applied"); ask.style.display = "";
+    comp.classList.toggle("is-sent", !!sentState[k]); $("sent").classList.toggle("on", !!sentState[k]);
+    $("body").contentEditable = !sentState[k];
+    if (sentState[k]) $("sent-d").innerHTML = d.done;
+    Envoy.hydrateIcons(document.querySelector(".layout"));
+  }
+  document.querySelectorAll(".qitem").forEach((q) => q.addEventListener("click", () => load(q.dataset.draft)));
+  // From: Business vs Personal
+  const FROM = { biz: ["sarah@whitfieldco.com", "<b>Business inbox</b> · Whitfield &amp; Co · Gmail"], personal: ["sarah.whitfield@gmail.com", "<b>Personal inbox</b> · Gmail"] };
+  document.querySelectorAll("[data-from]").forEach((b) => b.addEventListener("click", () => {
+    const f = b.dataset.from; $("from-addr").textContent = FROM[f][0]; $("from-inbox").innerHTML = FROM[f][1];
+    $("from-hero").classList.toggle("personal", f === "personal"); $("from-warn").classList.toggle("hidden", f !== "personal");
+    b.closest("details").open = false;
+    Envoy.toast(`Sending as <b>${FROM[f][0]}</b>`);
+  }));
+  // Ask Envoy apply + undo (Envoy edit only)
+  let checksBefore = null;
+  $("apply").addEventListener("click", () => {
+    const span = $("body").querySelector("[data-fix]"); if (!span) return;
+    before = span.outerHTML; checksBefore = $("checks").innerHTML;
+    span.outerHTML = `<mark data-envoy>${D[cur].add}</mark>`;
+    ask.classList.add("applied");
+    const li = [...$("checks").querySelectorAll("li")].find((l) => l.querySelector(".warn"));
+    if (li) { li.querySelector(".warn").outerHTML = `<span class="ok">${Envoy.icon("checkc", 15)}</span>`; li.lastElementChild.textContent = "Suggestion applied — read it once more"; }
+  });
+  $("undo-edit").addEventListener("click", () => {
+    const m = $("body").querySelector("mark[data-envoy]");
+    if (m && before) m.outerHTML = before;
+    if (checksBefore) $("checks").innerHTML = checksBefore;
+    before = null; ask.classList.remove("applied");
+    Envoy.toast("Envoy’s edit removed — your words are back");
+  });
+  $("dismiss").addEventListener("click", () => { ask.style.display = "none"; Envoy.toast("Suggestion dismissed"); });
+  send.addEventListener("click", () => {
+    const d = D[cur];
+    comp.classList.add("is-sent"); $("sent").classList.add("on"); $("body").contentEditable = false;
+    $("sent-t").textContent = `Sent from ${$("from-addr").textContent} to ${d.to.replace(/&lt;.*$/, "").trim()}`;
+    $("sent-d").innerHTML = d.done;
+    const st = document.querySelector(`.qitem[data-draft="${cur}"] [data-st]`);
+    st.className = `state status ${d.toCls} sm`; st.textContent = d.toSt;
+    sentState[cur] = true;
+  });
+  window.addEventListener("envoy:autosend", syncGuard);
+  syncGuard();
+  load(new URLSearchParams(location.search).get("to") === "wild" ? "wild" : "glam");
+});
+</script>
+</body>
+</html>

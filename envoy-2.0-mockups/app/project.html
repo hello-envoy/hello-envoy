@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .ms { padding: var(--s-5) var(--s-6); display: flex; flex-direction: column; gap: var(--s-3); transition: border-color var(--dur-2), background var(--dur-2); }
+  .ms h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 28px; letter-spacing: -0.01em; }
+  .ms .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: var(--text-sm); }
+  .ms .steps li { display: flex; gap: 8px; align-items: center; color: var(--ink-2); }
+  .ms .steps li.done { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+  .ms .steps li svg { flex: none; }
+  .ms .steps li.done svg { color: var(--ok); }
+  .ms .rule { font-size: var(--text-xs); color: var(--ink-3); display: flex; gap: 6px; align-items: center; padding: 8px 10px; background: var(--paper); border: 1px dashed var(--line-strong); border-radius: var(--r-sm); }
+  .ms.is-done { background: var(--paper-2); }
+  .ms.is-done h3::after { content: " ✓"; color: var(--ok); }
+  .ms-summary { margin-top: var(--s-4); }
+  .owner { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--ink-2); }
+  .owner::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+  .o-me::before { background: var(--ink); } .o-couple::before { background: var(--clay); } .o-vendor::before { background: var(--chart-4); }
+  .mtag { font-size: var(--text-xs); color: var(--ink-3); }
+  .wk-item { display: grid; grid-template-columns: 24px 1fr 160px 90px 90px; gap: 12px; align-items: center; padding: 11px var(--s-6); border-bottom: 1px solid var(--line); }
+  .wk-item:last-child { border-bottom: 0; }
+  .wk-item.done .t { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+  .wk-group { padding: 10px var(--s-6); background: var(--paper); border-bottom: 1px solid var(--line); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); font-weight: 500; display:flex; justify-content: space-between; }
+  .kind { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; }
+  .k-risk { background: var(--risk-soft); color: var(--risk); }
+  .k-decision { background: var(--paper-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .k-hold { background: var(--warn-soft); color: var(--warn); }
+  .impact { display: inline-flex; gap: 2px; } .impact i { width: 4px; height: 12px; border-radius: 1px; background: var(--paper-3); } .impact i.on { background: var(--ink-2); }
+  .src { display: inline-flex; gap: 5px; align-items: center; font-size: var(--text-xs); color: var(--ink-3); }
+  .src svg { color: var(--clay); }
+  .owner-filter .fchip { height: 28px; }
+  .sel-select { appearance: none; border: 0; background: transparent; font: inherit; color: inherit; cursor: pointer; padding: 0; }
+  #decisions-log .insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); margin-bottom: var(--s-6); }
+  #decisions-log .ins { padding: var(--s-5); display: flex; flex-direction: column; gap: 10px; }
+  #decisions-log .ins .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; display: flex; gap: 6px; align-items: center; }
+  #decisions-log .ins .t { font-family: var(--font-display); font-size: 19px; line-height: 25px; }
+  #decisions-log .ins .d { color: var(--ink-2); font-size: var(--text-sm); line-height: 1.55; flex: 1; }
+  #decisions-log .ins.added { opacity: .55; }
+  #decisions-log .bar-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-3); flex-wrap: wrap; }
+  #decisions-log .ledger { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  #decisions-log .ledger li { display: grid; grid-template-columns: 88px 1fr auto; gap: 12px; align-items: baseline; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); font-size: var(--text-sm); }
+  #decisions-log .aa-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin-top: 8px; }
+  #decisions-log .aa-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-sm); padding: 6px 0; border-bottom: 1px solid var(--line); }
+  #decisions-log .aa-all { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--paper-2); font-size: var(--text-sm); margin-bottom: 12px; }
+  #decisions-log .hidden { display: none !important; }
+  @media (max-width: 960px) { #decisions-log .insights, #decisions-log .aa-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-shell="planner" data-page="project">
+<div data-topbar></div>
+
+<main class="page">
+  <div class="page-head section-chrome-max">
+    <div>
+      <div class="eyebrow">Elena &amp; Marcus · Plan</div>
+      <h1>Project</h1>
+      <div class="meta"><span id="ms-count">5 of 12 milestones done</span><span class="faint">·</span><span id="meta-weeks">50 weeks out</span><span class="faint">·</span><span id="meta-checklist">14 checklist items this month</span></div>
+    </div>
+    <div class="row gap-2">
+      <a class="btn btn-ghost btn-sm" id="dayof-link" href="day-of.html"><i data-i="note" data-s="14"></i>Day-of packet</a>
+      <button class="btn btn-secondary" data-toast="New milestone"><i data-i="layers"></i>Milestone</button>
+      <button class="btn btn-primary" data-toast="New checklist item — assign Me, Couple, or Vendor"><i data-i="plus"></i>Checklist item</button>
+    </div>
+  </div>
+
+  <!-- ============ Milestones in motion ============ -->
+  <div class="g-12" id="lock-row">
+    <section class="card ms span-6" id="lock">
+      <div class="row-between"><span class="eyebrow">Milestone · In motion</span><span class="chip chip-risk" id="lock-chip"><span class="dot"></span>Deposit due Fri, Nov 6</span></div>
+      <h3>Lock catering</h3>
+      <ul class="steps" id="lock-steps">
+        <li class="done"><i data-i="checkc" data-s="15"></i>Menu B approved by couple · Oct 30</li>
+        <li class="done"><i data-i="checkc" data-s="15"></i>Wildflour contract countersigned · <span class="status sm s-booked">Booked</span></li>
+        <li id="dep-step"><i data-i="dollar" data-s="15"></i>30% deposit · $7,920 · <span class="owner o-couple">Couple pays</span></li>
+      </ul>
+      <div class="rule"><i data-i="bolt" data-s="13"></i>Auto-completes when Wildflour moves <b>Booked → Deposit paid</b> — no checkbox hunting.</div>
+      <div class="row gap-2"><button class="btn btn-accent btn-sm" id="log-dep"><i data-i="check" data-s="14"></i>Log deposit paid</button><button class="btn btn-ghost btn-sm" data-toast="Reminder sent to <b>Elena &amp; Marcus</b> in their portal">Remind couple</button></div>
+    </section>
+    <section class="card ms span-3">
+      <div class="row-between"><span class="eyebrow">In motion</span><span class="chip chip-warn">Couple deciding</span></div>
+      <h3>Choose florist</h3>
+      <ul class="steps">
+        <li class="done"><i data-i="checkc" data-s="15"></i>Shortlist of 3</li>
+        <li><i data-i="heart" data-s="15"></i>A/B pick · <span class="owner o-couple">Couple</span></li>
+        <li><i data-i="mail" data-s="15"></i>Inquiries · <span class="owner o-me">Me</span></li>
+      </ul>
+      <a class="btn btn-secondary btn-sm" href="contacts.html#compare" style="align-self:flex-start">Compare florists</a>
+    </section>
+    <section class="card ms span-3">
+      <div class="row-between"><span class="eyebrow">In motion</span><span class="chip chip-risk">Date conflict</span></div>
+      <h3>Hotel block</h3>
+      <ul class="steps">
+        <li class="done"><i data-i="checkc" data-s="15"></i>30 rooms requested</li>
+        <li><i data-i="alert" data-s="15"></i>Fix hold → Oct 15–17 · <span class="owner o-me">Me</span></li>
+        <li><i data-i="note" data-s="15"></i>Block agreement · <span class="owner o-vendor">Vendor</span></li>
+      </ul>
+      <a class="btn btn-secondary btn-sm" href="contacts.html?scope=project&amp;c=harborline" style="align-self:flex-start">Open thread</a>
+    </section>
+  </div>
+  <div class="ms-summary" id="ms-summary" aria-label="All 12 milestones"></div>
+
+  <!-- ============ Views ============ -->
+  <div class="row-between mt-8 project-subtabs-wrap">
+    <div class="section-tabs-wrap grow">
+      <div class="section-tabs mastertabs" role="tablist" data-tabs="#views" data-hash>
+        <button type="button" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
+        <button type="button" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
+        <button type="button" data-tab="decisions" aria-selected="false"><i data-i="edit" data-s="15"></i>Decisions</button>
+        <button type="button" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
+        <button type="button" class="hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
+      </div>
+    </div>
+    <div class="row owner-filter owner-filter-pad">
+      <span class="faint text-sm">Owner</span>
+      <button class="fchip is-on" data-owner="all">All</button>
+      <button class="fchip" data-owner="me">Me</button>
+      <button class="fchip" data-owner="couple">Couple</button>
+      <button class="fchip" data-owner="vendor">Vendor</button>
+      <span class="faint" style="margin:0 2px">·</span>
+      <button class="btn btn-ghost btn-sm" id="open-sheet" title="Spreadsheet view of every checklist item"><i data-i="grid" data-s="13"></i>Sheet view</button>
+    </div>
+  </div>
+
+  <div id="views" class="mt-6">
+    <!-- This week -->
+    <section data-panel="week">
+      <div class="card">
+        <div class="card-head">
+          <div class="row"><button class="btn btn-ghost btn-sm btn-icon" title="Previous week" style="transform:rotate(180deg)"><i data-i="chevr" data-s="14"></i></button>
+            <h3 style="font-family:var(--font-display);font-weight:400;font-size:20px">50 weeks out</h3><span class="faint">Nov 2 – Nov 8</span>
+            <button class="btn btn-ghost btn-sm btn-icon" title="Next week"><i data-i="chevr" data-s="14"></i></button></div>
+          <div class="row gap-4 text-sm"><span class="faint">3 of 7 done</span><div class="bar" style="width:120px"><i style="width:43%"></i></div></div>
+        </div>
+        <div id="week-list"></div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section data-panel="timeline" class="hide" id="timeline">
+      <div class="gantt" id="gantt"></div>
+      <div class="legend mt-4"><span><i style="background:var(--ink)"></i>Done</span><span><i style="background:var(--clay-soft);border:1px solid var(--clay)"></i>In motion</span><span><i style="background:var(--paper-3);border:1px solid var(--line-strong)"></i>Upcoming</span><span><i style="background:var(--clay);transform:rotate(45deg)"></i>Deadline</span></div>
+    </section>
+
+    <!-- Decisions -->
+    <section data-panel="decisions" class="hide" id="decisions-log">
+      <div class="row-between mb-4 flex-wrap gap-2">
+        <p class="faint text-sm" style="margin:0">Insights, auto-approve scopes, and the couple-visible ledger — moved from top-level Decisions.</p>
+        <button class="btn btn-secondary btn-sm" id="pv-btn" aria-pressed="false"><i data-i="eye" data-s="14"></i><span>Couple view of ledger</span></button>
+      </div>
+      <section class="card mb-4" aria-label="Auto-approve insights">
+        <div class="card-head"><h3>Auto-approve insights</h3><span class="faint text-sm">Demo scopes · default off</span></div>
+        <div class="card-body" style="padding-top:0">
+          <label class="aa-all"><span><b>Auto-approve all</b> — every new insight becomes a decision row without a tap</span><input type="checkbox" class="toggle" id="aa-all" aria-label="Auto-approve all insights"></label>
+          <div class="aa-grid">
+            <div><div class="eyebrow mb-1">By insight type</div>
+              <div class="aa-row"><span><b>Timing</b> · vendor gaps</span><input type="checkbox" class="toggle" data-aa="type-timing"></div>
+              <div class="aa-row"><span><b>Hold</b> · dates &amp; blocks</span><input type="checkbox" class="toggle" data-aa="type-hold"></div>
+              <div class="aa-row"><span><b>Weather</b> · rain / tent</span><input type="checkbox" class="toggle" data-aa="type-weather"></div></div>
+            <div><div class="eyebrow mb-1">By scope</div>
+              <div class="aa-row"><span><b>Account</b> · all weddings</span><input type="checkbox" class="toggle" data-aa="scope-account"></div>
+              <div class="aa-row"><span><b>Project</b> · Elena &amp; Marcus</span><input type="checkbox" class="toggle" data-aa="scope-project"></div>
+              <div class="aa-row"><span><b>Vendor type</b> · Hotel block</span><input type="checkbox" class="toggle" data-aa="vtype-hotel"></div>
+              <div class="aa-row"><span><b>Vendor</b> · Harborline Hotel</span><input type="checkbox" class="toggle" data-aa="vendor-harborline"></div></div>
+          </div>
+          <p class="faint text-sm mt-3" id="aa-note">All scopes off — use <b>Add as decision</b> on each card below.</p>
+        </div>
+      </section>
+      <div class="eyebrow mb-2">Noticed this week</div>
+      <div class="insights mb-6">
+        <article class="card ins" data-ins="0" data-ins-type="timing"><div class="k"><i data-i="clock" data-s="12"></i>Timing</div><div class="t">Videographer is the last open vendor</div><div class="d">October dates in Charleston fill by January. Two shortlisted studios have Oct 16 open today.</div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></article>
+        <article class="card ins" data-ins="1" data-ins-type="hold" data-ins-vendor="harborline"><div class="k"><i data-i="cal" data-s="12"></i>Hold</div><div class="t">Harborline room block releases Oct 8–10 hold</div><div class="d">The 20-room courtesy hold lapses Dec 15 unless the couple confirms a count.</div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></article>
+        <article class="card ins" data-ins="2" data-ins-type="weather"><div class="k"><i data-i="globe" data-s="12"></i>Weather</div><div class="t">Mid-October rain odds are 1 in 4</div><div class="d">Tent hold with Coastal Tents is soft. A firm hold costs $600, refundable to Sep 1.</div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></article>
+      </div>
+      <div class="eyebrow mb-2">Past notices · ledger</div>
+      <ul class="ledger mb-6">
+        <li><span class="when">Oct 24</span><div><span class="tag">Converted</span> <b>Guest count band</b> — decided row (128 vs 140)</div><span class="faint text-xs">You approved</span></li>
+        <li><span class="when">Sep 28</span><div><span class="tag">Notice</span> <b>Harborline hold dates</b> — open in contacts</div><a class="btn-link text-xs" href="contacts.html?scope=project&amp;c=harborline">Open →</a></li>
+      </ul>
+      <div class="bar-row"><div class="l"><div class="seg" id="filt"><button aria-selected="true" data-f="open">Open <span class="count" data-c="open"></span></button><button aria-selected="false" data-f="decided">Decided <span class="count" data-c="decided"></span></button><button aria-selected="false" data-f="all">All <span class="count" data-c="all"></span></button></div><button class="fchip" id="only-couple" aria-pressed="false"><i data-i="heart" data-s="13"></i>Couple-visible only</button></div><div class="r"><span class="couple-count"><i data-i="eye" data-s="14"></i><b id="vis-n">0</b> of <span id="all-n">0</span> visible to couple</span></div></div>
+      <div id="planner-view"><div class="sheet"><table><thead><tr><th class="idx">#</th><th>Decision</th><th>Options · A / B</th><th>Who decides</th><th>Due</th><th>Status</th><th style="text-align:center">Who can see</th></tr></thead><tbody id="rows"></tbody><tbody><tr class="add-row"><td class="idx">+</td><td colspan="6"><button id="add"><i data-i="plus" data-s="14"></i>Add a decision</button></td></tr></tbody></table></div></div>
+      <section id="couple-view" class="hidden"><div class="cpv" id="cpv"></div></section>
+    </section>
+
+    <!-- Risks & holds -->
+    <section data-panel="risks" class="hide">
+      <div class="card">
+        <div class="card-head"><h3>Risks &amp; holds <span class="sub">Kept short on purpose — 10 rows max</span></h3>
+          <div class="seg"><button aria-selected="true">Open</button><button aria-selected="false">All</button></div></div>
+        <div class="table-wrap"><table class="table" id="risk-table">
+          <thead><tr><th>Kind</th><th>Item</th><th>Impact</th><th>Owner</th><th>By</th><th>Status</th><th>Source</th></tr></thead><tbody></tbody></table></div>
+        <div class="card-foot"><span><i data-i="spark" data-s="13"></i> Envoy suggests risks and holds from vendor threads — you decide what's kept.</span><span style="display:flex;gap:6px"><button type="button" class="btn btn-ghost btn-sm" id="go-decisions">Decisions tab →</button><button class="btn btn-ghost btn-sm" data-toast="New risk, decision, or hold">+ Add row</button></span></div>
+      </div>
+    </section>
+
+    <!-- Sheet -->
+    <section data-panel="sheet" class="hide">
+      <div class="row-between mb-4">
+        <div class="row gap-2"><span class="chip chip-outline">Grouped by milestone</span><span class="chip chip-outline">Click any cell to edit</span></div>
+        <div class="row gap-2"><button class="btn btn-secondary btn-sm" data-toast="Exported Elena-Marcus-checklist.csv"><i data-i="upload" data-s="14"></i>Export CSV</button></div>
+      </div>
+      <div class="sheet"><table id="sheet"></table></div>
+    </section>
+  </div>
+</main>
+
+<script src="../assets/app.js"></script>
+<script src="../assets/decisions-log.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { icon, toast, hydrateIcons, weddingSlice, applyWeddingPageHead, withW, mountSalesforcePath } = Envoy;
+  const dayof = document.getElementById("dayof-link"); if (dayof) dayof.href = withW("day-of.html");
+  const wId = new URLSearchParams(location.search).get("w") || "em";
+  const wSlice = weddingSlice(wId);
+  applyWeddingPageHead("Plan");
+  document.getElementById("ms-count").textContent = wSlice.projectMs;
+  document.getElementById("meta-weeks").textContent = wSlice.projectWeeks;
+  document.getElementById("meta-checklist").textContent = wSlice.projectChecklist;
+  document.querySelectorAll('a[href^="contacts.html"]').forEach((a) => {
+    const raw = a.getAttribute("href");
+    const hash = raw.includes("#") ? raw.slice(raw.indexOf("#")) : "";
+    a.href = withW("contacts.html") + hash;
+  });
+  if (wId !== "em" && !wSlice.fullSpine) {
+    const note = document.createElement("div");
+    note.className = "card card-pad mb-4";
+    note.innerHTML = `<span class="text-sm"><b>${wSlice.label}</b> — project slice for this wedding. Full checklist on <a class="btn-link" href="project.html">Elena &amp; Marcus</a>.</span>`;
+    document.querySelector("main.page").insertBefore(note, document.querySelector("main.page").children[1]);
+  }
+
+  // ---------- Milestones ----------
+  const MS = [
+    ["Venue booked", "d", "2026-09-20", "2026-10-03"], ["Planner & team", "d", "2026-09-15", "2026-09-30"],
+    ["Photographer booked", "d", "2026-10-01", "2026-10-21"], ["Band booked", "d", "2026-10-05", "2026-10-24"],
+    ["Guest estimate set", "d", "2026-10-10", "2026-10-30"], ["Lock catering", "m", "2026-10-12", "2026-11-06"],
+    ["Choose florist", "m", "2026-10-25", "2026-12-01"], ["Hotel block", "m", "2026-10-20", "2026-11-20"],
+    ["Save-the-dates", "", "2026-12-01", "2027-02-15"], ["Attire & beauty", "", "2027-01-10", "2027-05-15"],
+    ["Final numbers", "", "2027-08-15", "2027-09-16"], ["Day-of", "", "2027-10-14", "2027-10-17"],
+  ];
+  const sumEl = document.getElementById("ms-summary");
+  const drawSummary = () => {
+    let cur = false;
+    mountSalesforcePath(
+      sumEl,
+      MS.map((m) => {
+        let state = "upcoming";
+        if (m[1] === "d") state = "complete";
+        else if (m[1] === "m" && !cur) { state = "current"; cur = true; }
+        return { title: m[0], state };
+      }),
+      { compact: true },
+    );
+  };
+  drawSummary();
+
+  const OWN = { me: "Me", couple: "Couple", vendor: "Vendor" };
+
+  // ---------- This week ----------
+  const WEEK = [
+    ["me", "Reply to Lowcountry Glam re: trial", "Attire & beauty", "Mon", 0],
+    ["me", "Draft florist inquiries", "Choose florist", "Wed", 0],
+    ["me", "Confirm hotel hold → Oct 15–17", "Hotel block", "Thu", 0],
+    ["me", "Attach from contact book", "Choose florist", "Mon", 1],
+    ["couple", "Pick florist A or B", "Choose florist", "Mon", 0],
+    ["couple", "Pay catering deposit", "Lock catering", "Fri", 0],
+    ["vendor", "Countersigned catering contract", "Lock catering", "Sun", 1],
+    ["vendor", "Menu B tasting slot", "Lock catering", "Tue", 1],
+  ];
+  document.getElementById("week-list").innerHTML = ["me", "couple", "vendor"].map(o => `
+    <div class="wk-group" data-owner-group="${o}"><span>${OWN[o]}</span><span>${WEEK.filter(w => w[0] === o && w[4]).length}/${WEEK.filter(w => w[0] === o).length}</span></div>
+    ${WEEK.filter(w => w[0] === o).map(w => `<div class="wk-item ${w[4] ? "done" : ""}" data-owner="${o}">
+      <label class="check"><input type="checkbox" ${w[4] ? "checked" : ""}></label>
+      <span class="t">${w[1]}</span><span class="mtag">${w[2]}</span><span class="owner o-${o}">${OWN[o]}</span><span class="faint text-sm">${w[3]}</span></div>`).join("")}`).join("");
+  document.getElementById("week-list").addEventListener("change", (e) => { const it = e.target.closest(".wk-item"); it.classList.toggle("done", e.target.checked); if (e.target.checked) toast("Checked off · <b>" + it.querySelector(".t").textContent + "</b>"); });
+
+  // ---------- Timeline ----------
+  const T0 = new Date("2026-09-01"), months = 14;
+  const T1 = new Date(2026 + Math.floor((8 + months) / 12), (8 + months) % 12, 1);
+  const pct = (d) => Math.max(0, Math.min(100, ((new Date(d) - T0) / (T1 - T0)) * 100));
+  const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const today = pct("2026-11-02");
+  const drawGantt = () => {
+    document.getElementById("gantt").innerHTML =
+      `<div class="gantt-row gantt-head"><div class="gantt-label">Milestone</div><div class="gantt-lane" style="grid-template-columns:repeat(${months},1fr)">${[...Array(months)].map((_, i) => { const m = (8 + i) % 12; return `<span>${MN[m]}${m === 0 || i === 0 ? " ’" + String(26 + Math.floor((8 + i) / 12)).slice(-2) : ""}</span>`; }).join("")}</div></div>` +
+      MS.map(m => {
+        const l = pct(m[2]), w = Math.max(1.2, pct(m[3]) - l);
+        const cls = m[1] === "d" ? "done" : m[1] === "m" ? "active" : "";
+        return `<div class="gantt-row"><div class="gantt-label"><span class="owner ${m[1] === "d" ? "o-me" : m[1] === "m" ? "o-couple" : "o-vendor"}" style="font-size:0"></span>${m[0]}</div>
+          <div class="gantt-lane" style="background-size:calc(100% / ${months}) 100%"><span class="gtoday" style="left:${today}%"></span>
+          <div class="gbar ${cls}" style="left:${l}%;width:${w}%">${cls === "active" ? `<span class="fill" style="width:60%"></span>` : ""}<span>${w > 7 ? m[0] : ""}</span></div>
+          ${m[1] !== "d" ? `<span class="gdiamond" style="left:${pct(m[3])}%" title="Due ${m[3]}"></span>` : ""}</div></div>`;
+      }).join("");
+  };
+  drawGantt();
+
+  // ---------- Risks & holds ----------
+  const RISKS = [
+    ["hold", "Harborline holding Oct 8–10 — wedding is Oct 16", 3, "me", "Nov 5", "Open", "Harborline thread"],
+    ["risk", "Catering date released if deposit is late", 3, "couple", "Nov 6", "Open", "Wildflour contract"],
+    ["decision", "Florist: Heron & Fern vs Marlowe", 2, "couple", "Nov 9", "Waiting on couple", "Compare"],
+    ["risk", "Videographer unbooked — October is peak season", 2, "me", "Dec 1", "Open", "Envoy insight"],
+    ["hold", "Tent hold at Coastal Rentals expires", 2, "me", "Dec 15", "Held", "Coastal thread"],
+    ["risk", "Rain on garden ceremony", 2, "vendor", "Sep 2027", "Mitigated · tent", "Venue call"],
+    ["hold", "Ashby Estate rehearsal dinner room", 1, "vendor", "Jan 10", "Held", "Ashby thread"],
+    ["decision", "Family-style service, Menu B", 1, "couple", "Oct 30", "Decided", "Couple portal"],
+    ["decision", "Guest estimate 128 (cap 140)", 1, "couple", "Oct 30", "Decided", "Couple portal"],
+  ];
+  const KL = { risk: "Risk", decision: "Decision", hold: "Hold" };
+  document.querySelector("#risk-table tbody").innerHTML = RISKS.map((r, i) => `<tr data-owner="${r[3]}" ${i === 1 ? 'id="risk-deposit"' : ""}>
+    <td><span class="kind k-${r[0]}">${KL[r[0]]}</span></td><td class="cell-main">${r[1]}</td>
+    <td><span class="impact" title="${["","Low","Medium","High"][r[2]]}">${[1,2,3].map(n => `<i class="${n <= r[2] ? "on" : ""}"></i>`).join("")}</span></td>
+    <td><span class="owner o-${r[3]}">${OWN[r[3]]}</span></td><td class="faint num">${r[4]}</td>
+    <td>${/Decided|Mitigated/.test(r[5]) ? `<span class="chip chip-ok">${r[5]}</span>` : r[5] === "Held" ? `<span class="chip chip-warn">${r[5]}</span>` : r[5] === "Open" ? `<span class="chip chip-risk">${r[5]}</span>` : `<span class="chip">${r[5]}</span>`}</td>
+    <td><span class="src">${icon(/insight/.test(r[6]) ? "spark" : "thread", 12)}${r[6]}</span></td></tr>`).join("");
+
+  // ---------- Sheet (editable grid) ----------
+  const SHEET = [
+    ["Lock catering", [["Menu B proposal", "Couple", "Oct 30", "Done", 26400, 0, "Family-style, 128", "Couple portal"], ["Contract countersigned", "Vendor", "Nov 1", "Done", 0, 0, "", "Wildflour thread"], ["Deposit 30%", "Couple", "Nov 6", "Due", 0, 7920, "Pay via Wildflour portal", "Invoice PDF"], ["Tasting", "Couple", "Feb 12", "Planned", 0, 0, "Bring 4 guests", "Wildflour email"]]],
+    ["Choose florist", [["Shortlist 3 florists", "Me", "Oct 28", "Done", 0, 0, "H&F, Marlowe, Bloom", "Compare"], ["Inquiries", "Me", "Nov 4", "Drafted", 0, 0, "", "Draft composer"], ["Couple A/B pick", "Couple", "Nov 9", "Waiting", 0, 0, "", "Couple portal"], ["Retainer", "Couple", "Dec 1", "Planned", 12000, 0, "Budget cap", "Sheet line"]]],
+    ["Hotel block", [["Request 30 rooms", "Me", "Oct 24", "Done", 0, 0, "", "Harborline thread"], ["Fix hold dates", "Me", "Nov 5", "Open", 0, 0, "Oct 15–17", "Needs attention"], ["Block agreement", "Vendor", "Nov 12", "Waiting", 0, 0, "No attrition fee", "Harborline PDF"]]],
+  ];
+  const money = (n) => n ? "$" + n.toLocaleString() : "";
+  let r = 0;
+  const statusChip = (s) => ({ Done: "chip-ok", Due: "chip-risk", Open: "chip-risk", Waiting: "chip-warn", Drafted: "chip-info" }[s] || "");
+  document.getElementById("sheet").innerHTML = `<thead><tr><th class="idx"></th><th style="min-width:240px">Checklist item</th><th>Owner</th><th>Due</th><th>Status</th><th style="text-align:right">Budget</th><th style="text-align:right">Paid</th><th style="min-width:140px">Source</th><th style="min-width:160px">Notes</th></tr></thead><tbody>` +
+    SHEET.map(([g, rows]) => `<tr class="group"><td class="idx">${icon("chevd", 12)}</td><td colspan="4"><div class="cell">${g} <span class="faint" style="font-weight:400">· ${rows.length} items</span></div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[4], 0))}</div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[5], 0))}</div></td><td></td><td></td></tr>` +
+      rows.map(x => `<tr><td class="idx">${++r}</td>
+        <td><div class="cell" contenteditable="true">${x[0]}</div></td>
+        <td><div class="cell" contenteditable="true"><span class="owner o-${x[1].toLowerCase()}">${x[1]}</span></div></td>
+        <td><div class="cell" contenteditable="true">${x[2]}</div></td>
+        <td><div class="cell"><span class="chip ${statusChip(x[3])}">${x[3]}</span></div></td>
+        <td class="num"><div class="cell" contenteditable="true">${money(x[4])}</div></td>
+        <td class="num"><div class="cell" contenteditable="true">${money(x[5])}</div></td>
+        <td><div class="cell cell-src">${x[7] || "—"}</div></td>
+        <td><div class="cell faint" contenteditable="true">${x[6]}</div></td></tr>`).join("")).join("") +
+    `<tr><td class="idx">+</td><td colspan="8"><div class="cell faint" contenteditable="true" data-ph>Add a checklist item…</div></td></tr></tbody>`;
+  document.getElementById("sheet").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.isContentEditable) { e.preventDefault(); e.target.blur(); toast("Saved"); } });
+
+  // ---------- Owner filter ----------
+  document.querySelectorAll("[data-owner]").forEach(b => { if (b.tagName !== "BUTTON") return;
+    b.addEventListener("click", () => {
+      document.querySelectorAll("button[data-owner]").forEach(x => x.classList.toggle("is-on", x === b));
+      const o = b.dataset.owner;
+      document.querySelectorAll(".wk-item[data-owner], #risk-table tr[data-owner]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.owner !== o));
+      document.querySelectorAll("[data-owner-group]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.ownerGroup !== o));
+    }); });
+
+  // ---------- Demo beat 5: Lock catering → Done ----------
+  document.getElementById("log-dep").addEventListener("click", function () {
+    const card = document.getElementById("lock");
+    const step = document.getElementById("dep-step");
+    step.classList.add("done"); step.innerHTML = icon("checkc", 15) + "30% deposit · $7,920 · paid Nov 2";
+    card.classList.add("is-done");
+    card.querySelector(".eyebrow").textContent = "Milestone · Done";
+    const chip = document.getElementById("lock-chip"); chip.className = "chip chip-ok"; chip.innerHTML = '<span class="dot"></span>Deposit paid';
+    this.outerHTML = `<span class="chip chip-outline">${icon("lock", 12)} Locked · Wildflour Catering</span>`;
+    MS[5][1] = "d"; drawSummary(); drawGantt();
+    document.getElementById("ms-count").textContent = "6 of 12 milestones done";
+    const rr = document.getElementById("risk-deposit"); if (rr) rr.querySelector("td:nth-child(6)").innerHTML = '<span class="chip chip-ok">Resolved</span>';
+    const rn = document.getElementById("risk-n"); rn.textContent = +rn.textContent - 1;
+    toast("<b>Lock catering</b> is Done — couple's portal updated");
+  });
+
+  document.getElementById("go-decisions")?.addEventListener("click", () => document.querySelector('[data-tab="decisions"]')?.click());
+  if (location.hash === "#lock") document.getElementById("lock").scrollIntoView({ block: "center" });
+  document.getElementById("open-sheet").onclick = () => document.getElementById("sheet-tab").click();
+  const h = location.hash.slice(1); const t = document.querySelector(`[data-tab="${h}"]`); if (t) t.click();
+});
+</script>
+</body>
+</html>

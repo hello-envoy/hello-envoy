@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Directory · Contacts · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+</head>
+<body data-shell="planner" data-page="contacts" class="contacts-page">
+<div data-topbar></div>
+
+<main class="page">
+  <div class="page-head section-chrome-max">
+    <div>
+      <div class="eyebrow" id="page-eyebrow">Account · Directory</div>
+      <h1>Contacts</h1>
+      <div class="meta"><span id="meta-n">12 in contact book</span><span class="faint meta-extra">·</span><span id="meta-booked">4 directory-only</span><span class="faint meta-extra">·</span><span class="accent" id="meta-reply">2 need your reply on weddings</span></div>
+    </div>
+    <div class="row" id="page-head-actions">
+      <button class="btn btn-secondary btn-sm" data-toast="Import from CSV, Gmail, or HoneyBook"><i data-i="upload"></i>Import</button>
+      <button class="btn btn-secondary btn-sm" data-toast="New contact"><i data-i="plus"></i>Add contact</button>
+      <button class="btn btn-primary btn-sm hide" id="open-attach"><i data-i="attach"></i>Attach from book</button>
+      <a class="btn btn-ghost btn-sm hide" id="back-to-dir" href="contacts.html">Account directory</a>
+    </div>
+  </div>
+
+  <section class="contacts-chrome section-chrome-max" aria-label="Contacts">
+    <div class="contacts-chrome-head">
+      <div class="subtabs" role="tablist" data-tabs="#contacts-views" data-hash>
+        <button type="button" id="contacts-subtab-list" data-tab="list" aria-selected="true">Directory</button>
+        <button type="button" data-tab="compare" aria-selected="false">Compare</button>
+      </div>
+    </div>
+
+    <div id="contacts-views">
+      <div data-panel="list" class="contacts-workspace">
+
+        <section class="card attach-card hide" id="attach" aria-label="Attach from contact book">
+          <div class="card-head card-head-flush"><h3 class="text-base">Attach from contact book</h3>
+            <button class="btn btn-ghost btn-sm btn-icon" id="close-attach" type="button" title="Close"><i data-i="x" data-s="14"></i></button></div>
+          <div class="card-body card-body-tight"><div class="dir-grid" id="dir-grid"></div></div>
+          <div class="card-foot card-foot-flush"><span class="text-sm faint" id="attach-hint">Suggested for October Charleston · 140 guests</span>
+            <button class="btn btn-primary btn-sm" type="button" id="do-attach"><i data-i="attach" data-s="14"></i>Attach <span id="attach-n">3</span></button></div>
+        </section>
+
+        <div class="outreach-shell">
+          <aside class="outreach-inbox" aria-label="Inbox">
+            <div class="outreach-inbox-head">
+              <div><span class="eyebrow inbox-eyebrow">Inbox</span><strong id="list-title">Contact book</strong></div>
+              <button type="button" class="btn btn-secondary btn-sm" data-toast="New thread — pick a contact, then draft in Approve &amp; send"><i data-i="plus" data-s="13"></i>New thread</button>
+            </div>
+            <div class="outreach-filter-bar" aria-label="Filters">
+              <button type="button" class="fchip" id="filter-all" aria-pressed="true">All</button>
+              <details class="filter-menu" id="type-menu">
+                <summary class="btn btn-secondary btn-sm">Type</summary>
+                <div class="filter-menu-pop" id="type-menu-pop"></div>
+              </details>
+              <details class="filter-menu" id="sort-filter-menu">
+                <summary class="btn btn-ghost btn-sm btn-icon btn-round" title="Sort and filter"><i data-i="sort" data-s="16"></i></summary>
+                <div class="filter-menu-pop" id="advanced-filters"></div>
+              </details>
+              <div class="search"><i data-i="search" data-s="15"></i><input class="input" id="q" placeholder="Search name, company, email…" aria-label="Search"></div>
+            </div>
+            <div class="row-between pad-inbox-foot"><span class="faint text-xs" id="result-n"></span><button type="button" class="btn btn-ghost btn-sm" id="reset">Clear</button></div>
+            <div class="outreach-list" id="inbox-list" role="listbox" aria-label="Contact list"></div>
+            <div class="empty hide pad-inbox-empty" id="empty"><div class="glyph"><i data-i="users" data-s="18"></i></div><h4>No matches</h4><p class="faint text-sm">Try filters or search.</p></div>
+          </aside>
+          <section class="outreach-thread" id="drawer" aria-label="Thread"></section>
+        </div>
+      </div>
+
+      <div data-panel="compare" class="hide compare-panel" id="compare">
+        <div class="section-title section-title-flush"><h2>Compare florists</h2><span class="faint text-sm">Matrix + radar</span></div>
+        <div class="g-12">
+          <section class="card span-5">
+            <div class="card-head"><h3>Fit profile</h3><div class="legend" id="radar-legend"></div></div>
+            <div class="card-body"><div class="chart-box chart-box-tall"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
+              <p class="lean-line">You’re leaning <em>Heron &amp; Fern</em> — garden fit, fast replies, six past weddings together.</p></div>
+          </section>
+          <section class="card span-7">
+            <div class="card-head"><h3>Side by side</h3><span class="chip chip-outline">Florist · 3</span></div>
+            <div class="table-wrap matrix-wrap"><table class="matrix" id="florist-matrix" aria-label="Florist comparison matrix"></table></div>
+            <div class="card-foot"><span>Send A/B to couple</span><a class="btn btn-accent btn-sm" href="couple-portal.html#ab"><i data-i="heart" data-s="14"></i>Couple portal</a></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="../assets/app.js"></script>
+<script src="../assets/contacts-page.js"></script>
+</body>
+</html>

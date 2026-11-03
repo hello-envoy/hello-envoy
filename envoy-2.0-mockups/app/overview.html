@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; overflow: visible; position: relative; z-index: 5; }
+  .hero-l { padding: var(--s-8); border-right: 1px solid var(--line); }
+  .hero-r { padding: var(--s-6) var(--s-8); display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6) var(--s-8); align-content: center; }
+  .count-big { font-family: var(--font-display); font-size: 88px; line-height: 84px; letter-spacing: -0.035em;  font-weight: 500; }
+  .count-big em { font-style: normal; color: var(--clay); font-weight: 500; }
+  .stat .k { color: var(--ink-3); font-size: var(--text-sm); display:flex; gap:6px; align-items:center; }
+  .stat .v { font-family: var(--font-display); font-size: 28px; line-height: 34px; margin-top: 4px; letter-spacing: -0.01em; font-variant-numeric: lining-nums tabular-nums; }
+  .stat .v small { font-family: var(--font-sans); font-size: var(--text-sm); color: var(--ink-3); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-6); }
+  .budget-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); margin-bottom: var(--s-4); }
+  .budget-nums .v { font-family: var(--font-display); font-size: 24px; line-height: 30px; font-variant-numeric: lining-nums tabular-nums; }
+  .budget-nums .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .cat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat-chips .fchip { height: 28px; padding: 0 10px; }
+  .cat-chips .fchip i { width: 7px; height: 7px; border-radius: 2px; display: inline-block; }
+  .cat-chips .fchip.fill-spent i { opacity: 1; }
+  .cat-chips .fchip.fill-future i { background: repeating-linear-gradient(-45deg, transparent, transparent 2px, var(--ink-4) 2px, var(--ink-4) 3px) !important; opacity: .85; }
+  .cat-chips .fchip.fill-line i { background: transparent !important; box-shadow: inset 0 0 0 2px currentColor; opacity: .7; }
+  .bud-legend { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: 6px; font-size: var(--text-xs); color: var(--ink-2); }
+  .bud-legend li { display: flex; align-items: center; gap: 8px; }
+  .bud-legend i { width: 12px; height: 12px; border-radius: 2px; flex: none; display: inline-block; }
+  .bud-legend .spent i { background: var(--ink); }
+  .bud-legend .future i { background: repeating-linear-gradient(-45deg, var(--surface), var(--surface) 2px, var(--ink-4) 2px, var(--ink-4) 3px); border: 1px solid var(--line); }
+  .bud-legend .line i { background: var(--surface); box-shadow: inset 0 0 0 2px var(--line-strong); }
+  .skel { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--line); font-size: var(--text-sm); }
+  .skel-options { display: grid; gap: 8px; margin-top: 10px; }
+  .skel-options label { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-md); cursor: pointer; }
+  .skel-options label:has(input:checked) { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .donut-wrap { position: relative; height: 200px; }
+  .sk-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: var(--text-sm); color: var(--ink-2); }
+  .sk-legend li { display: flex; align-items: center; gap: 10px; }
+  .sk-legend i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .hidden { display: none !important; }
+  .donut-center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; pointer-events: none; }
+  .donut-center b { display:block; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 30px; }
+  .act-feed { position: relative; margin: 0; padding: var(--s-4) var(--s-6) var(--s-3) 56px; list-style: none; }
+  .act-feed::before { content: ""; position: absolute; left: 31px; top: 28px; bottom: 20px; width: 2px; background: var(--line-strong); border-radius: 1px; }
+  .act-item { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; padding-bottom: var(--s-5); }
+  .act-item:last-child { padding-bottom: 0; }
+  .act-item::before { content: ""; position: absolute; left: -31px; top: 10px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-strong); box-sizing: border-box; transform: translateX(-50%); margin-left: 31px; }
+  .act-item.is-now::before { border-color: var(--clay); background: var(--clay-soft); box-shadow: 0 0 0 4px var(--paper); }
+  .act-item .when { color: var(--ink-3); font-size: var(--text-xs); white-space: nowrap; padding-top: 4px; }
+  .act-item .body { font-size: var(--text-sm); line-height: 1.45; color: var(--ink); }
+  .act-item .body .cell-sub { margin-top: 2px; }
+  .flash { animation: flash 1.6s var(--ease) 1; }
+  @keyframes flash { 0%{ box-shadow: 0 0 0 0 rgba(58,52,214,.0);} 20% { box-shadow: 0 0 0 6px rgba(58,52,214,.18);} 100%{ box-shadow: 0 0 0 0 rgba(58,52,214,0);} }
+  .sk-title { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 38px; letter-spacing: -0.015em; margin-top: 4px; }
+  .sk-sub { color: var(--ink-2); font-size: var(--text-sm); margin-top: 4px; max-width: 560px; }
+  .sk-nums { display: flex; gap: var(--s-8); }
+  .sk-nums > div { display: flex; flex-direction: column; gap: 2px; }
+  .sk-nums .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .sk-nums .v { font-family: var(--font-display); font-size: 26px; line-height: 30px; }
+  #sankey .sankey text { font-size: 13px; }
+</style>
+</head>
+<body data-shell="planner" data-page="overview">
+<div data-topbar></div>
+
+<main class="page">
+  <!-- ============ Header ============ -->
+  <section class="card hero">
+    <div class="hero-l">
+      <div class="eyebrow">Wedding · Planning phase</div>
+      <h1 class="display display-3 mt-2">Elena &amp; Marcus</h1>
+      <div class="row wrap mt-3 muted" style="gap:var(--s-4)">
+        <span class="row gap-2"><i data-i="cal" data-s="15"></i>Saturday, October 16, 2027</span>
+        <span class="row gap-2"><i data-i="pin" data-s="15"></i>The Ashby Estate · Charleston, SC</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="contacts.html?scope=project&amp;label=Shortlist"><i data-i="mail"></i>Email shortlist</a>
+        <button class="btn btn-secondary" data-toast="Log a booking: pick vendor → status <b>Booked</b> → add deposit to reach <b>Deposit paid</b>"><i data-i="checkc"></i>Log a booking</button>
+        <details class="menu" id="cta-more">
+          <summary class="btn btn-secondary"><i data-i="more"></i>More<i data-i="chevd" data-s="14"></i></summary>
+          <div class="menu-pop" role="menu">
+            <a role="menuitem" href="couple-portal.html"><i data-i="eye" data-s="15"></i><span>Preview as couple<span class="sub">Open Elena &amp; Marcus’s portal (planner preview)</span></span></a>
+            <a role="menuitem" href="share-update.html"><i data-i="share" data-s="15"></i><span>Share update<span class="sub">Thin update email · not the full portal</span></span></a>
+            <a role="menuitem" href="contacts.html"><i data-i="users" data-s="15"></i><span>Contact book<span class="sub">All account contacts</span></span></a>
+            <a role="menuitem" href="contacts.html?scope=project#attach"><i data-i="upload" data-s="15"></i><span>Import from contact book<span class="sub">Attach to this wedding</span></span></a>
+            <a role="menuitem" href="contacts.html?scope=project#compare"><i data-i="flower" data-s="15"></i><span>Compare florists<span class="sub">Matrix &amp; radar on Contacts</span></span></a>
+            <a role="menuitem" href="project.html#timeline"><i data-i="gantt" data-s="15"></i><span>Open timeline<span class="sub">14-month view in Project</span></span></a>
+          </div>
+        </details>
+      </div>
+    </div>
+    <div class="hero-r">
+      <div style="grid-column: span 2">
+        <div class="stat"><div class="k"><i data-i="clock" data-s="14"></i>Countdown</div></div>
+        <div class="count-big num">348 <em>days</em></div>
+      </div>
+      <div class="stat"><div class="k"><i data-i="guests" data-s="14"></i>Guests</div><div class="v">128 <small>of 140 target</small></div></div>
+      <div class="stat"><div class="k"><i data-i="layers" data-s="14"></i>Milestones</div><div class="v">5 <small>of 12 done</small></div></div>
+    </div>
+  </section>
+
+  <!-- ============ Needs attention ============ -->
+  <div class="section-title" id="attention"><h2>Needs attention</h2><span class="faint text-sm">Updated 2 min ago · from 41 threads</span></div>
+  <section class="attn" id="attn-strip">
+    <a href="contacts.html?scope=project&amp;c=sweetgrass&amp;fix=email" class="hot" title="Opens Sweetgrass Stems with Add email / Retry send">
+      <span class="n">1</span>
+      <span><span class="t">Failed send</span><br><span class="d">Inquiry to Sweetgrass Stems bounced — email missing</span><br><span class="status sm s-none st">Not contacted</span> <span class="go">Add email &amp; retry →</span></span>
+    </a>
+    <a href="contacts.html?scope=project&amp;c=glam&amp;fix=reply" class="hot" title="Opens the Lowcountry Glam thread with Draft reply">
+      <span class="n">2</span>
+      <span><span class="t">Unanswered &gt; 3 days</span><br><span class="d">Lowcountry Glam (4d), Coastal Event Rentals (5d)</span><br><span class="status sm s-reply st">Needs reply</span> <span class="go">Draft reply →</span></span>
+    </a>
+    <a href="contacts.html?scope=project&amp;c=harborline&amp;fix=hold" title="Opens Harborline with Request date change">
+      <span class="n">1</span>
+      <span><span class="t">Date conflict</span><br><span class="d">Harborline Hotel holding Oct 9, not Oct 16</span><br><span class="status sm s-waiting st">Waiting</span> <span class="go">Request Oct 15–17 →</span></span>
+    </a>
+    <a href="project.html#lock" title="Opens Lock catering with Log deposit paid">
+      <span class="n">1</span>
+      <span><span class="t">Missing deposit</span><br><span class="d">Wildflour Catering · $7,920 due Fri, Nov 6</span><br><span class="status sm s-booked st">Booked</span> <span class="go">Log deposit → Deposit paid</span></span>
+    </a>
+  </section>
+
+  <!-- ============ Contacts + Budget ============ -->
+  <div class="g-12 mt-8">
+    <section class="card span-8">
+      <div class="card-head">
+        <h3>Contacts <span class="sub">16 on this wedding</span></h3>
+        <div class="seg" data-tabs="#vendor-table" id="vendor-seg">
+          <button data-tab="me" aria-selected="true">Needs me <span class="mono faint">5</span></button>
+          <button data-tab="them" aria-selected="false">Waiting on them <span class="mono faint">3</span></button>
+          <button data-tab="all" aria-selected="false">All</button>
+        </div>
+      </div>
+      <div class="table-wrap" id="vendor-table">
+        <table class="table">
+          <thead><tr><th>Vendor</th><th>Type</th><th>Status</th><th>Next action</th><th class="r">Last reply</th></tr></thead>
+          <tbody>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">W</span><div><div class="cell-main">Wildflour Catering</div><div class="cell-sub">Priya Natarajan</div></div></div></td><td>Caterer</td><td><span class="status s-booked">Booked</span></td><td><a class="btn-link" href="project.html#lock">Log $7,920 deposit</a></td><td class="r faint num">1d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">L</span><div><div class="cell-main">Lowcountry Glam</div><div class="cell-sub">Tasha Greene</div></div></div></td><td>Beauty</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?scope=project&amp;c=glam&amp;fix=reply">Draft reply · trial dates</a></td><td class="r num" style="color:var(--clay)">4d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">C</span><div><div class="cell-main">Coastal Event Rentals</div><div class="cell-sub">Dev Patel</div></div></div></td><td>Rentals</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?scope=project&amp;c=coastal&amp;fix=reply">Draft reply · chair count (128)</a></td><td class="r num" style="color:var(--clay)">5d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Heron &amp; Fern Florals</div><div class="cell-sub">Shortlist · A</div></div></div></td><td>Florist</td><td><span class="status s-none">Not contacted</span></td><td><a class="btn-link" href="contacts.html?scope=project#compare">Draft inquiry</a></td><td class="r faint">—</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Harborline Hotel</div><div class="cell-sub">Room block · 30 rooms</div></div></div></td><td>Hotel block</td><td><span class="status s-waiting">Waiting</span></td><td><a class="btn-link" href="contacts.html?scope=project&amp;c=harborline&amp;fix=hold">Fix hold date → Oct 16</a></td><td class="r faint num">2d</td></tr>
+            <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">S</span><div><div class="cell-main">Saltmarsh Films</div><div class="cell-sub">Inquiry sent Oct 29</div></div></div></td><td>Video</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Nudge Thu if silent</td><td class="r faint num">—</td></tr>
+            <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">M</span><div><div class="cell-main">Marlowe Flower Co.</div><div class="cell-sub">Shortlist · B</div></div></div></td><td>Florist</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Awaiting proposal</td><td class="r faint num">—</td></tr>
+            <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">S</span><div><div class="cell-main">Sugar Hall Cakes</div><div class="cell-sub">Tasting request</div></div></div></td><td>Cake</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Tasting dates pending</td><td class="r faint num">—</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">A</span><div><div class="cell-main">The Ashby Estate</div><div class="cell-sub">Margaret Ashby</div></div></div></td><td>Venue</td><td><span class="status s-paid">Deposit paid</span></td><td class="muted">Send floor plan · Jan</td><td class="r faint num">2d</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">J</span><div><div class="cell-main">Juniper &amp; Vale Photo</div><div class="cell-sub">Ana Ortiz</div></div></div></td><td>Photo</td><td><span class="status s-paid">Deposit paid</span></td><td class="muted">Engagement shoot · Mar</td><td class="r faint num">6d</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">T</span><div><div class="cell-main">The Tidewater Six</div><div class="cell-sub">Band · 6 piece</div></div></div></td><td>Band/DJ</td><td><span class="status s-paid">Deposit paid</span></td><td class="muted">Song list · Aug</td><td class="r faint num">3w</td></tr>
+            <tr data-b="done" class="hide"><td><div class="row"><span class="logo-sq">P</span><div><div class="cell-main">Palmetto Coach Co.</div><div class="cell-sub">Shuttle quote</div></div></div></td><td>Transport</td><td><span class="status s-declined">Declined</span></td><td class="muted">Find alternative</td><td class="r faint num">1w</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot"><span>Sorted by what moves the wedding forward</span><a class="btn-link" href="contacts.html">All vendors →</a></div>
+    </section>
+
+    <section class="card span-4">
+      <div class="card-head"><h3>Budget</h3><a class="btn-link text-sm" href="#sankey">Where the money goes ↓</a></div>
+      <div class="card-body">
+        <div class="budget-nums">
+          <div><div class="k">Budgeted</div><div class="v num">$120k</div></div>
+          <div><div class="k">Spent</div><div class="v num">$80.6k</div></div>
+          <div><div class="k">Remaining</div><div class="v num accent">$39.4k</div></div>
+        </div>
+        <div class="bar bar-lg" title="Spent $80,600 of $120,000 budgeted">
+          <i style="width:28.3%"></i><i class="c2" style="width:22%"></i><i class="c3" style="width:7%"></i><i class="c4" style="width:9.5%"></i><i class="rest" style="flex:1"></i>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm mt-4" id="donut-toggle" aria-pressed="false">Show donut breakdown</button>
+        <div class="donut-wrap mt-4 hidden" id="donut-wrap"><canvas id="donut" aria-label="Budget by category"></canvas><div class="donut-center"><div><b class="num">67%</b><span class="faint text-sm">spent</span></div></div></div>
+        <ul class="bud-legend" aria-label="Budget fill legend">
+          <li class="spent"><i aria-hidden="true"></i>Opaque = spent (paid out)</li>
+          <li class="future"><i aria-hidden="true"></i>Lined = future payment scheduled</li>
+          <li class="line"><i aria-hidden="true"></i>Hollow = budgeted line only</li>
+        </ul>
+        <div class="row-between mt-6 mb-2"><span class="eyebrow">Filter vendors by category</span><span class="faint text-xs">Spent / Budgeted</span></div>
+        <div class="cat-chips" id="cat-chips"></div>
+        <div id="budget-sources"></div>
+        <details class="skel">
+          <summary style="font-weight:500;cursor:pointer">Starter budget tree (pick once, tweak amounts)</summary>
+          <div class="skel-options" id="budget-skel">
+            <label><input type="radio" name="skel" value="garden" checked> <span><b>Garden estate · 140 guests</b><br><span class="faint">Venue-heavy · $118k default — matches this wedding</span></span></label>
+            <label><input type="radio" name="skel" value="city"> <span><b>City loft · 100 guests</b><br><span class="faint">Catering + photo weighted · $92k default</span></span></label>
+            <label><input type="radio" name="skel" value="destination"> <span><b>Destination weekend</b><br><span class="faint">Travel + hotel block · $145k default</span></span></label>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm mt-3" id="apply-skel">Apply tree to Sheet view</button>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ Budget Sankey (prominent) ============ -->
+  <section class="card mt-4" id="sankey">
+    <div class="card-head" style="align-items:flex-end;padding-top:var(--s-5)">
+      <div><div class="eyebrow">Budget · $120,000</div><h2 class="sk-title">Where the money goes</h2>
+        <div class="sk-sub">Total budget → each category → <b>booked</b> (contracted) and <b>spent</b> (paid out) separately. Hover a band for the number.</div></div>
+      <div class="sk-nums"><div><span class="k">Booked</span><span class="v num">$79.6k</span></div><div><span class="k">Spent</span><span class="v num">$80.6k</span><span class="faint text-xs">Catering over line</span></div><div><span class="k">Remaining</span><span class="v num accent">$39.4k</span></div></div>
+    </div>
+    <div class="card-body"><div id="sankey-el" style="width:100%"></div>
+      <ul class="sk-legend mt-3" id="sankey-legend"></ul>
+      <p class="faint text-sm mt-2"><a class="btn-link" href="project.html#sheet">Adjust allocations in Sheet view →</a></p></div>
+  </section>
+
+  <!-- ============ Milestone timeline ============ -->
+  <section class="card mt-4">
+    <div class="card-head"><h3>Milestones <span class="sub">Booked · Deposit paid · Final · Day-of</span></h3>
+      <div class="row gap-2 wrap"><div class="legend"><span class="sf-leg"><i class="done" aria-hidden="true"></i>Complete</span><span class="sf-leg"><i class="now" aria-hidden="true"></i>Current</span><span class="sf-leg"><i aria-hidden="true"></i>Upcoming</span></div><a class="btn btn-ghost btn-sm" id="dayof-link" href="day-of.html"><i data-i="note" data-s="14"></i>Day-of packet</a></div>
+    </div>
+    <div class="card-body" style="padding-bottom:var(--s-2)">
+      <div id="mtl" class="sf-path-wrap"></div>
+    </div>
+  </section>
+
+    <section class="card mt-4">
+      <div class="card-head"><h3>Recent activity</h3><span class="faint text-sm">Feed · newest first</span></div>
+      <ol class="act-feed" aria-label="Recent activity timeline">
+        <li class="act-item is-now"><span class="av av-sm av-clay">EM</span><div class="body"><b>Elena</b> picked <b>Heron &amp; Fern</b> over Marlowe<div class="cell-sub">Florist A/B · couple portal</div></div><time class="when">12m</time></li>
+        <li class="act-item"><span class="av av-sm">W</span><div class="body">Wildflour sent signed contract<div class="cell-sub">Catering · $26,400</div></div><time class="when">1h</time></li>
+        <li class="act-item"><span class="av av-sm av-ink">SW</span><div class="body">You attached <b>4 vendors from your contact book</b><div class="cell-sub">From your directory</div></div><time class="when">3h</time></li>
+        <li class="act-item"><span class="av av-sm">A</span><div class="body">The Ashby Estate confirmed rain plan<div class="cell-sub">Venue</div></div><time class="when">2d</time></li>
+        <li class="act-item"><span class="av av-sm av-clay">EM</span><div class="body">Marcus updated guest estimate to <b>128</b><div class="cell-sub">Guest count · couple portal</div></div><time class="when">3d</time></li>
+      </ol>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { css, BUDGET_CATS, budgetSankeyData, mountBudgetSankey, budgetFmtK, weddingSlice, budgetCategorySourcesHtml, wireBudgetDonutToggle, withW, mountSalesforcePath } = Envoy;
+  const dayof = document.getElementById("dayof-link"); if (dayof) dayof.href = withW("day-of.html");
+  document.getElementById("budget-sources").innerHTML = budgetCategorySourcesHtml();
+  const CATS = BUDGET_CATS;
+  const w = new URLSearchParams(location.search).get("w") || "em";
+  const slice = weddingSlice(w);
+  if (w !== "em") {
+    const h = document.querySelector(".hero h1.display");
+    if (h) h.textContent = slice.label;
+    document.querySelectorAll(".hero .eyebrow").forEach((el) => { el.textContent = slice.tag || "Wedding · demo slice"; });
+    const pin = document.querySelector(".hero-l .muted span:nth-child(2)");
+    if (pin && slice.venue) pin.innerHTML = `<i data-i="pin" data-s="15"></i>${slice.venue}`;
+    document.querySelector(".count-big").innerHTML = `${slice.days} <em>days</em>`;
+    document.querySelector(".hero-r .stat:last-child .v").innerHTML = `${slice.milestones.split(" ")[0]} <small>${slice.milestones.replace(/^\d+\s*/, "of ")}</small>`;
+    document.querySelectorAll(".sk-nums .v.num").forEach((el, i) => {
+      const vals = [`$${(slice.booked / 1000).toFixed(1)}k`, `$${(slice.spent / 1000).toFixed(1)}k`, `$${((slice.budget - slice.spent) / 1000).toFixed(1)}k`];
+      if (vals[i]) el.textContent = vals[i];
+    });
+    document.querySelector("#sankey .eyebrow").textContent = `Budget · $${slice.budget.toLocaleString()}`;
+    Envoy.hydrateIcons(document.querySelector(".hero"));
+  }
+  const COL = ["--chart-1","--chart-2","--chart-3","--chart-4","--chart-5","--chart-7","--chart-6","--chart-8"].map(css);
+
+  // chips → filter contacts
+  const chipFill = (c) => {
+    if (c[3] >= c[1] && c[3] > 0) return "fill-spent";
+    if (c[2] > c[3] && c[2] > 0) return "fill-future";
+    return "fill-line";
+  };
+  document.getElementById("cat-chips").innerHTML = CATS.map((c, i) =>
+    `<a class="fchip ${chipFill(c)}" href="contacts.html?type=${encodeURIComponent(c[4])}" title="${c[5]}"><i style="background:${COL[i]};color:${COL[i]}"></i>${c[0]} <span class="count">$${+(c[3]/1000).toFixed(1)}k spent · $${(c[1]/1000).toFixed(0)}k line</span></a>`).join("");
+  document.getElementById("apply-skel")?.addEventListener("click", () => {
+    const v = document.querySelector('#budget-skel input[name="skel"]:checked')?.value || "garden";
+    Envoy.toast(`Applied <b>${v === "garden" ? "Garden estate" : v === "city" ? "City loft" : "Destination weekend"}</b> tree — tweak amounts in Sheet view`);
+  });
+
+  let donutChart = null;
+  const ensureDonut = () => {
+    if (donutChart || !window.Chart) return;
+    donutChart = new Chart(document.getElementById("donut"), {
+      type: "doughnut",
+      data: { labels: CATS.map(c => c[0]), datasets: [{ data: CATS.map(c => c[1]), backgroundColor: COL, borderColor: css("--surface"), borderWidth: 2, hoverOffset: 4 }] },
+      options: { cutout: "74%", plugins: { tooltip: { callbacks: { label: (x) => ` ${x.label}: $${x.raw.toLocaleString()} budgeted · $${CATS[x.dataIndex][3].toLocaleString()} spent` } } } }
+    });
+  };
+  wireBudgetDonutToggle(document.getElementById("donut-toggle"), document.getElementById("donut-wrap"), document.getElementById("donut"), ensureDonut);
+
+  const M = [
+    ["Venue booked", "Booked · Oct 3", "done"],
+    ["Photo & band", "Booked · Oct 21", "done"],
+    ["Lock catering", "Deposit due · Nov 6", "now"],
+    ["Florist chosen", "Booked · Dec 1", ""],
+    ["Save-the-dates", "Sent · Feb 15", ""],
+    ["Attire & rentals", "Deposit paid by May", ""],
+    ["Final numbers", "Final · Sep 16", ""],
+    ["Day-of", "Oct 16, 2027", ""],
+  ];
+  mountSalesforcePath(
+    document.getElementById("mtl"),
+    M.map(([title, sub, st]) => ({ title, sub, state: st === "done" ? "complete" : st === "now" ? "current" : "upcoming" })),
+  );
+
+  {
+    const { totals } = w === "em" ? budgetSankeyData() : {
+      totals: { budget: slice.budget, spent: slice.spent, remaining: slice.budget - slice.spent, booked: slice.booked },
+    };
+    const pctSpent = Math.round((totals.spent / totals.budget) * 100);
+    document.querySelectorAll(".budget-nums .v.num").forEach((el, i) => {
+      const vals = [budgetFmtK(totals.budget), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
+      if (vals[i]) el.textContent = vals[i];
+    });
+    const bar = document.querySelector(".budget-nums + .bar");
+    if (bar) bar.title = `Spent ${budgetFmtK(totals.spent)} of ${budgetFmtK(totals.budget)} budgeted`;
+    const dc = document.querySelector(".donut-center b.num");
+    if (dc) dc.textContent = pctSpent + "%";
+    if (w === "em") {
+      document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
+        const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
+        if (vals[i]) el.textContent = vals[i];
+      });
+    }
+  }
+  mountBudgetSankey(document.getElementById("sankey-el"), document.getElementById("sankey-legend"));
+
+  // vendor segmented sort
+  addEventListener("envoy:tab", (e) => {
+    const v = e.detail; if (!["me","them","all"].includes(v)) return;
+    document.querySelectorAll("#vendor-table tbody tr").forEach(tr => tr.classList.toggle("hide", v !== "all" && tr.dataset.b !== v));
+  });
+
+  if (location.hash === "#attention") { const s = document.getElementById("attn-strip"); s.classList.add("flash"); }
+});
+</script>
+</body>
+</html>

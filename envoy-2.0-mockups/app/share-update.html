@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Share update · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-8); align-items: start; }
+  .pick { list-style: none; margin: 0; padding: 0; }
+  .pick li { display: grid; grid-template-columns: 1fr auto; gap: var(--s-4); align-items: center; padding: 14px var(--s-6); border-bottom: 1px solid var(--line); }
+  .pick li:last-child { border-bottom: 0; }
+  .pick .t { font-weight: 500; display: flex; gap: 8px; align-items: center; }
+  .pick .d { color: var(--ink-3); font-size: var(--text-sm); margin-top: 2px; }
+  .pick li.off .t { color: var(--ink-2); }
+  .note { width: 100%; min-height: 110px; border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 12px; font: inherit; line-height: 1.55; color: var(--ink); background: var(--surface); resize: vertical; }
+  .note:focus { outline: none; border-color: var(--clay); box-shadow: 0 0 0 3px rgba(58,52,214,.14); }
+  .never { margin-top: var(--s-5); padding: var(--s-5) var(--s-6); }
+  .never ul { margin: 8px 0 0; padding-left: 18px; color: var(--ink-2); font-size: var(--text-sm); line-height: 1.7; }
+  .send-row { display: flex; align-items: center; gap: 10px; margin-top: var(--s-5); }
+  .send-row .spacer { flex: 1; }
+  .send-row .meta { color: var(--ink-3); font-size: var(--text-sm); }
+  .preview { position: sticky; top: 80px; }
+  .frame { border: 1px solid var(--line); border-radius: 18px; background: var(--paper); overflow: hidden; box-shadow: var(--e-3); }
+  .frame .bar-top { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-size: var(--text-xs); color: var(--ink-3); }
+  .frame .bar-top .url { flex: 1; text-align: center; font-family: var(--font-mono); }
+  .pv { padding: var(--s-6); display: grid; gap: var(--s-4); }
+  .pv .hello { font-family: var(--font-display); font-size: 26px; line-height: 32px; letter-spacing: -0.01em; }
+  .pv .hello em { font-style: normal; color: var(--clay); }
+  .pv .from { color: var(--ink-2); font-size: var(--text-sm); line-height: 1.6; white-space: pre-wrap; }
+  .pblock { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-4) var(--s-5); transition: opacity var(--dur-2), transform var(--dur-2); }
+  .pblock .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; display: flex; justify-content: space-between; }
+  .pblock .new { color: var(--clay); text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .pblock .v { margin-top: 6px; font-size: var(--text-sm); color: var(--ink-2); line-height: 1.55; }
+  .pblock .v b { color: var(--ink); font-weight: 500; }
+  .pblock.hidden { display: none; }
+  .ab { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .ab span { border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 10px; font-size: var(--text-sm); }
+  .ms { display: grid; gap: 6px; margin-top: 8px; font-size: var(--text-sm); }
+  .ms div { display: flex; gap: 8px; align-items: center; }
+  .ms .ok { color: var(--ok); }
+  .empty-pv { text-align: center; color: var(--ink-3); font-size: var(--text-sm); padding: var(--s-6); border: 1px dashed var(--line-strong); border-radius: var(--r-lg); }
+  .sent-banner { display: none; margin-top: var(--s-5); padding: 14px var(--s-5); border-radius: var(--r-lg); background: var(--ok-soft); color: var(--ink); font-size: var(--text-sm); gap: 10px; align-items: center; }
+  .sent-banner.on { display: flex; }
+  .urgent-banner { display: flex; gap: 12px; align-items: flex-start; padding: 14px var(--s-5); margin-bottom: var(--s-5); border-radius: var(--r-lg); border: 1px solid var(--clay-3); background: var(--clay-soft); color: var(--ink); font-size: var(--text-sm); line-height: 1.55; }
+  .urgent-banner b { display: block; font-weight: 600; margin-bottom: 2px; }
+  .urgent-banner .tag { font-size: 10px; letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--clay-ink); font-weight: 600; }
+</style>
+</head>
+<body data-shell="planner" data-page="share">
+<div data-topbar></div>
+
+<main class="page">
+  <header class="page-head">
+    <div>
+      <div class="eyebrow">Elena &amp; Marcus · Couple portal</div>
+      <h1>Share an update</h1>
+      <div class="meta"><span><i data-i="eye" data-s="14"></i><b>Who can see:</b> only blocks you turn on below</span><span><i data-i="users" data-s="14"></i><b>Who decides:</b> couple picks in portal; you decide everything else</span><span><i data-i="lock" data-s="14"></i>Vendor threads stay Private to you</span></div>
+    </div>
+    <a class="btn btn-ghost" href="couple-portal.html"><i data-i="eye" data-s="14"></i>Open their portal</a>
+  </header>
+
+  <div class="urgent-banner" role="status">
+    <span class="tag">Need you by Monday</span>
+    <div><b>Florist A/B is on — Elena hasn’t picked yet</b>They see both options in the portal; your note below nudges them. If you turn off the A/B block, the banner clears on send (demo).</div>
+  </div>
+
+  <div class="layout">
+    <section>
+      <div class="card">
+        <div class="card-head"><h3>What’s in this update</h3><span class="faint" style="font-size:var(--text-sm)"><b id="on-n">2</b> of 5 on</span></div>
+        <ul class="pick" id="pick">
+          <li data-k="ms"><div><div class="t"><i data-i="checkc" data-s="14"></i>Milestones</div><div class="d">Catering locked · 6 of 12 done</div></div><input type="checkbox" class="toggle" checked aria-label="Milestones"></li>
+          <li data-k="ab"><div><div class="t"><i data-i="flower" data-s="14"></i>Florist A/B — their pick</div><div class="d">Heron &amp; Fern or Marlowe · pick by Nov 9</div></div><input type="checkbox" class="toggle" checked aria-label="Florist A/B"></li>
+          <li data-k="dec" class="off"><div><div class="t"><i data-i="listi" data-s="14"></i>Shared decisions only</div><div class="d">Rows marked <b>Shared</b> in <a class="btn-link" href="project.html#decisions">Decisions</a> — Private rows never leave</div></div><input type="checkbox" class="toggle" aria-label="Shared decisions"></li>
+          <li data-k="bud" class="off"><div><div class="t"><i data-i="dollar" data-s="14"></i>Budget glance</div><div class="d">Totals only — never vendor markup or line items</div></div><input type="checkbox" class="toggle" aria-label="Budget glance"></li>
+          <li data-k="day" class="off"><div><div class="t"><i data-i="cal" data-s="14"></i>Day-of outline</div><div class="d">Ceremony, cocktails, dinner, dancing — no call times</div></div><input type="checkbox" class="toggle" aria-label="Day-of outline"></li>
+        </ul>
+      </div>
+
+      <div class="card card-pad" style="margin-top:var(--s-5)">
+        <label for="note" style="font-weight:500;display:block;margin-bottom:8px">A note from you</label>
+        <textarea class="note" id="note">Catering is officially locked — Wildflour has Menu B for all 128 of you. The one thing I need this week is your florist pick; both hold your date until Nov 12.
+
+— Sarah</textarea>
+      </div>
+
+      <div class="card card-sunken never">
+        <div style="font-weight:500;display:flex;gap:8px;align-items:center"><i data-i="lock" data-s="14"></i>Never shared, whatever you toggle</div>
+        <ul><li>Vendor email threads and drafts</li><li>Your notes, markup and commission</li><li>Private decisions and risks</li><li>Other clients</li></ul>
+      </div>
+
+      <div class="send-row">
+        <span class="meta">Goes to their portal + one email to Elena &amp; Marcus</span>
+        <span class="spacer"></span>
+        <button class="btn btn-ghost" data-toast="Saved — not shared yet">Save for later</button>
+        <button class="btn btn-primary" id="send"><i data-i="send" data-s="14"></i>Send update</button>
+      </div>
+      <div class="sent-banner" id="sent"><i data-i="checkc" data-s="16"></i><span><b>Shared.</b> Their portal shows these <span id="sent-n">3</span> items under “New from Sarah”. Replies come back to you here, not to vendors.</span></div>
+    </section>
+
+    <aside class="preview">
+      <div class="eyebrow" style="margin-bottom:var(--s-3)">Preview · what Elena &amp; Marcus will see</div>
+      <div class="frame">
+        <div class="bar-top"><span>●●●</span><span class="url">portal.envoy.app/elena-marcus</span></div>
+        <div class="pv" id="pv">
+          <div class="hello">New from <em>Sarah</em></div>
+          <div class="from" id="pv-note"></div>
+          <div class="pblock" data-p="ms"><div class="k">Milestones <span class="new">Updated</span></div><div class="ms"><div><span class="ok"><i data-i="checkc" data-s="14"></i></span><b>Catering locked</b> · Wildflour, Menu B</div><div><span class="ok"><i data-i="checkc" data-s="14"></i></span>Guest count set · 128</div><div><span style="color:var(--ink-4)"><i data-i="clock" data-s="14"></i></span>Choose florist · by Nov 9</div></div></div>
+          <div class="pblock" data-p="ab"><div class="k">Your pick <span class="new">Needs you</span></div><div class="v"><b>Which florist feels like you?</b></div><div class="ab"><span>A · Heron &amp; Fern Florals</span><span>B · Marlowe Flower Co.</span></div></div>
+          <div class="pblock hidden" data-p="dec"><div class="k">Decisions</div><div class="v"><b>Ceremony rain plan:</b> tent on the allée or the Ashby ballroom — your pick by Dec 1</div></div>
+          <div class="pblock hidden" data-p="bud"><div class="k">Budget glance</div><div class="v"><b>$80,000</b> committed of $120,000 · $40,000 left</div><div class="bar" style="margin-top:8px"><i style="width:67%"></i></div></div>
+          <div class="pblock hidden" data-p="day"><div class="k">Your day · outline</div><div class="v">4:30 Ceremony · 5:00 Cocktails · 6:15 Dinner · 8:00 Dancing</div></div>
+          <div class="empty-pv hidden" id="pv-empty">Nothing selected — they’d only see your note.</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const $ = (id) => document.getElementById(id);
+  function sync() {
+    let n = 0;
+    document.querySelectorAll("#pick li").forEach((li) => {
+      const on = li.querySelector("input").checked; if (on) n++;
+      li.classList.toggle("off", !on);
+      document.querySelector(`.pblock[data-p="${li.dataset.k}"]`).classList.toggle("hidden", !on);
+    });
+    $("on-n").textContent = n; $("pv-empty").classList.toggle("hidden", n > 0);
+    $("pv-note").textContent = $("note").value;
+    $("sent").classList.remove("on");
+    return n;
+  }
+  $("pick").addEventListener("change", sync);
+  $("note").addEventListener("input", sync);
+  $("send").addEventListener("click", () => {
+    const n = sync();
+    $("sent-n").textContent = n; $("sent").classList.add("on");
+    Envoy.toast(`Update shared with Elena &amp; Marcus · ${n} item${n === 1 ? "" : "s"}`);
+  });
+  sync();
+});
+</script>
+</body>
+</html>

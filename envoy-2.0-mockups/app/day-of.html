@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day-of packet · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .packet { max-width: 1120px; margin: 0 auto; }
+  .cover { display: grid; grid-template-columns: 1.3fr 1fr; border-bottom: 1px solid var(--line); padding-bottom: var(--s-8); margin-bottom: var(--s-8); gap: var(--s-8); align-items: end; }
+  .cover h1 { font-family: var(--font-display); font-weight: 500; font-size: 64px; line-height: 64px; letter-spacing: -0.03em;  }
+  .cover h1 em { font-style: normal; color: var(--clay); }
+  .cover .sub { color: var(--ink-2); margin-top: var(--s-3); display: flex; gap: var(--s-4); flex-wrap: wrap; }
+  .cover .sub span { display: inline-flex; gap: 6px; align-items: center; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); }
+  .facts .k { color: var(--ink-3); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; }
+  .facts .v { font-family: var(--font-display); font-size: 22px; line-height: 28px; margin-top: 4px; font-variant-numeric: lining-nums; }
+  .draft-note { display: flex; gap: 10px; align-items: center; padding: 10px 14px; border: 1px dashed var(--line-strong); border-radius: var(--r-md); color: var(--ink-2); font-size: var(--text-sm); margin-bottom: var(--s-8); }
+  .cols { display: grid; grid-template-columns: 1.35fr 1fr; gap: var(--s-8); align-items: start; }
+  h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 26px; letter-spacing: -0.01em; margin-bottom: var(--s-4); display: flex; justify-content: space-between; align-items: baseline; }
+  h2.sec small { font-family: var(--font-sans); font-size: var(--text-sm); color: var(--ink-3); letter-spacing: 0; }
+  .ros { list-style: none; margin: 0; padding: 0; position: relative; }
+  .ros::before { content: ""; position: absolute; left: 83px; top: 8px; bottom: 8px; width: 1px; background: var(--line-strong); }
+  .ros > li { display: grid; grid-template-columns: 72px 24px 1fr; gap: 0 var(--s-3); padding: 0 0 var(--s-6); }
+  .ros .tm { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); text-align: right; padding-top: 3px; font-variant-numeric: tabular-nums; }
+  .ros .pt { width: 9px; height: 9px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--ink-3); margin: 6px auto 0; position: relative; z-index: 1; }
+  .ros li.key .pt { background: var(--clay); border-color: var(--clay); width: 11px; height: 11px; margin-top: 5px; }
+  .ros .t { font-weight: 500; font-size: var(--text-md, 16px); }
+  .ros li.key .t { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 26px; }
+  .ros .w { color: var(--ink-3); font-size: var(--text-sm); margin-top: 2px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .ros .w span { display: inline-flex; gap: 5px; align-items: center; }
+  .ros .n { color: var(--ink-2); font-size: var(--text-sm); margin-top: 6px; line-height: 1.55; }
+  .ros .phase { grid-column: 1 / -1; font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; padding: 0 0 var(--s-3) 108px; }
+  .calls td { vertical-align: top; }
+  .calls .time { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+  .calls .vn { font-weight: 500; }
+  .calls .sub { color: var(--ink-3); font-size: var(--text-xs); }
+  .rain { margin-top: var(--s-8); }
+  .rain .card-body { display: grid; gap: 12px; font-size: var(--text-sm); color: var(--ink-2); line-height: 1.55; }
+  .rain .rule { display: grid; grid-template-columns: 96px 1fr; gap: 10px; }
+  .rain .rule b { color: var(--ink); font-weight: 500; }
+  .dial { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-4); }
+  .dcard { padding: var(--s-5); display: grid; gap: 8px; }
+  .dcard .role { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .dcard .nm { font-weight: 500; }
+  .dcard .co { color: var(--ink-3); font-size: var(--text-sm); margin-top: -6px; }
+  .dcard .ph { font-family: var(--font-mono); font-size: 13px; color: var(--ink); text-decoration: none; display: inline-flex; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-md); justify-content: space-between; }
+  .dcard .ph:hover { border-color: var(--ink-3); }
+  .dcard.first { background: var(--paper-2); }
+  .foot-note { margin-top: var(--s-10); padding-top: var(--s-5); border-top: 1px solid var(--line); color: var(--ink-3); font-size: var(--text-xs); display: flex; justify-content: space-between; }
+  .gen { display: grid; grid-template-columns: 220px 1fr; gap: var(--s-4); margin-bottom: var(--s-8); }
+  .personas { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .personas button { text-align: left; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); cursor: pointer; color: var(--ink-2); }
+  .personas button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 500; box-shadow: 0 0 0 1px var(--ink); }
+  .chat { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); min-height: 160px; display: flex; flex-direction: column; }
+  .chat-log { flex: 1; padding: var(--s-4); display: grid; gap: 10px; font-size: var(--text-sm); line-height: 1.55; max-height: 220px; overflow: auto; }
+  .chat-log .you { color: var(--ink-3); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .06em; }
+  .chat-in { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+  .chat-in .input { flex: 1; height: 36px; }
+  @media print {
+    [data-topbar], .topbar, .demo-rail, .no-print, .toast-wrap { display: none !important; }
+    body { background: #fff; }
+    .page { padding: 0 !important; }
+    .card { box-shadow: none !important; break-inside: avoid; }
+    .ros > li { break-inside: avoid; }
+    .dial { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body data-shell="planner" data-page="dayof">
+<div data-topbar></div>
+
+<main class="page"><div class="packet">
+  <div class="no-print" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--s-6)">
+    <div class="eyebrow">Elena &amp; Marcus · Day-of packet</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" data-toast="Link copied — view-only, for vendors on the day">
+        <i data-i="link" data-s="14"></i>Copy vendor link</button>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()"><i data-i="note" data-s="14"></i>Print packet</button>
+    </div>
+  </div>
+
+  <section class="cover">
+    <div>
+      <h1>Saturday,<br><em>October 16, 2027</em></h1>
+      <div class="sub"><span><i data-i="pin" data-s="14"></i>The Ashby Estate · 1120 Ashby Lane, Charleston</span><span><i data-i="guests" data-s="14"></i>128 guests</span></div>
+    </div>
+    <div class="facts">
+      <div><div class="k">Ceremony</div><div class="v">4:30 pm</div></div>
+      <div><div class="k">Sunset</div><div class="v">6:44 pm</div></div>
+      <div><div class="k">Last song</div><div class="v">10:45 pm</div></div>
+    </div>
+  </section>
+
+  <div class="draft-note no-print"><i data-i="edit" data-s="15"></i><span>Working draft, 348 days out. Times fill in from vendor threads as each one books — unbooked vendors are marked, not guessed.</span></div>
+
+  <section class="card no-print gen" aria-label="Generate day-of copy">
+    <div><div class="eyebrow">Personas</div><ul class="personas" id="personas">
+      <li><button type="button" data-p="groom" aria-pressed="true">Groom · timeline + dial</button></li>
+      <li><button type="button" data-p="bridal" aria-pressed="false">Bridal party · hair, photos, arrival</button></li>
+      <li><button type="button" data-p="photo" aria-pressed="false">Photo / video · shot list beats</button></li>
+      <li><button type="button" data-p="other" aria-pressed="false">Other vendor · call times only</button></li>
+    </ul>
+    <div><div class="eyebrow">Ask Envoy · chat-style draft</div>
+      <div class="chat"><div class="chat-log" id="chat-log"></div>
+        <form class="chat-in" id="chat-form"><input class="input" placeholder="e.g. Short version for the groom, no vendor emails…" aria-label="Generate prompt"><button class="btn btn-primary btn-sm" type="submit">Generate</button></form>
+      </div>
+      <p class="faint text-xs mt-2">Demo only — inserts into the <b>master packet</b> below when you generate. Nothing sends.</p>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section>
+      <h2 class="sec">Run of show <small>Leads in italics</small></h2>
+      <ol class="ros">
+        <li class="phase" style="display:block">Afternoon</li>
+        <li><span class="tm">10:00</span><span class="pt"></span><div><div class="t">Hair &amp; makeup begins</div><div class="w"><span><i data-i="pin" data-s="12"></i>Harborline, Suite 4</span><span><em>Lowcountry Glam</em></span></div></div></li>
+        <li><span class="tm">2:30</span><span class="pt"></span><div><div class="t">Dressed · details photographed</div><div class="w"><span><i data-i="pin" data-s="12"></i>Ashby bridal room</span><span><em>Photographer</em></span></div></div></li>
+        <li><span class="tm">3:15</span><span class="pt"></span><div><div class="t">First look</div><div class="w"><span><i data-i="pin" data-s="12"></i>Oak allée, south end</span><span><em>Sarah</em></span></div><div class="n">Guests arrive from 4:00 by the north drive, so the allée stays private until 3:45.</div></div></li>
+        <li class="phase" style="display:block">Evening</li>
+        <li class="key"><span class="tm">4:30</span><span class="pt"></span><div><div class="t">Ceremony</div><div class="w"><span><i data-i="pin" data-s="12"></i>Oak allée</span><span>25 min</span><span><em>Officiant · string trio</em></span></div><div class="n">Rain plan: Ashby ballroom, theatre seating for 140 — see right.</div></div></li>
+        <li class="key"><span class="tm">5:00</span><span class="pt"></span><div><div class="t">Cocktail hour</div><div class="w"><span><i data-i="pin" data-s="12"></i>Garden terrace</span><span><em>Wildflour · bar</em></span></div><div class="n">Family photos on the lawn 5:05–5:35, then the couple joins guests.</div></div></li>
+        <li class="key"><span class="tm">6:15</span><span class="pt"></span><div><div class="t">Dinner</div><div class="w"><span><i data-i="pin" data-s="12"></i>Carriage house</span><span>Menu B · plated, three courses</span><span><em>Wildflour</em></span></div><div class="n">Toasts between first and second course — father of the bride, then best man. Sunset portraits 6:35.</div></div></li>
+        <li class="key"><span class="tm">8:00</span><span class="pt"></span><div><div class="t">Dancing</div><div class="w"><span><i data-i="pin" data-s="12"></i>Carriage house floor</span><span><em>Band — not booked yet</em></span></div><div class="n">First dance opens the set. Cake at 9:15, late bites at 9:45.</div></div></li>
+        <li><span class="tm">10:50</span><span class="pt"></span><div><div class="t">Sparkler send-off</div><div class="w"><span><i data-i="pin" data-s="12"></i>Front steps</span><span><em>Sarah · Ashby staff</em></span></div></div></li>
+      </ol>
+    </section>
+
+    <aside>
+      <h2 class="sec">Vendor call times</h2>
+      <section class="card">
+        <table class="table calls">
+          <thead><tr><th>Arrive</th><th>Vendor</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="time">8:00 am</td><td><div class="vn">The Ashby Estate</div><div class="sub">Gates open · Daniel on site</div></td><td><span class="status s-paid sm">Deposit paid</span></td></tr>
+            <tr><td class="time">9:30 am</td><td><div class="vn">Lowcountry Glam</div><div class="sub">Harborline Suite 4 · 3 artists</div></td><td><span class="status s-reply sm">Needs reply</span></td></tr>
+            <tr><td class="time">11:00 am</td><td><div class="vn">Florist · A/B pending</div><div class="sub">Heron &amp; Fern or Marlowe</div></td><td><span class="status s-waiting sm">Waiting</span></td></tr>
+            <tr><td class="time">12:30 pm</td><td><div class="vn">Wildflour Catering</div><div class="sub">Load-in via service road</div></td><td><span class="status s-booked sm">Booked</span></td></tr>
+            <tr><td class="time">1:00 pm</td><td><div class="vn">Coastal Tents</div><div class="sub">Only if rain plan is called</div></td><td><span class="status s-waiting sm">Soft hold</span></td></tr>
+            <tr><td class="time">2:00 pm</td><td><div class="vn">Photographer</div><div class="sub">Not chosen yet</div></td><td><span class="status s-none sm">Not contacted</span></td></tr>
+            <tr><td class="time">4:00 pm</td><td><div class="vn">Band</div><div class="sub">Soundcheck before guests</div></td><td><span class="status s-none sm">Not contacted</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card rain">
+        <div class="card-head"><h3><i data-i="shield" data-s="15"></i> Rain plan · on hold</h3><span class="chip chip-warn">Decide by Oct 14</span></div>
+        <div class="card-body">
+          <div class="rule"><b>The call</b><span>Oct 14, 10:00 am. If the 48-hour forecast is 40% or more, Sarah calls it and tells the couple.</span></div>
+          <div class="rule"><b>Ceremony</b><span>Moves to the Ashby ballroom. Theatre seating for 140, set by Ashby staff in 90 min.</span></div>
+          <div class="rule"><b>Cocktails</b><span>Coastal Tents 40×60 on the terrace. Soft hold today; a firm hold is $600, refundable to Sep 1.</span></div>
+          <div class="rule"><b>Who to tell</b><span>Officiant, string trio, florist (aisle install moves indoors), photographer.</span></div>
+          <a class="btn-link no-print" href="project.html#decisions" style="font-size:var(--text-sm)">Open in Decisions →</a>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <section style="margin-top:var(--s-10)">
+    <h2 class="sec">Quick dial <small>Tap to call on the day</small></h2>
+    <div class="dial">
+      <article class="card dcard first"><div class="role">Planner · day lead</div><div class="nm">Sarah Whitfield</div><div class="co">Whitfield &amp; Co</div><a class="ph" href="tel:+18435550142">(843) 555-0142 <i data-i="arrowr" data-s="13"></i></a></article>
+      <article class="card dcard"><div class="role">Venue</div><div class="nm">Daniel Okafor</div><div class="co">The Ashby Estate</div><a class="ph" href="tel:+18435550198">(843) 555-0198 <i data-i="arrowr" data-s="13"></i></a></article>
+      <article class="card dcard"><div class="role">Catering</div><div class="nm">Priya Natarajan</div><div class="co">Wildflour Catering</div><a class="ph" href="tel:+18435550117">(843) 555-0117 <i data-i="arrowr" data-s="13"></i></a></article>
+      <article class="card dcard"><div class="role">Hair &amp; makeup</div><div class="nm">Tasha Greene</div><div class="co">Lowcountry Glam</div><a class="ph" href="tel:+18435550163">(843) 555-0163 <i data-i="arrowr" data-s="13"></i></a></article>
+    </div>
+  </section>
+
+  <div class="foot-note"><span>Elena &amp; Marcus · Oct 16, 2027 · Prepared by Whitfield &amp; Co</span><span>Phone numbers are placeholders (555)</span></div>
+</div></main>
+
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { toast } = Envoy;
+  let persona = "groom";
+  const SEED = {
+    groom: [["Envoy", "Run of show for Marcus — ceremony 4:30, first look 3:15, sparkler exit 10:50. Rain: ballroom if called Oct 14."]],
+    bridal: [["Envoy", "Hair starts 10:00 Harborline Suite 4 · dressed 2:30 · first look 3:15 oak allée."]],
+    photo: [["Envoy", "Golden hour 6:35 after dinner entrance · family photos 5:05–5:35 during cocktails."]],
+    other: [["Envoy", "Wildflour load-in 12:30 service road · florist TBD when A/B closes."]],
+  };
+  const log = document.getElementById("chat-log");
+  function paint() { log.innerHTML = (SEED[persona] || []).map(([who, msg]) => `<div><div class="you">${who}</div>${msg}</div>`).join(""); }
+  paint();
+  document.getElementById("personas").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-p]"); if (!b) return;
+    persona = b.dataset.p;
+    document.querySelectorAll("#personas button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    paint();
+  });
+  document.getElementById("chat-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = e.target.querySelector("input").value.trim() || "Refresh this section";
+    SEED[persona].push(["You", q]);
+    SEED[persona].push(["Envoy", `Updated the ${persona} slice in the master packet — still a draft.`]);
+    paint(); e.target.reset();
+    toast("Added to master day-of packet (demo)");
+  });
+});
+</script>
+</body>
+</html>
