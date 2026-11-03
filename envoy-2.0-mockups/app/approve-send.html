@@ -77,7 +77,7 @@
   .applied .applied-note { display: flex !important; }
 </style>
 </head>
-<body data-page="approve">
+<body data-shell="planner" data-page="approve">
 <div data-topbar></div>
 
 <main class="page">
@@ -100,6 +100,11 @@
   </div>
 
   <div class="layout">
+    <div class="main-col" style="display:grid;gap:var(--s-5)">
+    <section class="card" id="thread">
+      <div class="card-head"><h3>Their last message</h3><span class="faint" style="font-size:var(--text-xs)" id="q-when"></span></div>
+      <div class="card-body"><div class="quote" id="quote"></div></div>
+    </section>
     <section class="card" id="composer">
       <div class="from-hero" id="from-hero">
         <div class="fk">Sending as</div>
@@ -124,22 +129,18 @@
       <div class="body" id="body" contenteditable="true" spellcheck="true" aria-label="Email body"></div>
       <div class="attachments" id="att"></div>
       <div class="guard"><span class="lock"><i data-i="lock" data-s="15"></i></span><span><b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.</span></div>
-      <div class="review">
-        <input type="checkbox" id="ok">
-        <label for="ok"><div class="rl">I reviewed this note to <span id="rv-name">Tasha Greene at Lowcountry Glam</span></div>
-          <div class="snip"><b id="rv-subj"></b><span id="rv-lines"></span></div></label>
-      </div>
       <div class="actions">
-        <span class="faint" style="font-size:var(--text-sm)">Approve stays off until you tick the review.</span>
+        <span class="faint" style="font-size:var(--text-sm)">Read their note above, then approve once.</span>
         <span class="spacer"></span>
         <button class="btn btn-ghost" data-toast="Draft saved — still waiting for you">Save draft</button>
-        <button class="btn btn-primary" id="send" disabled><i data-i="send" data-s="14"></i>Approve &amp; send</button>
+        <button class="btn btn-primary" id="send"><i data-i="send" data-s="14"></i>Approve &amp; send</button>
       </div>
       <div class="sent" id="sent">
         <span class="ck"><i data-i="check" data-s="18"></i></span>
         <div style="flex:1"><b id="sent-t">Sent from sarah@whitfieldco.com</b><div style="font-size:var(--text-sm);color:var(--ink-2);margin-top:2px" id="sent-d"></div></div>
       </div>
     </section>
+    </div>
 
     <aside class="side">
       <section class="card" id="ask">
@@ -165,10 +166,6 @@
         <ul class="checks" id="checks"></ul>
       </section>
 
-      <section class="card">
-        <div class="card-head"><h3>Their last message</h3><span class="faint" style="font-size:var(--text-xs)" id="q-when"></span></div>
-        <div class="card-body"><div class="quote" id="quote"></div></div>
-      </section>
     </aside>
   </div>
 </main>
@@ -209,45 +206,33 @@ window.addEventListener("envoy:ready", () => {
     },
   };
   const $ = (id) => document.getElementById(id);
-  const comp = $("composer"), ask = $("ask"), ok = $("ok"), send = $("send");
+  const comp = $("composer"), ask = $("ask"), send = $("send");
   let cur = "glam", before = null;
   const sentState = {};
-  function snippet() {
-    $("rv-subj").textContent = $("subj").value;
-    const t = $("body").innerText.replace(/\s+/g, " ").trim();
-    $("rv-lines").textContent = t.slice(0, 150) + (t.length > 150 ? "…" : "");
-  }
-  function unreview() { ok.checked = false; send.disabled = true; }
   function load(k) {
     cur = k; const d = D[k]; before = null;
     document.querySelectorAll(".qitem").forEach((q) => q.setAttribute("aria-selected", q.dataset.draft === k));
     $("to").innerHTML = `<span class="chip chip-outline">${d.to}</span>`;
     $("subj").value = d.subj; $("body").innerHTML = d.body;
     $("att").innerHTML = d.att.join("");
-    $("rv-name").textContent = d.who;
     $("from-warn").lastChild.textContent = ` ${d.first} has only heard from your business address. Replies would land in your personal inbox.`;
     $("sugg-t").textContent = d.sugg; $("sugg-del").textContent = d.del; $("sugg-add").textContent = d.add;
     $("sugg-why").innerHTML = d.why.join("");
     $("checks").innerHTML = d.checks.map(([t, s]) => `<li><span class="${t}"><i data-i="${t === "ok" ? "checkc" : "alert"}" data-s="15"></i></span><span>${s}</span></li>`).join("");
     $("quote").textContent = d.quote; $("q-when").textContent = d.when;
     ask.classList.remove("applied"); ask.style.display = "";
-    unreview();
     comp.classList.toggle("is-sent", !!sentState[k]); $("sent").classList.toggle("on", !!sentState[k]);
     $("body").contentEditable = !sentState[k];
     if (sentState[k]) $("sent-d").innerHTML = d.done;
-    snippet();
     Envoy.hydrateIcons(document.querySelector(".layout"));
   }
   document.querySelectorAll(".qitem").forEach((q) => q.addEventListener("click", () => load(q.dataset.draft)));
-  ok.addEventListener("change", () => (send.disabled = !ok.checked));
-  $("body").addEventListener("input", () => { snippet(); unreview(); });
-  $("subj").addEventListener("input", () => { snippet(); unreview(); });
   // From: Business vs Personal
   const FROM = { biz: ["sarah@whitfieldco.com", "<b>Business inbox</b> · Whitfield &amp; Co · Gmail"], personal: ["sarah.whitfield@gmail.com", "<b>Personal inbox</b> · Gmail"] };
   document.querySelectorAll("[data-from]").forEach((b) => b.addEventListener("click", () => {
     const f = b.dataset.from; $("from-addr").textContent = FROM[f][0]; $("from-inbox").innerHTML = FROM[f][1];
     $("from-hero").classList.toggle("personal", f === "personal"); $("from-warn").classList.toggle("hidden", f !== "personal");
-    b.closest("details").open = false; unreview();
+    b.closest("details").open = false;
     Envoy.toast(`Sending as <b>${FROM[f][0]}</b>`);
   }));
   // Ask Envoy apply + undo (Envoy edit only)
@@ -259,18 +244,16 @@ window.addEventListener("envoy:ready", () => {
     ask.classList.add("applied");
     const li = [...$("checks").querySelectorAll("li")].find((l) => l.querySelector(".warn"));
     if (li) { li.querySelector(".warn").outerHTML = `<span class="ok">${Envoy.icon("checkc", 15)}</span>`; li.lastElementChild.textContent = "Suggestion applied — read it once more"; }
-    unreview(); snippet();
   });
   $("undo-edit").addEventListener("click", () => {
     const m = $("body").querySelector("mark[data-envoy]");
     if (m && before) m.outerHTML = before;
     if (checksBefore) $("checks").innerHTML = checksBefore;
-    before = null; ask.classList.remove("applied"); unreview(); snippet();
+    before = null; ask.classList.remove("applied");
     Envoy.toast("Envoy’s edit removed — your words are back");
   });
   $("dismiss").addEventListener("click", () => { ask.style.display = "none"; Envoy.toast("Suggestion dismissed"); });
   send.addEventListener("click", () => {
-    if (!ok.checked) return;
     const d = D[cur];
     comp.classList.add("is-sent"); $("sent").classList.add("on"); $("body").contentEditable = false;
     $("sent-t").textContent = `Sent from ${$("from-addr").textContent} to ${d.to.replace(/&lt;.*$/, "").trim()}`;

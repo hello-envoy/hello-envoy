@@ -70,14 +70,8 @@
     const tab = (id, label, href) => `<a href="${href}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
-      <a class="brand" href="../landing/index.html" title="Envoy">${BRAND}</a>
-      <div class="crumb">
-        <span class="sep">/</span>
-        <a class="crumb-all" href="portfolio.html" ${page === "portfolio" ? 'aria-current="page"' : ""}>All weddings</a>
-        ${page === "portfolio" ? "" : `<span class="sep">/</span>
-        <a class="project-switch" href="portfolio.html" title="Switch wedding"><span class="mono-ini">E&amp;M</span>Elena &amp; Marcus ${icon("chevd", 14)}</a>`}
-      </div>
-      ${page === "portfolio" ? '<nav class="navtabs" aria-label="Primary"></nav>' : `<nav class="navtabs" aria-label="Primary">
+      <a class="brand" href="${page === "portfolio" ? "portfolio.html" : "portfolio.html"}" title="Envoy">${BRAND}</a>
+      ${page === "portfolio" ? `<nav class="navtabs" aria-label="Primary"><a href="portfolio.html" aria-current="page">Dashboard</a></nav>` : `<nav class="navtabs" aria-label="Primary">
         ${tab("overview", "Overview", "overview.html")}
         ${tab("contacts", "Contacts", "contacts.html")}
         ${tab("project", "Project", "project.html")}
@@ -197,9 +191,41 @@
   }
 
   /* ---------- Demo narrative rail ---------- */
+  const WEDDINGS = [
+    { id: "em", ini: "E&M", label: "Elena & Marcus", href: "overview.html" },
+    { id: "kd", ini: "K&D", label: "Kate & Dom", href: "overview.html?w=kd" },
+    { id: "ne", ini: "N&E", label: "Noor & Eli", href: "overview.html?w=ne" },
+    { id: "ps", ini: "P&S", label: "Priya & Sam", href: "overview.html?w=ps" },
+  ];
+  function activeWeddingId() {
+    const q = new URLSearchParams(location.search).get("w");
+    if (q) return q;
+    const p = location.pathname.split("/").pop();
+    if (p === "portfolio.html") return null;
+    return "em";
+  }
+  function mountPlannerShell() {
+    if (document.body.dataset.shell !== "planner") return;
+    const main = document.querySelector("main.page");
+    if (!main || document.querySelector(".planner-shell")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "planner-shell";
+    main.parentNode.insertBefore(wrap, main);
+    const wid = activeWeddingId();
+    const panel = document.createElement("aside");
+    panel.className = "project-panel";
+    panel.setAttribute("aria-label", "Weddings");
+    panel.innerHTML = `<div class="eyebrow">Weddings</div>` +
+      `<a href="portfolio.html"${wid ? "" : ' aria-current="page"'}><span class="ini">24</span>All weddings</a>` +
+      WEDDINGS.map((w) => `<a href="${w.href}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`).join("");
+    wrap.appendChild(panel);
+    wrap.appendChild(main);
+  }
+
   const STORY = [
+    ["portfolio.html", "Start the day — portfolio across 24 weddings"],
+    ["overview.html#attention", "Open a wedding — Overview surfaces what needs attention"],
     ["contacts.html#attach", "Attach preferred vendors from your directory"],
-    ["overview.html#attention", "Overview surfaces what needs attention"],
     ["contacts.html#compare", "Compare florists → draft inquiries"],
     ["couple-portal.html#ab", "Couple picks florist A/B in their portal"],
     ["project.html#lock", "Milestone “Lock catering” → Done on Booked → Deposit paid"],
@@ -244,7 +270,7 @@
   window.Envoy = { icon, hydrateIcons, toast, sankey, palette, css, chartDefaults };
 
   document.addEventListener("DOMContentLoaded", () => {
-    mountTopbar(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail(); wireBoards();
+    mountTopbar(); mountPlannerShell(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail(); wireBoards();
     window.dispatchEvent(new Event("envoy:ready"));
   });
 })();

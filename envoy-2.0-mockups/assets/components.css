@@ -450,3 +450,17 @@ tr:hover .row-actions, tr.is-selected .row-actions { opacity: 1; }
 .btn-group .btn { min-height: 36px; padding: 0 var(--sp-4); }
 .table th, .sheet th { font-weight: 600; letter-spacing: .12em; color: var(--faint); }
 .brand-mark { width: 20px; height: 20px; color: var(--indigo-600); } .brand:hover .brand-word { color: var(--indigo-600); }
+
+/* ---------- Planner shell: left project panel + main (SCRUM-341 rebuild) ---------- */
+.planner-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 0; max-width: var(--content-max); margin: 0 auto; align-items: start; }
+.project-panel { position: sticky; top: calc(var(--topbar-h) + 12px); margin: var(--s-6) 0 var(--s-16) var(--s-6); padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+.project-panel .eyebrow { margin-bottom: var(--s-3); }
+.project-panel a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-md); text-decoration: none; color: var(--ink-2); font-size: var(--text-sm); font-weight: 500; }
+.project-panel a:hover { background: var(--wash); color: var(--indigo-600); }
+.project-panel a[aria-current="page"] { background: var(--indigo-50); color: var(--indigo-700); box-shadow: inset 0 0 0 1px var(--indigo-100); }
+.project-panel a .ini { width: 28px; height: 28px; border-radius: 8px; background: var(--wash); display: grid; place-items: center; font-size: 10px; font-weight: 600; color: var(--ink-3); flex: none; }
+.project-panel a[aria-current="page"] .ini { background: var(--indigo-600); color: var(--on-dark); }
+.planner-shell > .page { padding-left: var(--s-4); max-width: none; width: 100%; }
+.navtabs a:hover { color: var(--indigo-600); }
+.navtabs a[aria-current="page"]::after { background: var(--indigo-600); }
+@media (max-width: 960px) { .planner-shell { grid-template-columns: 1fr; } .project-panel { position: static; margin: var(--s-4) var(--s-6) 0; } }

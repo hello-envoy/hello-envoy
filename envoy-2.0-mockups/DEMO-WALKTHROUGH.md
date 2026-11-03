@@ -3,7 +3,7 @@
 Open local `index.html` or, in PM repo after checkout: `npm run demo:envoy-2`.
 
 ## 90-second story (founder → wedding planner)
-1. **Portfolio** — Good morning across all weddings. Tap a Needs-you row (Fix email / Reply / Log deposit).
+1. **Portfolio (dashboard)** — Good morning across all weddings. Needs-you one-clicks; scroll the **12-month timeline**; open Elena & Marcus (or Kate & Dom / Noor & Eli / Priya & Sam).
 2. **Elena & Marcus → Overview** — Needs attention one-click; budget Spent/Budgeted; Email shortlist + Log a booking.
 3. **Contacts** — Attach preferred vendors; open **Vendor compare**; Send A/B to couple.
 4. **Couple portal** — This week; florist pick with ownership; Mark as paid (outside Envoy).

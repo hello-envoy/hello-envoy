@@ -206,3 +206,17 @@ The "Linen" notes in the sections above are history. Where they conflict with th
 - **Sankey**: `--chart-4` is now indigo-200 (it was line-3), and the default link opacity went from 0.28 to 0.42, so the bands read better while staying ink and indigo.
 - **Hub**: shows the demo path. It links the landing page, the waitlist, the design system and all 11 app screens. Hover colour is indigo (it was clay).
 - **Checked**: every local href and src resolves (the only one that doesn't is favicon.ico). I re-took the hub, landing, couple-portal and overview screenshots in headless Chrome.
+
+## FULL REBUILD (SCRUM-341 spec · Nov 2026)
+
+Authoritative brief: attached `SCRUM-341-rebuild-spec.md`. Kits: `envoy-2.0-mockups-redesign.tgz` + `envoy-2.0-mockups-final.tgz`.
+
+- **White page ground** on planner app (`--paper` = white card); landing keeps redesign tints where embedded.
+- **App homepage = portfolio** with Needs-you rollup, **12-month scrollable timeline**, ≥4 openable weddings (E&M full spine; kd/ne/ps overview slice).
+- **Planner shell**: left **project panel** (wedding list) + top tabs Overview | Contacts | Project | More (no breadcrumb trail).
+- **Overview** = single-wedding home; **Sankey primary** with separate **Booked** and **Spent** sinks, over-budget highlight (Catering), list legend, Sheet link; **donut secondary** (toggle).
+- **Couple A/B** = text + price band + tags only (no photos / moodboards).
+- **Approve & send** = inbound thread **above** draft; **single Approve & send** (review checkbox removed).
+- **Status colours** documented in Finish pass (ok/warn/info + `--error` / `--risk-soft`).
+- **README** in `envoy-2.0-mockups/README.md` with exact `npm run demo` steps and interactive vs static matrix.
+- **Deferred**: full 24-wedding depth, production waitlist, auto-send matrices, PM repo parity.

@@ -32,11 +32,7 @@
   .opt:hover { border-color: var(--line-strong); box-shadow: var(--e-2); }
   .opt.is-picked { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
   .opt.is-other { opacity: .55; }
-  .mood { height: 168px; display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; padding: 3px; }
-  .mood span { border-radius: 10px; position: relative; overflow: hidden; }
-  .mood span::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 45%); }
-  .mood-cap { font-size: var(--text-xs, 12px); color: var(--muted); padding: 6px 14px 0; }
-  .mood span:first-child { grid-row: span 2; }
+  .ab-preview { min-height: 88px; padding: 14px 16px; background: var(--wash); border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
   .opt .b { padding: 18px 20px 20px; }
   .opt .letter { font-family: var(--font-display); font-size: 15px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-strong); display: inline-grid; place-items: center; }
   .opt.is-picked .letter { background: var(--ink); color: var(--paper); border-color: var(--ink); }
@@ -102,14 +98,14 @@
       <div class="both"><i data-i="users" data-s="14"></i>Marcus can see this too — only one of you needs to tap.</div>
       <div class="ab">
         <button class="opt" data-pick="Heron &amp; Fern Florals">
-          <div class="mood" role="img" aria-label="Moodboard A: garden roses in muted white and dusty apricot, loose greenery, textured ribbon"><span style="background:radial-gradient(circle at 35% 40%,#F6E6D8,#E9C2A6 45%,#8DA07F 90%)"></span><span style="background:radial-gradient(circle at 50% 50%,#FBF6EF,#EAD9C6 70%)"></span><span style="background:radial-gradient(circle at 40% 60%,#E7B597,#C98E6E 80%)"></span><span style="background:linear-gradient(160deg,#A8B79A,#6F8565)"></span><span style="background:radial-gradient(circle at 60% 40%,#F2E3D3,#D4B49A 85%)"></span></div><div class="mood-cap">Garden roses · apricot · loose greenery</div>
+          <div class="ab-preview" role="img" aria-label="Option A: garden-gathered florals, muted whites and dusty apricot, loose greenery, about ten thousand eight hundred dollars"><span class="chip chip-outline">$9.5k–$11.5k band</span><span class="chip chip-outline">Garden · soft · textured</span></div>
           <div class="b"><div class="row-between"><span class="letter">A</span><span class="num muted">~ $10,800</span></div>
             <h3>Heron &amp; Fern Florals</h3>
             <p class="muted mt-2">Garden-gathered and loose. Muted whites and dusty apricot, lots of texture, a ceremony arch that looks like it grew there.</p>
             <div class="words"><span class="chip chip-outline">Soft</span><span class="chip chip-outline">Textured</span><span class="chip chip-outline">Wild</span><span class="chip chip-outline">Sarah's worked with them</span></div></div>
         </button>
         <button class="opt" data-pick="Marlowe Flower Co.">
-          <div class="mood" role="img" aria-label="Moodboard B: lush white peonies and orchids, tall candlelit centerpieces, deep green foliage"><span style="background:radial-gradient(circle at 40% 35%,#FFFFFF,#EDEAE6 50%,#3E5446 95%)"></span><span style="background:radial-gradient(circle at 50% 30%,#FFE9B8,#C99A4A 40%,#2E2A2A 90%)"></span><span style="background:radial-gradient(circle at 50% 50%,#F7F4F2,#DCD4D0 75%)"></span><span style="background:linear-gradient(160deg,#4F6B57,#24382B)"></span><span style="background:radial-gradient(circle at 50% 40%,#F4EFEA,#BFB2A8 80%)"></span></div><div class="mood-cap">White peonies · candlelight · deep greens</div>
+          <div class="ab-preview" role="img" aria-label="Option B: lush composed florals, white peonies and candlelit reception, full install and strike, about twelve thousand four hundred dollars"><span class="chip chip-outline">$11k–$13k band</span><span class="chip chip-outline">Lush · formal · candlelit</span></div>
           <div class="b"><div class="row-between"><span class="letter">B</span><span class="num muted">~ $12,400</span></div>
             <h3>Marlowe Flower Co.</h3>
             <p class="muted mt-2">Lush and composed. Full install and strike, tall centerpieces, a more formal, candlelit evening feel.</p>

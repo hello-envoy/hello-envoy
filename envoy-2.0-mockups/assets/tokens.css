@@ -79,7 +79,8 @@
 
 /* ---- kit aliases → redesign tokens ---- */
 :root {
-  --paper: var(--ground);  --paper-2: var(--wash);  --paper-3: var(--line);
+  /* demo pages: white canvas (spec); --ground stays for landing tints */
+  --paper: var(--card);  --paper-2: var(--wash);  --paper-3: var(--line);
   --surface: var(--card);  --line-strong: var(--line-2);
   --ink-2: var(--muted);   --ink-3: var(--faint);   --ink-4: var(--line-3);
 
@@ -133,7 +134,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0; background: var(--ground); color: var(--ink);
+  margin: 0; background: var(--paper); color: var(--ink);
   font: 400 var(--t-ui)/1.5 var(--f);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
