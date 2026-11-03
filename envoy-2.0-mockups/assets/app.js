@@ -97,15 +97,17 @@
     return (page === "portfolio" ? tab("portfolio", "Dashboard", "portfolio.html") : "") +
       PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
   }
+  function ensureFavicon() {
+    if (document.querySelector('link[rel="icon"]')) return;
+    const fav = document.createElement("link");
+    fav.rel = "icon";
+    fav.type = "image/svg+xml";
+    fav.href = ASSETS + "envoy-mark.svg";
+    document.head.appendChild(fav);
+  }
   function mountTopbar() {
     const host = document.querySelector("[data-topbar]");
     if (!host) return;
-    if (!document.querySelector('link[rel="icon"]')) {
-      const fav = document.createElement("link");
-      fav.rel = "icon";
-      fav.href = ASSETS + "envoy-mark.svg";
-      document.head.appendChild(fav);
-    }
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
       <a class="brand" href="portfolio.html" title="Envoy">${BRAND}</a>
@@ -595,6 +597,7 @@
   };
 
   document.addEventListener("DOMContentLoaded", () => {
+    ensureFavicon();
     mountTopbar(); mountPlannerShell(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail(); wireBoards();
     window.dispatchEvent(new Event("envoy:ready"));
   });

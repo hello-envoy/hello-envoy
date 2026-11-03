@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Envoy — Meet your planning partner</title>
+<link rel="icon" type="image/svg+xml" href="../assets/envoy-mark.svg">
 <meta name="description" content="Wedding planning software for planners — vendor threads, couple portal, budget, and day-of in one calm workspace. Open the demo free.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Envoy — Meet your planning partner">
@@ -627,7 +628,9 @@ html{-webkit-text-size-adjust:100%}
 
 /* ---------- top ---------- */
 .vm .top{padding:var(--inset-top) 22px 0;overflow:hidden;position:relative}
-.vm .nav{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.vm .nav{display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;z-index:2}
+.vm .m-brand{flex:1;display:flex;justify-content:center;min-width:0}
+.vm .m-brand .brand-wordmark{height:22px;width:auto;max-width:min(140px,42vw);display:block}
 .vm .menu-btn{width:38px;height:32px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line-2);
   display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px}
 .vm .menu-btn:hover{background:var(--indigo-50)}
@@ -962,6 +965,7 @@ body{margin:0}
   <header class="top">
     <div class="nav">
       <button class="menu-btn" id="m-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="m-menu"><i></i><i></i></button>
+      <a class="brand m-brand" href="#" aria-label="Envoy home"><img class="brand-wordmark" src="../assets/envoy-wordmark.svg" height="22" width="84" alt="Envoy" /></a>
       <a class="btn btn-chip btn-sm login" href="../app/portfolio.html">Open demo</a>
     </div>
     <div class="marquee" aria-hidden="true">

@@ -158,10 +158,10 @@
       <div class="card-body">
         <div class="budget-nums">
           <div><div class="k">Budgeted</div><div class="v num">$120k</div></div>
-          <div><div class="k">Spent</div><div class="v num">$80.0k</div></div>
-          <div><div class="k">Remaining</div><div class="v num accent">$40.0k</div></div>
+          <div><div class="k">Spent</div><div class="v num">$80.6k</div></div>
+          <div><div class="k">Remaining</div><div class="v num accent">$39.4k</div></div>
         </div>
-        <div class="bar bar-lg" title="Spent $80,000 of $120,000 budgeted">
+        <div class="bar bar-lg" title="Spent $80,600 of $120,000 budgeted">
           <i style="width:28.3%"></i><i class="c2" style="width:22%"></i><i class="c3" style="width:7%"></i><i class="c4" style="width:9.5%"></i><i class="rest" style="flex:1"></i>
         </div>
         <button type="button" class="btn btn-ghost btn-sm mt-4" id="donut-toggle" aria-pressed="false">Show donut breakdown</button>
@@ -298,8 +298,10 @@ window.addEventListener("envoy:ready", () => {
     <div class="mtl-labels">${M.map((m, i) => `<div class="mtl-lab" style="left:${pos2(m[2])}%"><b>${m[0]}</b><span>${m[1]}</span></div>`).join("")}</div>`;
   document.querySelector(".mtl-labels").style.height = "48px";
 
-  if (w === "em") {
-    const { totals } = budgetSankeyData();
+  {
+    const { totals } = w === "em" ? budgetSankeyData() : {
+      totals: { budget: slice.budget, spent: slice.spent, remaining: slice.budget - slice.spent, booked: slice.booked },
+    };
     const pctSpent = Math.round((totals.spent / totals.budget) * 100);
     document.querySelectorAll(".budget-nums .v.num").forEach((el, i) => {
       const vals = [budgetFmtK(totals.budget), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
@@ -309,10 +311,12 @@ window.addEventListener("envoy:ready", () => {
     if (bar) bar.title = `Spent ${budgetFmtK(totals.spent)} of ${budgetFmtK(totals.budget)} budgeted`;
     const dc = document.querySelector(".donut-center b.num");
     if (dc) dc.textContent = pctSpent + "%";
-    document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
-      const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
-      if (vals[i]) el.textContent = vals[i];
-    });
+    if (w === "em") {
+      document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
+        const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
+        if (vals[i]) el.textContent = vals[i];
+      });
+    }
   }
   mountBudgetSankey(document.getElementById("sankey-el"), document.getElementById("sankey-legend"));
 
