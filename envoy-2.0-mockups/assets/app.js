@@ -182,7 +182,7 @@
       const s = byId[l.source], t = byId[l.target], w = l.value * k;
       const sx = s.x + opt.nodeW, tx = t.x, sy = s.y + s.so, ty = t.y + t.to; s.so += w; t.to += w;
       const mx = (sx + tx) / 2, col = l.color || t.color || css("--chart-4");
-      svg += `<path class="link" d="M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}L${tx},${ty + w}C${mx},${ty + w} ${mx},${sy + w} ${sx},${sy + w}Z" fill="${col}" opacity="${l.opacity || 0.28}"><title>${s.label} → ${t.label}: ${opt.fmt(l.value)}</title></path>`;
+      svg += `<path class="link" d="M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}L${tx},${ty + w}C${mx},${ty + w} ${mx},${sy + w} ${sx},${sy + w}Z" fill="${col}" opacity="${l.opacity || 0.42}"><title>${s.label} → ${t.label}: ${opt.fmt(l.value)}</title></path>`;
     });
     data.nodes.forEach((n) => {
       const v = Math.max(n.inV, n.outV);

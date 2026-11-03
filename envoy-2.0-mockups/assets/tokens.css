@@ -96,7 +96,7 @@
 
   /* charts: monochrome ink + indigo ramp, remainder = line */
   --chart-1: var(--ink);       --chart-2: var(--indigo-600); --chart-3: var(--indigo-300);
-  --chart-4: var(--line-3);    --chart-5: var(--indigo-100); --chart-6: var(--line-2);
+  --chart-4: var(--indigo-200);    --chart-5: var(--indigo-100); --chart-6: var(--line-2);
   --chart-7: var(--biz);       --chart-8: var(--line);
 
   --font-display: var(--f); --font-sans: var(--f);

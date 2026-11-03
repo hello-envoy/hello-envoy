@@ -198,4 +198,11 @@ The "Linen" notes in the sections above are history. Where they conflict with th
 - **`design-system/index.html`**: a living page generated from system.css. It shows swatches with contrast, the ramp, type, spacing, the buttons from 07-buttons, the on-dark variants, kit parts, and the check.mjs rules.
 - **`index.html`, `VISION.md`, `DEMO-WALKTHROUGH.md`**: now credit envoy-redesign.
 - **Verified**: served with `python3 -m http.server` and screenshotted in headless Chrome at 1440px into `screenshots/`. No 404s.
-- **Known gap**: the moodboard swatches on the couple portal (florist A/B) were remapped to indigo and greys. They were meant to suggest real flower colours, so they should become photos.
+## Finish pass (Nov 2, 2026)
+
+- **Couple portal florist A/B**: the indigo and grey swatches are now soft gradient tiles that look like photos (roses and apricot with greenery for A; white peonies, candlelight and deep greens for B). These tones belong to the image content and aren't brand colours. They're never the only cue: each moodboard has `role="img"` with descriptive alt text and a visible caption.
+- **Landing links**: an "Open the demo →" chip goes to `../app/overview.html`. "Log in" goes to the portfolio on desktop and the Overview on mobile. "Start a project" in the footer goes to the Overview. The pricing and business CTAs go to `waitlist.html`, and the footer now has a Waitlist link. The layout is unchanged.
+- **Status colours**: the redesign defines only `--error`. In the kit, ok is ink on wash, warn is indigo-700 on indigo-50, and info is muted on wash, and each status always carries a text label. `--risk-soft: #F8E7E6` (error at about 10% on white, used only as a background tint, never for text) is **the only colour the kit adds**.
+- **Sankey**: `--chart-4` is now indigo-200 (it was line-3), and the default link opacity went from 0.28 to 0.42, so the bands read better while staying ink and indigo.
+- **Hub**: shows the demo path. It links the landing page, the waitlist, the design system and all 11 app screens. Hover colour is indigo (it was clay).
+- **Checked**: every local href and src resolves (the only one that doesn't is favicon.ico). I re-took the hub, landing, couple-portal and overview screenshots in headless Chrome.
