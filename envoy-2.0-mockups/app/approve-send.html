@@ -69,6 +69,11 @@
   .ask-in { display: flex; gap: 8px; padding: 12px var(--s-6); border-top: 1px solid var(--line); }
   .applied .apply-row { display: none !important; }
   .applied .applied-note { display: flex !important; }
+  .scope-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .scope-list li label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--text-sm); color: var(--ink-2); cursor: pointer; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+  .scope-list li label span b { display: block; color: var(--ink); font-weight: 500; }
+  .scope-list li label span em { display: block; font-style: normal; font-size: var(--text-xs); color: var(--ink-3); margin-top: 2px; }
+  .guard.is-autosend { background: var(--warn-soft); border-top-color: var(--clay-3); }
 </style>
 </head>
 <body data-shell="planner" data-page="approve">
@@ -122,7 +127,7 @@
       </div>
       <div class="body" id="body" contenteditable="true" spellcheck="true" aria-label="Email body"></div>
       <div class="attachments" id="att"></div>
-      <div class="guard"><span class="lock"><i data-i="lock" data-s="15"></i></span><span><b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.</span></div>
+      <div class="guard" id="send-guard"><span class="lock"><i data-i="lock" data-s="15"></i></span><span id="guard-copy"><b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.</span></div>
       <div class="actions">
         <span class="faint" style="font-size:var(--text-sm)">Read their note above, then approve once.</span>
         <span class="spacer"></span>
@@ -153,6 +158,19 @@
           <input class="input" placeholder="Make it warmer, shorter, add the address…" aria-label="Ask Envoy about this draft">
           <button class="btn btn-secondary btn-icon" aria-label="Ask"><i data-i="arrowr" data-s="14"></i></button>
         </form>
+      </section>
+
+      <section class="card" id="autosend-card">
+        <div class="card-head"><h3>Auto-send</h3><span class="chip chip-outline" style="height:22px;font-size:10px">Demo · default off</span></div>
+        <div class="card-body" style="padding-top:0">
+          <p class="faint text-sm mb-3">Scopes control whether matching <em>future</em> drafts could send without a tap. This screen always needs <b>Approve &amp; send</b> — toggles only change demo settings.</p>
+          <ul class="scope-list" id="autosend-scopes">
+            <li><label><span><b>Account</b><em>All weddings on your Envoy account</em></span><input type="checkbox" class="toggle" data-scope="account" aria-label="Auto-send account"></label></li>
+            <li><label><span><b>Project</b><em>Elena &amp; Marcus · this wedding</em></span><input type="checkbox" class="toggle" data-scope="project" aria-label="Auto-send project"></label></li>
+            <li><label><span><b>Vendor type</b><em>Beauty / hair &amp; makeup</em></span><input type="checkbox" class="toggle" data-scope="vtype" aria-label="Auto-send vendor type"></label></li>
+            <li><label><span><b>Vendor</b><em id="autosend-vendor-label">Lowcountry Glam · this draft</em></span><input type="checkbox" class="toggle" data-scope="vendor" aria-label="Auto-send vendor"></label></li>
+          </ul>
+        </div>
       </section>
 
       <section class="card">
@@ -201,6 +219,17 @@ window.addEventListener("envoy:ready", () => {
   };
   const $ = (id) => document.getElementById(id);
   const comp = $("composer"), ask = $("ask"), send = $("send");
+  const guardCopy = $("guard-copy"), guardBar = $("send-guard");
+  const scopeLabels = { account: "Account", project: "Project", vtype: "Vendor type · Beauty", vendor: "Vendor" };
+  const scopeEls = [...document.querySelectorAll("#autosend-scopes [data-scope]")];
+  function anyAutoSendOn() { return scopeEls.some((s) => s.checked); }
+  function syncGuard() {
+    const on = anyAutoSendOn();
+    guardBar.classList.toggle("is-autosend", on);
+    guardCopy.innerHTML = on
+      ? "<b>This draft still needs Approve &amp; send.</b> Auto-send is on for some scopes (demo) — matching future drafts could skip your tap; nothing leaves from this screen until you approve."
+      : "<b>Won’t send until you approve.</b> Edit anything above — Envoy never sends on its own, and nothing is queued.";
+  }
   let cur = "glam", before = null;
   const sentState = {};
   function load(k) {
@@ -214,6 +243,7 @@ window.addEventListener("envoy:ready", () => {
     $("sugg-why").innerHTML = d.why.join("");
     $("checks").innerHTML = d.checks.map(([t, s]) => `<li><span class="${t}"><i data-i="${t === "ok" ? "checkc" : "alert"}" data-s="15"></i></span><span>${s}</span></li>`).join("");
     $("quote").textContent = d.quote; $("q-when").textContent = d.when;
+    $("autosend-vendor-label").textContent = `${d.who.split(" at ")[1] || d.who} · this draft`;
     ask.classList.remove("applied"); ask.style.display = "";
     comp.classList.toggle("is-sent", !!sentState[k]); $("sent").classList.toggle("on", !!sentState[k]);
     $("body").contentEditable = !sentState[k];
@@ -256,6 +286,15 @@ window.addEventListener("envoy:ready", () => {
     st.className = `state status ${d.toCls} sm`; st.textContent = d.toSt;
     sentState[cur] = true;
   });
+  scopeEls.forEach((el) => el.addEventListener("change", () => {
+    const key = el.dataset.scope;
+    const name = key === "vendor" ? (D[cur]?.who?.split(" at ")[1] || D[cur]?.who || "Vendor") : scopeLabels[key];
+    Envoy.toast(el.checked
+      ? `Auto-send demo ON · <b>${name}</b> — this draft still waits for Approve &amp; send`
+      : `Auto-send OFF · <b>${name}</b>`);
+    syncGuard();
+  }));
+  syncGuard();
   load(new URLSearchParams(location.search).get("to") === "wild" ? "wild" : "glam");
 });
 </script>

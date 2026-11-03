@@ -55,6 +55,12 @@
   .ledger li { display: grid; grid-template-columns: 88px 1fr auto; gap: 12px; align-items: baseline; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); font-size: var(--text-sm); }
   .ledger .when { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
   .ledger .tag { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+  .aa-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin-top: 8px; }
+  @media (max-width: 720px) { .aa-grid { grid-template-columns: 1fr; } }
+  .aa-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-sm); color: var(--ink-2); padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .aa-row:last-child { border-bottom: 0; }
+  .aa-row b { color: var(--ink); font-weight: 500; }
+  .aa-all { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--paper-2); font-size: var(--text-sm); margin-bottom: 12px; }
 </style>
 </head>
 <body data-shell="planner" data-page="decisions">
@@ -73,22 +79,45 @@
     </div>
   </header>
 
+  <section class="card mb-6" id="auto-approve" aria-label="Auto-approve insights">
+    <div class="card-head"><h3>Auto-approve insights</h3><span class="faint text-sm">Demo scopes · default off</span></div>
+    <div class="card-body" style="padding-top:0">
+      <label class="aa-all"><span><b>Auto-approve all</b> — every new insight becomes a decision row without a tap</span><input type="checkbox" class="toggle" id="aa-all" aria-label="Auto-approve all insights"></label>
+      <div class="aa-grid">
+        <div>
+          <div class="eyebrow mb-1">By insight type</div>
+          <div class="aa-row"><span><b>Timing</b> · vendor gaps</span><input type="checkbox" class="toggle" data-aa="type-timing"></div>
+          <div class="aa-row"><span><b>Hold</b> · dates &amp; blocks</span><input type="checkbox" class="toggle" data-aa="type-hold"></div>
+          <div class="aa-row"><span><b>Weather</b> · rain / tent</span><input type="checkbox" class="toggle" data-aa="type-weather"></div>
+        </div>
+        <div>
+          <div class="eyebrow mb-1">By scope</div>
+          <div class="aa-row"><span><b>Account</b> · all weddings</span><input type="checkbox" class="toggle" data-aa="scope-account"></div>
+          <div class="aa-row"><span><b>Project</b> · Elena &amp; Marcus</span><input type="checkbox" class="toggle" data-aa="scope-project"></div>
+          <div class="aa-row"><span><b>Vendor type</b> · Hotel block</span><input type="checkbox" class="toggle" data-aa="vtype-hotel"></div>
+          <div class="aa-row"><span><b>Vendor</b> · Harborline Hotel</span><input type="checkbox" class="toggle" data-aa="vendor-harborline"></div>
+        </div>
+      </div>
+      <p class="faint text-sm mt-3" id="aa-note">All scopes off — use <b>Add as decision</b> on each card below (you still approve what couples see).</p>
+    </div>
+  </section>
+
   <section aria-label="Insights">
     <div class="eyebrow" style="margin-bottom:var(--s-3)">Noticed this week · turn one into a decision</div>
     <div class="insights" id="insights">
-      <article class="card ins" data-ins="0">
+      <article class="card ins" data-ins="0" data-ins-type="timing">
         <div class="k"><i data-i="clock" data-s="12"></i>Timing</div>
         <div class="t">Videographer is the last open vendor</div>
         <div class="d">October dates in Charleston fill by January. Two shortlisted studios have Oct 16 open today.</div>
         <div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></div>
       </article>
-      <article class="card ins" data-ins="1">
+      <article class="card ins" data-ins="1" data-ins-type="hold" data-ins-vendor="harborline">
         <div class="k"><i data-i="cal" data-s="12"></i>Hold</div>
         <div class="t">Harborline room block releases Oct 8–10 hold</div>
         <div class="d">The 20-room courtesy hold lapses Dec 15 unless the couple confirms a count.</div>
         <div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></div>
       </article>
-      <article class="card ins" data-ins="2">
+      <article class="card ins" data-ins="2" data-ins-type="weather">
         <div class="k"><i data-i="globe" data-s="12"></i>Weather</div>
         <div class="t">Mid-October rain odds are 1 in 4</div>
         <div class="d">Tent hold with Coastal Tents is soft. A firm hold costs $600, refundable to Sep 1.</div>
@@ -218,7 +247,57 @@ window.addEventListener("envoy:ready", () => {
     { d: "Harborline room block", a: "Confirm 20 rooms", b: "Release the hold", o: "Couple", s: "couple", due: "Dec 15", v: false },
     { d: "Firm tent hold ($600)", a: "Hold now", b: "Wait to Sep 1", o: "Couple", s: "open", due: "Jan 15", v: false },
   ];
+  const aaNote = $("aa-note");
+  const aaAll = $("aa-all");
+  const aaToggles = [...document.querySelectorAll("[data-aa]")];
+  function aaScopeOn() { return aaAll.checked || aaToggles.some((t) => t.checked); }
+  function syncAaNote() {
+    aaNote.innerHTML = aaAll.checked
+      ? "Auto-approve all is on (demo) — new insights would become decision rows automatically; past ledger unchanged."
+      : aaScopeOn()
+        ? "Some auto-approve scopes are on (demo) — matching insights can skip Add as decision; you still control Shared/Private per row."
+        : "All scopes off — use <b>Add as decision</b> on each card below (you still approve what couples see).";
+  }
+  function insightAutoApproved(card) {
+    if (aaAll.checked) return true;
+    const t = card.dataset.insType;
+    if (t === "timing" && document.querySelector('[data-aa="type-timing"]')?.checked) return true;
+    if (t === "hold" && document.querySelector('[data-aa="type-hold"]')?.checked) return true;
+    if (t === "weather" && document.querySelector('[data-aa="type-weather"]')?.checked) return true;
+    if (document.querySelector('[data-aa="scope-account"]')?.checked) return true;
+    if (document.querySelector('[data-aa="scope-project"]')?.checked) return true;
+    if (t === "hold" && document.querySelector('[data-aa="vtype-hotel"]')?.checked) return true;
+    if (card.dataset.insVendor === "harborline" && document.querySelector('[data-aa="vendor-harborline"]')?.checked) return true;
+    return false;
+  }
+  function wireInsightCard(card) {
+    const btn = card.querySelector("button");
+    if (!btn || btn.disabled) return;
+    if (insightAutoApproved(card)) {
+      addRow({ ...INS[+card.dataset.ins] });
+      card.classList.add("added");
+      btn.disabled = true;
+      btn.innerHTML = Envoy.icon("check", 13) + " Auto-approved";
+      Envoy.toast("Insight auto-approved (demo) · added to Open decisions");
+    }
+  }
+  aaAll.addEventListener("change", () => {
+    if (aaAll.checked) aaToggles.forEach((t) => { t.checked = true; });
+    else aaToggles.forEach((t) => { t.checked = false; });
+    Envoy.toast(aaAll.checked ? "Auto-approve all ON (demo)" : "Auto-approve all OFF");
+    syncAaNote();
+    document.querySelectorAll(".ins:not(.added)").forEach(wireInsightCard);
+  });
+  aaToggles.forEach((el) => el.addEventListener("change", () => {
+    if (!el.checked) aaAll.checked = false;
+    else if (aaToggles.every((t) => t.checked)) aaAll.checked = true;
+    Envoy.toast(el.checked ? `Auto-approve ON · ${el.closest(".aa-row")?.querySelector("b")?.textContent || "scope"}` : "Auto-approve scope OFF");
+    syncAaNote();
+    document.querySelectorAll(".ins:not(.added)").forEach(wireInsightCard);
+  }));
+  syncAaNote();
   document.querySelectorAll(".ins").forEach((card) => card.querySelector("button").addEventListener("click", (e) => {
+    if (card.classList.contains("added")) return;
     addRow({ ...INS[+card.dataset.ins] });
     card.classList.add("added"); e.currentTarget.disabled = true; e.currentTarget.innerHTML = Envoy.icon("check", 13) + " Added";
     Envoy.toast("Added to Open decisions");
