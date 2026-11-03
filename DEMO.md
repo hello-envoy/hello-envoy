@@ -1,6 +1,6 @@
 # Envoy 2.0 demo
 
-Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, including round-2 polish, round-3 ideas, and the round-4 day-of and share-update pages, is `envoy-2.0-mockups/STEPS.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of the core pages are in `envoy-2.0-mockups/screenshots/`.
+Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, through round 5, is `envoy-2.0-mockups/STEPS.md`. The product map is `envoy-2.0-mockups/VISION.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of the core pages are in `envoy-2.0-mockups/screenshots/`.
 
 ## Run locally
 
@@ -31,6 +31,10 @@ Ideas · round 4, same index, **More** menu, and demo rail:
 - [Day-of packet](http://localhost:5174/app/day-of.html) — run of show, call times, rain plan, print
 - [Share update](http://localhost:5174/app/share-update.html) — visibility toggles, couple preview, never-shared list
 
+Ideas · round 5, also in **More** and the demo rail:
+
+- [Vendor compare](http://localhost:5174/app/vendor-compare.html) — Heron & Fern, Marlowe, and Bloom Theory. Contacts → Compare links here with “Open full compare →”.
+
 Stop the server with Ctrl+C.
 
 The pages are plain HTML, CSS, and one script. `file://` works too: open `envoy-2.0-mockups/index.html`. Google Fonts and Chart.js load from the network. The Sankey is SVG and still draws offline.
@@ -43,4 +47,4 @@ Elena & Marcus · Saturday, October 16, 2027 · The Ashby Estate, Charleston · 
 
 ## Demo rail
 
-The rail in the bottom-right of the app pages walks the story in `STEPS.md`: attach three vendors, needs attention, florist radar and A/B, the couple picks A, then Log deposit paid moves milestones from 5 to 6 of 12. Under that, **Ideas · rounds 3–4** links All weddings, Approve & send, Decisions, the day-of packet, and Share update.
+The rail in the bottom-right of the app pages walks the story in `STEPS.md`: attach three vendors, needs attention, florist radar and A/B, the couple picks A, then Log deposit paid moves milestones from 5 to 6 of 12. Under that, **Ideas · rounds 3–5** also links Vendor compare.

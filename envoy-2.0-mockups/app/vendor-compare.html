@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare florists · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .vc { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); }
+  .vcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); position: relative; }
+  .vcard.lean { border-color: var(--ink); }
+  .vcard .top { display: flex; gap: 12px; align-items: center; }
+  .vcard .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .vcard h3 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 28px; letter-spacing: -0.01em; }
+  .vcard .who { color: var(--ink-3); font-size: var(--text-sm); }
+  .vcard .price { font-family: var(--font-display); font-size: 32px; line-height: 36px; font-variant-numeric: lining-nums; }
+  .vcard .price small { font-family: var(--font-sans); font-size: var(--text-sm); color: var(--ink-3); margin-left: 6px; }
+  .vcard dl { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; font-size: var(--text-sm); margin: 0; }
+  .vcard dt { color: var(--ink-3); } .vcard dd { margin: 0; color: var(--ink-2); }
+  .vcard .acts { display: flex; gap: 6px; flex-wrap: nowrap; margin-top: auto; padding-top: var(--s-4); border-top: 1px solid var(--line); }
+  .vcard .tag { position: absolute; top: -10px; left: var(--s-6); background: var(--ink); color: var(--paper); font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+  .vcard .pref-on { color: var(--clay); }
+  .lower { display: grid; grid-template-columns: 5fr 7fr; gap: var(--s-4); margin-top: var(--s-6); }
+  .legend { display: flex; gap: 14px; font-size: var(--text-sm); color: var(--ink-2); }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .axes { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: var(--text-sm); color: var(--ink-2); }
+  .axes b { color: var(--ink); font-weight: 500; }
+  .why h2 { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 34px; letter-spacing: -0.01em; }
+  .why h2 em { color: var(--clay); font-style: italic; }
+  .why ul { margin: var(--s-4) 0 0; padding-left: 18px; color: var(--ink-2); line-height: 1.7; }
+  .why .but { margin-top: var(--s-4); padding: 12px 14px; background: var(--paper-2); border-radius: var(--r-md); font-size: var(--text-sm); color: var(--ink-2); }
+  .why .row { display: flex; gap: 8px; margin-top: var(--s-6); flex-wrap: wrap; }
+  .src { font-size: var(--text-xs); color: var(--ink-3); margin-top: var(--s-4); }
+</style>
+</head>
+<body data-page="contacts">
+<div data-topbar></div>
+<main class="page">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Elena &amp; Marcus · Contacts · Compare</div>
+      <h1>Compare florists</h1>
+      <div class="meta"><span><i data-i="flower" data-s="14"></i>3 florists open for Oct 16</span><span><i data-i="clock" data-s="14"></i>Couple picks by Nov 9</span></div>
+    </div>
+    <a class="btn btn-ghost" href="contacts.html#compare"><i data-i="users" data-s="14"></i>Back to contacts</a>
+  </div>
+
+  <div class="vc" id="cards"></div>
+
+  <div class="lower">
+    <section class="card">
+      <div class="card-head"><h3>Fit profile</h3><div class="legend" id="legend"></div></div>
+      <div class="card-body">
+        <div style="height:300px"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
+        <ul class="axes" style="margin-top:var(--s-4)">
+          <li><b>Price fit</b>: how close the quote is to the $11,000 floral line</li>
+          <li><b>Style</b>: how well it matches the couple's board (garden, loose, white and green)</li>
+          <li><b>Date</b>: whether Oct 16 is confirmed open</li>
+          <li><b>Replies</b>: how fast and clear they answer you</li>
+          <li><b>Package</b>: what's included: arch, centerpieces, install and strike</li>
+          <li><b>Track record</b>: weddings done with you, how the day went</li>
+        </ul>
+      </div>
+    </section>
+    <section class="card why">
+      <div class="card-body card-pad">
+        <div class="eyebrow">Your read</div>
+        <h2 id="lean-h">You’re leaning <em>Heron &amp; Fern</em> because…</h2>
+        <ul id="lean-why"></ul>
+        <div class="but" id="lean-but"></div>
+        <div class="row">
+          <a class="btn btn-primary" href="share-update.html"><i data-i="share" data-s="14"></i>Send A/B to couple</a>
+          <button class="btn btn-secondary" data-toast="Saved your read · only you see it">Save my read</button>
+        </div>
+        <div class="src"><i data-i="note" data-s="12"></i> From proposals (Oct 22–28), reply times in your inbox, and your notes. The couple never sees scores.</div>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { css } = Envoy;
+  const V = [
+    { k: "hf", n: "Heron & Fern Florals", who: "Ines Calder · Charleston", c: css("--chart-1"), p: "$10,800", note: "within budget",
+      s: [8, 9.5, 9, 9.5, 8, 9], date: "Open · confirmed Oct 24", reply: "about 4 hrs", pkg: "Arch, 14 centerpieces, personals", rec: "6 weddings with you",
+      why: ["Closest to the couple's garden board, loose and white-green", "Replies within a morning, every time", "Six weddings with you, no day-of surprises"],
+      but: "<b>Watch:</b> strike isn't included. Ask for the add-on (~$600) before booking." },
+    { k: "mf", n: "Marlowe Flower Co.", who: "Theo Marlowe · Mt Pleasant", c: css("--chart-2"), p: "$12,400", note: "$1,400 over",
+      s: [6, 8.5, 9, 6, 9.5, 8], date: "Open · confirmed Oct 27", reply: "about 1.5 days", pkg: "Full install + strike, 16 centerpieces", rec: "1 wedding with you",
+      why: ["The fullest package: install and strike handled", "Strong, editorial style the couple liked on Instagram", "Date confirmed in writing"],
+      but: "<b>Watch:</b> $1,400 over the floral line and slower replies. Fine if the couple loves the look." },
+    { k: "bt", n: "Bloom Theory", who: "Ari Bloom · West Ashley", c: css("--chart-4"), p: "$8,900", note: "$2,100 under",
+      s: [9.5, 7, 5.5, 5, 6.5, 7], date: "Tentative · holding for another couple", reply: "about 2 days", pkg: "Personals + 12 centerpieces", rec: "New to you",
+      why: ["Lowest quote by a wide margin", "Pretty personals work", "Would free $2,100 for the band"],
+      but: "<b>Watch:</b> Oct 16 isn't confirmed and there's no arch. Book only if the date firms up." },
+  ];
+  let lean = "hf", pref = new Set(["hf"]), booked = null;
+  const AX = ["Price fit", "Style", "Date", "Replies", "Package", "Track record"];
+  function render() {
+    document.getElementById("cards").innerHTML = V.map((v) => `
+      <article class="vcard ${v.k === lean ? "lean" : ""}" data-k="${v.k}">
+        ${v.k === lean ? `<span class="tag">Your lean</span>` : ""}
+        <div class="top"><span class="sw" style="background:${v.c}"></span><div><h3>${v.n.replace("&", "&amp;")}</h3><div class="who">${v.who}</div></div>
+          ${pref.has(v.k) ? `<span class="pref-on" style="margin-left:auto" title="Preferred"><i data-i="star" data-s="16"></i></span>` : ""}</div>
+        <div class="price">${v.p}<small>${v.note}</small></div>
+        <dl><dt>Oct 16</dt><dd>${v.date}</dd><dt>Replies in</dt><dd>${v.reply}</dd><dt>Package</dt><dd>${v.pkg}</dd><dt>History</dt><dd>${v.rec}</dd></dl>
+        <div class="acts">
+          <a class="btn btn-secondary btn-sm" href="contacts.html#draft" data-act="draft"><i data-i="mail" data-s="13"></i>Draft inquiry</a>
+          <button class="btn btn-ghost btn-sm" data-act="pref"><i data-i="star" data-s="13"></i>${pref.has(v.k) ? "Preferred" : "Mark preferred"}</button>
+          <button class="btn ${booked === v.k ? "btn-secondary" : "btn-primary"} btn-sm" data-act="book" ${booked && booked !== v.k ? "disabled" : ""}><i data-i="check" data-s="13"></i>${booked === v.k ? "Drafted" : "Book"}</button>
+        </div>
+      </article>`).join("");
+    const L = V.find((v) => v.k === lean);
+    document.getElementById("lean-h").innerHTML = `You’re leaning <em>${L.n.replace("&", "&amp;")}</em> because…`;
+    document.getElementById("lean-why").innerHTML = L.why.map((w) => `<li>${w}</li>`).join("");
+    document.getElementById("lean-but").innerHTML = L.but;
+    Envoy.hydrateIcons(document.getElementById("cards"));
+  }
+  document.getElementById("cards").addEventListener("click", (e) => {
+    const card = e.target.closest(".vcard"); if (!card) return;
+    const b = e.target.closest("[data-act]"); const k = card.dataset.k, v = V.find((x) => x.k === k);
+    if (!b) { lean = k; render(); return; }
+    if (b.dataset.act === "draft") return;
+    if (b.dataset.act === "pref") { pref.has(k) ? pref.delete(k) : pref.add(k); lean = k; Envoy.toast(pref.has(k) ? `${v.n} marked preferred · shows first in Contacts` : `${v.n} no longer preferred`); }
+    if (b.dataset.act === "book") { booked = k; lean = k; Envoy.toast(`Booking note to ${v.n} is in Approve & send · nothing sent yet`); }
+    render();
+  });
+  document.getElementById("legend").innerHTML = V.map((v) => `<span><i style="background:${v.c}"></i>${v.n.split(" ")[0]}</span>`).join("");
+  const hexA = (h, a) => h + Math.round(a * 255).toString(16).padStart(2, "0");
+  if (window.Chart) new Chart(document.getElementById("radar"), {
+    type: "radar",
+    data: { labels: AX, datasets: V.map((v, i) => ({ label: v.n, data: v.s, borderColor: v.c, backgroundColor: hexA(v.c, i === 0 ? .10 : .06), borderWidth: i === 0 ? 2 : 1.5, pointRadius: 2.5, pointBackgroundColor: v.c, borderDash: i === 2 ? [4, 3] : [] })) },
+    options: { maintainAspectRatio: false, scales: { r: { min: 0, max: 10, ticks: { display: false, stepSize: 2.5 }, grid: { color: css("--line") }, angleLines: { color: css("--line") }, pointLabels: { color: css("--ink-2"), font: { size: 12, weight: 500 } } } } }
+  });
+  render();
+});
+</script>
+</body>
+</html>

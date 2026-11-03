@@ -156,3 +156,12 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
 |---|---|
 | `app/day-of.html` | Day-of packet, printable |
 | `app/share-update.html` | Share-update composer + portal preview |
+
+## Round 5: Vendor compare (local only, no git)
+
+- **`app/vendor-compare.html`** compares Elena & Marcus's three florists: Heron & Fern Florals, Marlowe Flower Co. and Bloom Theory.
+  - Side-by-side cards show price vs. budget, Oct 16 availability, reply time, package and history.
+  - The existing Contacts radar is reused with plain axes (Price fit, Style, Date, Replies, Package, Track record), each explained in one line.
+  - "You're leaning X because…" lists reasons and one honest "Watch" caveat. Clicking a card changes the lean.
+  - CTAs: Draft inquiry, Mark preferred, Book (it drafts into Approve & send and never sends) and Send A/B to couple (goes to Share update).
+- Linked from Contacts → Compare ("Open full compare →"), index "Ideas · round 5", the topbar More menu, and the demo rail. VISION.md IA table gained one row.
