@@ -74,6 +74,11 @@
   .note-card .l { padding: 16px 20px; }
   .note-card .r { padding: 16px 20px; background: var(--paper-2); border-left: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-2); line-height: 1.45; }
   .cp-foot { flex: none; font-size: var(--text-xs); color: var(--ink-3); display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--line); margin-top: 4px; }
+  .task-detail { margin-top: 12px; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--paper-2); display: none; }
+  .task-detail.show { display: block; }
+  .donut-wrap { position: relative; max-width: 280px; margin: 0 auto; }
+  .donut-wrap.hidden { display: none; }
+  .donut-center { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
   #sankey.cp-budget .sk-title { font-size: 22px; line-height: 28px; }
   #sankey.cp-budget .sk-sub { font-size: var(--text-sm); }
   #sankey.cp-budget .sk-nums .v { font-size: 20px; line-height: 24px; }
@@ -91,7 +96,7 @@
 <div class="preview"><div class="in"><i data-i="eye" data-s="14"></i><span>Previewing what <b>Elena &amp; Marcus</b> see. Drafts, vendor threads, risks, and other clients are never shown here.</span><a href="overview.html" style="margin-left:auto">← Back to planner view</a></div></div>
 
 <header class="phead">
-  <a class="brand" href="#" style="text-decoration:none"><svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21.5 6.5 12 21 2.5 6.5 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c3.4 1.6 6.6 1.6 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="brand-word">Envoy</span></a>
+  <a class="brand" href="#" style="text-decoration:none"><img class="brand-wordmark" src="../assets/envoy-wordmark.svg" height="26" width="98" alt="Envoy" /></a>
   <div class="by"><span>Planned with</span><span class="av av-ink">SW</span><span><b style="color:var(--ink)">Sarah Whitfield</b> · Whitfield &amp; Co.</span></div>
 </header>
 
@@ -138,10 +143,9 @@
           </div>
           <p class="faint text-sm mt-2" id="ab-foot">Tap one — change your mind until Sarah sends the inquiry.</p>
         </div>
-        <ul class="task-list" id="your-tasks">
-          <li id="task-florist"><div><div style="font-weight:500">Pick florist A or B</div><div class="meta">Due Monday, Nov 9</div></div><span class="faint text-sm">↑ above</span></li>
-          <li id="task-deposit"><div><div style="font-weight:500">Pay catering deposit · $7,920</div><div class="meta">Due Fri, Nov 6 · Wildflour</div></div><button class="btn btn-secondary btn-sm" id="mark-paid">Mark as paid</button></li>
-        </ul>
+        <div class="row-between mb-2"><span class="eyebrow">Open tasks</span><button type="button" class="btn btn-link btn-sm" id="view-all-tasks">View all tasks</button></div>
+        <ul class="task-list" id="your-tasks"></ul>
+        <div class="task-detail" id="task-detail" aria-live="polite"></div>
         <div class="task-timeline" aria-label="Tasks over time">
           <div class="faint text-xs" style="text-transform:uppercase;letter-spacing:.08em">Coming up</div>
           <div><span>Share must-haves &amp; style</span><span class="faint">Nov 9</span></div>
@@ -161,7 +165,11 @@
             </div>
             <div class="sk-nums"><div><span class="k">Booked</span><span class="v num">$79.6k</span></div><div><span class="k">Spent</span><span class="v num">$80.6k</span><span class="faint text-xs">Catering over line</span></div><div><span class="k">Remaining</span><span class="v num accent">$39.4k</span></div></div>
           </div>
-          <div class="card-body" style="padding:0"><div id="sankey-el" style="width:100%"></div>
+          <div class="card-body" style="padding:0">
+            <button type="button" class="btn btn-ghost btn-sm mt-2" id="donut-toggle" aria-pressed="false">Show donut breakdown</button>
+            <div class="donut-wrap mt-3 hidden" id="donut-wrap"><canvas id="donut" aria-label="Budget by category"></canvas><div class="donut-center"><div><b class="num">67%</b><span class="faint text-sm">spent</span></div></div></div>
+            <div id="budget-sources"></div>
+            <div id="sankey-el" style="width:100%;margin-top:12px"></div>
             <ul class="sk-legend mt-2" id="sankey-legend"></ul>
             <p class="faint text-sm mt-2">Same view Sarah sees on Overview — your florist pick fits either way.</p></div>
         </section>
@@ -224,34 +232,64 @@
   <footer class="cp-foot"><span>Private to Elena, Marcus &amp; Sarah</span><span>Envoy couple portal</span></footer>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { toast, budgetSankeyData, mountBudgetSankey, budgetFmtK } = Envoy;
+  const { toast, budgetSankeyData, mountBudgetSankey, budgetFmtK, BUDGET_CATS, css, COUPLE_TASKS, budgetCategorySourcesHtml, wireBudgetDonutToggle } = Envoy;
   const tabBtn = (name) => document.querySelector('[data-tabs="#cp-panels"] [data-tab="' + name + '"]');
   const goTab = (name) => { const b = tabBtn(name); if (b) b.click(); };
 
-  const left = new Set(["florals", "deposit"]);
+  const openTasks = new Set(COUPLE_TASKS.map((t) => t.id));
   const syncLeft = () => {
-    const n = left.size;
     const el = document.getElementById("dec-n");
-    if (el) el.textContent = n ? String(n) : "✓";
+    if (el) el.textContent = openTasks.size ? String(openTasks.size) : "✓";
   };
-  syncLeft();
+  const taskList = document.getElementById("your-tasks");
+  const detailEl = document.getElementById("task-detail");
+  let activeTask = null;
+  const renderTasks = () => {
+    taskList.innerHTML = COUPLE_TASKS.map((t) => {
+      const done = !openTasks.has(t.id);
+      const sub = t.type === "payment" ? `${t.due} · ${t.vendor}` : t.due;
+      return `<li data-task="${t.id}" class="${done ? "done" : ""}"><div><div style="font-weight:500">${t.title}${t.amount ? " · " + t.amount : ""}</div><div class="meta">${sub}</div></div><button type="button" class="btn btn-link btn-sm" data-open-task="${t.id}">${done ? "View" : "Details"}</button></li>`;
+    }).join("");
+  };
+  const showTaskDetail = (id) => {
+    const t = COUPLE_TASKS.find((x) => x.id === id);
+    if (!t) return;
+    activeTask = id;
+    const done = !openTasks.has(id);
+    detailEl.classList.add("show");
+    detailEl.innerHTML = `<div class="eyebrow">${t.milestone}</div><h3 style="margin:6px 0 8px;font-family:var(--font-display);font-weight:400;font-size:20px">${t.title}${t.amount ? " · " + t.amount : ""}</h3>
+      <p class="text-sm" style="color:var(--ink-2);margin:0 0 8px"><b>Due</b> ${t.due}</p>
+      <p class="text-sm" style="color:var(--ink-2);margin:0 0 8px"><b>Hold</b> ${t.hold}</p>
+      <p class="text-sm" style="color:var(--ink-2);margin:0 0 12px"><b>Assignees</b> ${t.assignees.join(" & ")}</p>
+      ${t.type === "ab" ? "<p class=\"faint text-sm\">Use the A/B cards above, then come back here to confirm.</p>" : ""}
+      ${t.type === "payment" && !done ? '<button type="button" class="btn btn-secondary btn-sm" id="mark-paid">Mark as paid</button>' : ""}
+      ${done && t.type === "payment" ? '<span class="chip chip-ok"><span class="dot"></span>Paid · Sarah confirms with Wildflour</span>' : ""}`;
+    detailEl.querySelector("#mark-paid")?.addEventListener("click", () => {
+      openTasks.delete(id); syncLeft(); renderTasks(); showTaskDetail(id);
+      toast("Marked as paid — Sarah will confirm with Wildflour");
+    });
+  };
+  taskList.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-open-task]"); if (!b) return;
+    showTaskDetail(b.dataset.openTask);
+  });
+  document.getElementById("view-all-tasks").onclick = () => {
+    detailEl.classList.add("show");
+    detailEl.innerHTML = `<div class="eyebrow">All tasks</div><ul class="task-list" style="margin-top:8px">${COUPLE_TASKS.map((t) =>
+      `<li><div><div style="font-weight:500">${t.title}</div><div class="meta">${t.hold}</div></div><button type="button" class="btn btn-link btn-sm" data-open-one="${t.id}">Open</button></li>`).join("")}</ul>`;
+    detailEl.querySelectorAll("[data-open-one]").forEach((btn) => btn.onclick = () => showTaskDetail(btn.dataset.openOne));
+  };
+  renderTasks(); syncLeft();
 
-  document.getElementById("mark-paid").onclick = () => {
-    left.delete("deposit"); syncLeft();
-    const row = document.getElementById("task-deposit");
-    row.classList.add("done");
-    row.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok"><span class="dot"></span>Paid</span><div class="micro">Sarah confirms with Wildflour.</div>';
-    toast("Marked as paid — Sarah will confirm with Wildflour");
-  };
   document.querySelectorAll(".opt").forEach((o) => o.addEventListener("click", () => {
     document.querySelectorAll(".opt").forEach((x) => { x.classList.toggle("is-picked", x === o); x.classList.toggle("is-other", x !== o); });
     document.getElementById("ab-foot").innerHTML = `<b style="color:var(--ink)">You picked ${o.dataset.pick}.</b> Sarah's been notified. <a href="#" class="btn-link" onclick="return false">Change</a>`;
-    left.delete("florals"); syncLeft();
-    const tf = document.getElementById("task-florist");
-    if (tf) { tf.classList.add("done"); tf.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok">Picked</span>'; }
+    openTasks.delete("florist-ab"); syncLeft(); renderTasks();
+    if (activeTask === "florist-ab") showTaskDetail("florist-ab");
     toast(`Picked <b>${o.dataset.pick}</b> — Sarah will take it from here`);
   }));
 
@@ -276,11 +314,26 @@ window.addEventListener("envoy:ready", () => {
     });
   });
 
+  document.getElementById("budget-sources").innerHTML = budgetCategorySourcesHtml();
   const { totals } = budgetSankeyData();
+  const pctSpent = Math.round((totals.spent / totals.budget) * 100);
   document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
     const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
     if (vals[i]) el.textContent = vals[i];
   });
+  const dc = document.querySelector("#sankey .donut-center b.num");
+  if (dc) dc.textContent = pctSpent + "%";
+  const COL = ["--chart-1","--chart-2","--chart-3","--chart-4","--chart-5","--chart-7","--chart-6","--chart-8"].map(css);
+  let donutChart = null;
+  const ensureDonut = () => {
+    if (donutChart || !window.Chart) return;
+    donutChart = new Chart(document.getElementById("donut"), {
+      type: "doughnut",
+      data: { labels: BUDGET_CATS.map(c => c[0]), datasets: [{ data: BUDGET_CATS.map(c => c[1]), backgroundColor: COL, borderColor: css("--surface"), borderWidth: 2, hoverOffset: 4 }] },
+      options: { cutout: "74%", plugins: { tooltip: { callbacks: { label: (x) => ` ${x.label}: $${x.raw.toLocaleString()} budgeted` } } } }
+    });
+  };
+  wireBudgetDonutToggle(document.getElementById("donut-toggle"), document.getElementById("donut-wrap"), document.getElementById("donut"), ensureDonut);
   let redrawSankey = null;
   const ensureSankey = () => {
     if (!redrawSankey) redrawSankey = mountBudgetSankey(document.getElementById("sankey-el"), document.getElementById("sankey-legend"));

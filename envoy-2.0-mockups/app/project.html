@@ -50,7 +50,8 @@
       <h1>Project</h1>
       <div class="meta"><span id="ms-count">5 of 12 milestones done</span><span class="faint">·</span><span id="meta-weeks">50 weeks out</span><span class="faint">·</span><span id="meta-checklist">14 checklist items this month</span></div>
     </div>
-    <div class="row">
+    <div class="row gap-2">
+      <a class="btn btn-ghost btn-sm" id="dayof-link" href="day-of.html"><i data-i="note" data-s="14"></i>Day-of packet</a>
       <button class="btn btn-secondary" data-toast="New milestone"><i data-i="layers"></i>Milestone</button>
       <button class="btn btn-primary" data-toast="New checklist item — assign Me, Couple, or Vendor"><i data-i="plus"></i>Checklist item</button>
     </div>
@@ -96,7 +97,6 @@
   <div class="row-between mt-8" style="border-bottom:1px solid var(--line)">
     <div class="tabs" data-tabs="#views" data-hash style="border:0">
       <button class="tab" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
-      <button class="tab" data-tab="board" aria-selected="false"><i data-i="board" data-s="15"></i>Board</button>
       <button class="tab" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
       <button class="tab" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
       <button class="tab hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
@@ -113,11 +113,6 @@
   </div>
 
   <div id="views" class="mt-6">
-    <!-- Board -->
-    <section data-panel="board" class="hide">
-      <div class="board" id="board"></div>
-    </section>
-
     <!-- This week -->
     <section data-panel="week">
       <div class="card">
@@ -163,6 +158,7 @@
 <script>
 window.addEventListener("envoy:ready", () => {
   const { icon, toast, hydrateIcons, weddingSlice, applyWeddingPageHead, withW } = Envoy;
+  const dayof = document.getElementById("dayof-link"); if (dayof) dayof.href = withW("day-of.html");
   const wId = new URLSearchParams(location.search).get("w") || "em";
   const wSlice = weddingSlice(wId);
   applyWeddingPageHead("Plan");
@@ -194,34 +190,7 @@ window.addEventListener("envoy:ready", () => {
   const drawSummary = () => sumEl.innerHTML = MS.map(m => `<span class="${m[1]}" title="${m[0]}">${m[0]}</span>`).join("");
   drawSummary();
 
-  // ---------- Board (checklist items) ----------
-  // title, milestone, owner, due, col
-  const ITEMS = [
-    ["Reply to Lowcountry Glam re: trial", "Attire & beauty", "me", "Nov 3", "next"],
-    ["Confirm hotel hold → Oct 15–17", "Hotel block", "me", "Nov 5", "next"],
-    ["Draft florist inquiries", "Choose florist", "me", "Nov 4", "next"],
-    ["Confirm chair count with Coastal", "Final numbers", "me", "Nov 6", "next"],
-    ["Pay catering deposit · $7,920", "Lock catering", "couple", "Nov 6", "motion"],
-    ["Pick florist A or B", "Choose florist", "couple", "Nov 9", "motion"],
-    ["Share must-haves & style words", "Choose florist", "couple", "Nov 9", "motion"],
-    ["Proposal from Marlowe", "Choose florist", "vendor", "Nov 7", "waiting"],
-    ["Block agreement from Harborline", "Hotel block", "vendor", "Nov 12", "waiting"],
-    ["Save-the-date proofs", "Save-the-dates", "vendor", "Nov 20", "waiting"],
-    ["Countersigned catering contract", "Lock catering", "vendor", "Nov 1", "done"],
-    ["Menu B approved", "Lock catering", "couple", "Oct 30", "done"],
-    ["Guest estimate → 128", "Guest estimate set", "couple", "Oct 30", "done"],
-  ];
-  const COLS = [["next", "Up next"], ["motion", "In motion"], ["waiting", "Waiting on others"], ["done", "Done"]];
   const OWN = { me: "Me", couple: "Couple", vendor: "Vendor" };
-  const AV = { me: '<span class="av av-sm av-ink">SW</span>', couple: '<span class="av av-sm av-clay">EM</span>', vendor: '<span class="av av-sm">V</span>' };
-  document.getElementById("board").innerHTML = COLS.map(([k, l]) => `
-    <div class="col" data-col="${l}"><div class="col-head">${l} <span class="count">${ITEMS.filter(i => i[4] === k).length}</span><button class="btn btn-ghost btn-sm btn-icon" title="Add">${icon("plus", 14)}</button></div>
-      <div class="col-cards">${ITEMS.filter(i => i[4] === k).map(i => `
-        <article class="kcard" draggable="true" data-owner="${i[2]}" ${i[0].startsWith("Pay catering") ? 'id="dep-card"' : ""}>
-          <div class="mtag">${i[1]}</div>
-          <div class="k-title" ${k === "done" ? 'style="color:var(--ink-3)"' : ""}>${i[0]}</div>
-          <div class="k-meta"><span class="owner o-${i[2]}">${OWN[i[2]]}</span><span>·</span><span>${i[3]}</span>${AV[i[2]]}</div>
-        </article>`).join("")}</div></div>`).join("");
 
   // ---------- This week ----------
   const WEEK = [
@@ -299,7 +268,7 @@ window.addEventListener("envoy:ready", () => {
         <td><div class="cell"><span class="chip ${statusChip(x[3])}">${x[3]}</span></div></td>
         <td class="num"><div class="cell" contenteditable="true">${money(x[4])}</div></td>
         <td class="num"><div class="cell" contenteditable="true">${money(x[5])}</div></td>
-        <td><div class="cell faint">${x[7] || "—"}</div></td>
+        <td><div class="cell cell-src">${x[7] || "—"}</div></td>
         <td><div class="cell faint" contenteditable="true">${x[6]}</div></td></tr>`).join("")).join("") +
     `<tr><td class="idx">+</td><td colspan="8"><div class="cell faint" contenteditable="true" data-ph>Add a checklist item…</div></td></tr></tbody>`;
   document.getElementById("sheet").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.isContentEditable) { e.preventDefault(); e.target.blur(); toast("Saved"); } });
@@ -309,21 +278,9 @@ window.addEventListener("envoy:ready", () => {
     b.addEventListener("click", () => {
       document.querySelectorAll("button[data-owner]").forEach(x => x.classList.toggle("is-on", x === b));
       const o = b.dataset.owner;
-      document.querySelectorAll(".kcard[data-owner], .wk-item[data-owner], #risk-table tr[data-owner]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.owner !== o));
+      document.querySelectorAll(".wk-item[data-owner], #risk-table tr[data-owner]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.owner !== o));
       document.querySelectorAll("[data-owner-group]").forEach(el => el.classList.toggle("hide", o !== "all" && el.dataset.ownerGroup !== o));
     }); });
-
-  // re-wire drag for dynamically rendered cards
-  (function wire() {
-    let drag = null;
-    document.querySelectorAll(".kcard").forEach(c => { c.addEventListener("dragstart", () => { drag = c; c.classList.add("dragging"); }); c.addEventListener("dragend", () => { c.classList.remove("dragging"); }); });
-    document.querySelectorAll(".col").forEach(col => {
-      col.addEventListener("dragover", e => { e.preventDefault(); col.classList.add("drop"); });
-      col.addEventListener("dragleave", () => col.classList.remove("drop"));
-      col.addEventListener("drop", e => { e.preventDefault(); col.classList.remove("drop"); if (!drag) return; col.querySelector(".col-cards").prepend(drag);
-        document.querySelectorAll(".col").forEach(x => x.querySelector(".count").textContent = x.querySelectorAll(".kcard").length); toast("Moved to <b>" + col.dataset.col + "</b>"); drag = null; });
-    });
-  })();
 
   // ---------- Demo beat 5: Lock catering → Done ----------
   document.getElementById("log-dep").addEventListener("click", function () {
@@ -336,7 +293,6 @@ window.addEventListener("envoy:ready", () => {
     this.outerHTML = `<span class="chip chip-outline">${icon("lock", 12)} Locked · Wildflour Catering</span>`;
     MS[5][1] = "d"; drawSummary(); drawGantt();
     document.getElementById("ms-count").textContent = "6 of 12 milestones done";
-    const dc = document.getElementById("dep-card"); if (dc) { document.querySelector('.col[data-col="Done"] .col-cards').prepend(dc); document.querySelectorAll(".col").forEach(x => x.querySelector(".count").textContent = x.querySelectorAll(".kcard").length); }
     const rr = document.getElementById("risk-deposit"); if (rr) rr.querySelector("td:nth-child(6)").innerHTML = '<span class="chip chip-ok">Resolved</span>';
     const rn = document.getElementById("risk-n"); rn.textContent = +rn.textContent - 1;
     toast("<b>Lock catering</b> is Done — couple's portal updated");

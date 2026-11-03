@@ -35,7 +35,7 @@
   /* ---- neutrals ---- */
   --card:#FFFFFF;        /* cards, sheets, primary fill on dark   */
   --wash:#F4F5FC;        /* quiet panels inside white             */
-  --ground:#EAECFA;      /* the page behind everything            */
+  --ground:#FFFFFF;      /* the page behind everything            */
   --line:#E5E7F4;        /* dividers                              */
   --line-2:#D2D5EA;      /* decorative borders                    */
   --line-3:#7F849F;      /* control boundaries — the only one that clears 3:1 */
@@ -194,7 +194,7 @@ p{margin:0}
 .brand{display:inline-flex;align-items:center;gap:var(--sp-2);text-decoration:none;color:var(--ink);
   font-weight:600;font-size:var(--t-lead);letter-spacing:-.02em;padding-block:4px}
 .brand:hover{color:var(--indigo-600)}
-.brand svg{width:20px;height:20px;flex:none;color:var(--indigo-600)}
+.brand-wordmark{height:26px;width:auto;flex:none;display:block}
 
 .sheet{max-width:1440px;margin:0 auto;background:var(--card);border-radius:38px 38px 0 0;
   padding:var(--sp-9) var(--pad) var(--sp-9);min-height:70vh}
@@ -259,8 +259,7 @@ footer a:hover{color:var(--ink)}
 
 <header class="top">
   <a class="brand" href="index.html">
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21.5 6.5 12 21 2.5 6.5 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c3.4 1.6 6.6 1.6 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    Envoy
+    <img class="brand-wordmark" src="../assets/envoy-wordmark.svg" height="26" width="98" alt="Envoy" />
   </a>
   <a class="btn btn-ghost btn-sm" href="index.html">Back to the site</a>
 </header>

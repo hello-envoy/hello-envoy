@@ -60,7 +60,9 @@
     });
   }
 
-  const BRAND = `<svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21.5 6.5 12 21 2.5 6.5 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c3.4 1.6 6.6 1.6 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="brand-word">Envoy</span>`;
+  const ASSETS = "../assets/";
+  const BRAND = `<img class="brand-wordmark" src="${ASSETS}envoy-wordmark.svg" height="26" width="98" alt="Envoy" />`;
+  const BRAND_MARK = `<img class="brand-mark-img" src="${ASSETS}envoy-mark.svg" width="22" height="22" alt="" />`;
 
   function activeWeddingId() {
     const q = new URLSearchParams(location.search).get("w");
@@ -88,22 +90,27 @@
     ["approve", "Approve &amp; send", "approve-send.html"],
     ["share", "Share update", "share-update.html"],
     ["compare", "Compare", "vendor-compare.html"],
-    ["dayof", "Day-of", "day-of.html"],
   ];
+  function panelNavHtml(page) {
+    const tab = (id, label, href) =>
+      `<a href="${withW(href)}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
+    return (page === "portfolio" ? tab("portfolio", "Dashboard", "portfolio.html") : "") +
+      PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
+  }
   function mountTopbar() {
     const host = document.querySelector("[data-topbar]");
     if (!host) return;
-    const page = document.body.dataset.page;
-    const tab = (id, label, href) => `<a href="${withW(href)}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
-    const tabs = (page === "portfolio" ? tab("portfolio", "Dashboard", "portfolio.html") : "") +
-      PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
+    if (!document.querySelector('link[rel="icon"]')) {
+      const fav = document.createElement("link");
+      fav.rel = "icon";
+      fav.href = ASSETS + "envoy-mark.svg";
+      document.head.appendChild(fav);
+    }
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
       <a class="brand" href="portfolio.html" title="Envoy">${BRAND}</a>
-      <nav class="navtabs" aria-label="Primary">${tabs}</nav>
       <div class="topbar-right">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
-        <a class="btn btn-secondary btn-sm" href="couple-portal.html">${icon("eye", 14)} Couple view</a>
         <span class="av av-ink" title="Sarah Whitfield · Planner">SW</span>
       </div>
     </div></header>`;
@@ -311,6 +318,171 @@
     if (h1 && head.dataset.wTitle === "1") document.title = document.title.replace(/^[^·]+/, s.label);
     return s;
   }
+  /* Couple portal tasks — derived from milestone holds + assignees (Project sheet / holds narrative) */
+  const COUPLE_TASKS = [
+    {
+      id: "florist-ab",
+      type: "ab",
+      title: "Pick florist A or B",
+      due: "Monday, Nov 9",
+      milestone: "Choose florist",
+      hold: "Heron & Fern and Marlowe hold Oct 16 until Nov 12",
+      assignees: ["Elena", "Marcus"],
+    },
+    {
+      id: "catering-deposit",
+      type: "payment",
+      title: "Pay catering deposit",
+      amount: "$7,920",
+      due: "Fri, Nov 6",
+      milestone: "Lock catering",
+      hold: "Wildflour holds Oct 16 pending 30% deposit (assignee: couple)",
+      assignees: ["Elena", "Marcus"],
+      vendor: "Wildflour Catering",
+    },
+  ];
+
+  function floristCompareVendors() {
+    return [
+      {
+        k: "hf",
+        n: "Heron & Fern Florals",
+        who: "Ines Calder · Charleston",
+        c: css("--chart-1"),
+        p: "$10,800",
+        note: "within budget",
+        s: [8, 9.5, 9, 9.5, 8, 9],
+        date: "Open · confirmed Oct 24",
+        reply: "about 4 hrs",
+        pkg: "Arch, 14 centerpieces, personals",
+        rec: "6 weddings with you",
+        why: [
+          "Closest to the couple's garden board, loose and white-green",
+          "Replies within a morning, every time",
+          "Six weddings with you, no day-of surprises",
+        ],
+        but: "<b>Watch:</b> strike isn't included. Ask for the add-on (~$600) before booking.",
+      },
+      {
+        k: "mf",
+        n: "Marlowe Flower Co.",
+        who: "Theo Marlowe · Mt Pleasant",
+        c: css("--chart-2"),
+        p: "$12,400",
+        note: "$1,400 over",
+        s: [6, 8.5, 9, 6, 9.5, 8],
+        date: "Open · confirmed Oct 27",
+        reply: "about 1.5 days",
+        pkg: "Full install + strike, 16 centerpieces",
+        rec: "1 wedding with you",
+        why: [
+          "The fullest package: install and strike handled",
+          "Strong, editorial style the couple liked on Instagram",
+          "Date confirmed in writing",
+        ],
+        but: "<b>Watch:</b> $1,400 over the floral line and slower replies. Fine if the couple loves the look.",
+      },
+      {
+        k: "bt",
+        n: "Bloom Theory",
+        who: "Ari Bloom · West Ashley",
+        c: css("--chart-4"),
+        p: "$8,900",
+        note: "$2,100 under",
+        s: [9.5, 7, 5.5, 5, 6.5, 7],
+        date: "Tentative · holding for another couple",
+        reply: "about 2 days",
+        pkg: "Personals + 12 centerpieces",
+        rec: "New to you",
+        why: ["Lowest quote by a wide margin", "Pretty personals work", "Would free $2,100 for the band"],
+        but: "<b>Watch:</b> Oct 16 isn't confirmed and there's no arch. Book only if the date firms up.",
+      },
+    ];
+  }
+  function mountFloristCompareMatrix(tableEl, opt) {
+    if (!tableEl) return { render: () => {} };
+    opt = opt || {};
+    const V = floristCompareVendors();
+    let lean = opt.lean || "hf";
+    let inBook = new Set(opt.inBook || ["hf"]);
+    let booked = opt.booked || null;
+    const compact = !!opt.compact;
+    const ROWS = [
+      ["Est. price", (v) => `<span class="num">${v.p}</span> <span class="faint">${v.note}</span>`],
+      ["Oct 16 availability", (v) => v.date],
+      ["Avg. response", (v) => v.reply],
+      ["Package", (v) => v.pkg],
+      ["Weddings with you", (v) => v.rec],
+      ["Fit score (0–10)", (v) => `<span class="num">${(v.s.reduce((a, b) => a + b, 0) / v.s.length).toFixed(1)}</span>`],
+    ];
+    const render = () => {
+      const head = `<thead><tr><th scope="col">Criterion</th>${V.map(
+        (v) =>
+          `<th scope="col" class="col-h ${v.k === lean ? "lean" : ""}" data-k="${v.k}"><span class="sw" style="background:${v.c}"></span>${v.n.replace("&", "&amp;")}${v.k === lean ? '<span class="tag">Lean</span>' : ""}<div class="faint text-xs" style="font-weight:400;margin-top:4px">${v.who}</div></th>`,
+      ).join("")}</tr></thead>`;
+      const acts = (v) =>
+        compact
+          ? `<div class="acts"><button class="btn btn-${v.k === "hf" ? "primary" : "secondary"} btn-sm" data-draft-v="${v.n}">${icon("mail", 13)}Draft inquiry</button></div>`
+          : `<div class="acts">
+      <a class="btn btn-secondary btn-sm" href="contacts.html#draft"><i data-i="mail" data-s="13"></i>Draft inquiry</a>
+      <button class="btn btn-${booked === v.k ? "secondary" : "primary"} btn-sm" data-act="book" data-k="${v.k}"><i data-i="check" data-s="13"></i>${booked === v.k ? "Drafted" : "Book"}</button>
+      <button class="btn btn-ghost btn-sm" data-act="cb" data-k="${v.k}"><i data-i="attach" data-s="13"></i>${inBook.has(v.k) ? "In contact book" : "Add to contact book"}</button>
+    </div>`;
+      const body = `<tbody>${ROWS.map(
+        ([label, fn]) => `<tr><th scope="row">${label}</th>${V.map((v) => `<td>${fn(v)}</td>`).join("")}</tr>`,
+      ).join("")}<tr><th scope="row">Actions</th>${V.map((v) => `<td>${acts(v)}</td>`).join("")}</tr></tbody>`;
+      tableEl.innerHTML = head + body;
+      hydrateIcons(tableEl);
+      if (typeof opt.onRender === "function") opt.onRender(lean, V);
+    };
+    tableEl.addEventListener("click", (e) => {
+      const draft = e.target.closest("[data-draft-v]");
+      if (draft) {
+        e.preventDefault();
+        window.location.href = "contacts.html#draft";
+        return;
+      }
+      const h = e.target.closest(".col-h");
+      if (h) {
+        lean = h.dataset.k;
+        render();
+        return;
+      }
+      const b = e.target.closest("[data-act]");
+      if (!b) return;
+      const k = b.dataset.k;
+      const v = V.find((x) => x.k === k);
+      if (b.dataset.act === "cb") {
+        inBook.has(k) ? inBook.delete(k) : inBook.add(k);
+        toast(inBook.has(k) ? `${v.n} added to your contact book` : `${v.n} removed from contact book`);
+      } else if (b.dataset.act === "book") {
+        booked = k;
+        lean = k;
+        toast(`Booking note to ${v.n} is in Approve & send · nothing sent yet`);
+      }
+      render();
+    });
+    render();
+    return { render, getLean: () => lean, setLean: (k) => { lean = k; render(); }, vendors: V };
+  }
+
+  function budgetCategorySourcesHtml() {
+    return `<ul class="bud-sources" aria-label="Budget source by category">${BUDGET_CATS.map(
+      (c, i) => `<li><span class="cat">${c[0]}</span><span class="src">${c[5]}</span></li>`,
+    ).join("")}</ul>`;
+  }
+
+  function wireBudgetDonutToggle(toggleBtn, wrapEl, canvasEl, onShow) {
+    if (!toggleBtn || !wrapEl) return;
+    toggleBtn.addEventListener("click", () => {
+      const on = toggleBtn.getAttribute("aria-pressed") !== "true";
+      toggleBtn.setAttribute("aria-pressed", on);
+      toggleBtn.textContent = on ? "Hide donut breakdown" : "Show donut breakdown";
+      wrapEl.classList.toggle("hidden", !on);
+      if (on && typeof onShow === "function") onShow();
+    });
+  }
+
   const BOOK_GATES = {
     Venue: ["Contract countersigned", "Insurance / COI on file"],
     Caterer: ["Menu approved by couple", "Tasting date on calendar"],
@@ -333,7 +505,11 @@
     const panel = document.createElement("aside");
     panel.className = "project-panel";
     panel.setAttribute("aria-label", "Weddings");
-    panel.innerHTML = `<div class="eyebrow">This wedding</div>` +
+    const page = document.body.dataset.page;
+    panel.innerHTML = `<div class="panel-brand">${BRAND_MARK}<span class="brand-word">Envoy</span></div>` +
+      `<nav class="panel-nav" aria-label="Primary">${panelNavHtml(page)}</nav>` +
+      `<div class="panel-divider"></div>` +
+      `<div class="eyebrow">This wedding</div>` +
       `<a href="portfolio.html"${wid ? "" : ' aria-current="page"'}><span class="ini">24</span>All weddings</a>` +
       WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`).join("");
     wrap.appendChild(panel);
@@ -406,6 +582,16 @@
     activeWeddingId,
     withW,
     BOOK_GATES,
+    ASSETS,
+    BRAND,
+    BRAND_MARK,
+    COUPLE_TASKS,
+    floristCompareVendors,
+    mountFloristCompareMatrix,
+    budgetCategorySourcesHtml,
+    wireBudgetDonutToggle,
+    panelNavHtml,
+    PRIMARY_TABS,
   };
 
   document.addEventListener("DOMContentLoaded", () => {

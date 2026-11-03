@@ -173,6 +173,7 @@
         </ul>
         <div class="row-between mt-6 mb-2"><span class="eyebrow">Filter vendors by category</span><span class="faint text-xs">Spent / Budgeted</span></div>
         <div class="cat-chips" id="cat-chips"></div>
+        <div id="budget-sources"></div>
         <details class="skel">
           <summary style="font-weight:500;cursor:pointer">Starter budget tree (pick once, tweak amounts)</summary>
           <div class="skel-options" id="budget-skel">
@@ -201,7 +202,7 @@
   <!-- ============ Milestone timeline ============ -->
   <section class="card mt-4">
     <div class="card-head"><h3>Milestones <span class="sub">Booked · Deposit paid · Final · Day-of</span></h3>
-      <div class="legend"><span><i class="mtl-chev done" aria-hidden="true"></i>Done</span><span><i class="mtl-chev now" aria-hidden="true"></i>In motion</span><span><i class="mtl-chev" aria-hidden="true"></i>Upcoming</span></div>
+      <div class="row gap-2 wrap"><div class="legend"><span><i class="mtl-chev done" aria-hidden="true"></i>Done</span><span><i class="mtl-chev now" aria-hidden="true"></i>In motion</span><span><i class="mtl-chev" aria-hidden="true"></i>Upcoming</span></div><a class="btn btn-ghost btn-sm" id="dayof-link" href="day-of.html"><i data-i="note" data-s="14"></i>Day-of packet</a></div>
     </div>
     <div class="card-body" style="padding-bottom:var(--s-2)">
       <div class="mtl" id="mtl"></div>
@@ -224,7 +225,9 @@
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { css, BUDGET_CATS, budgetSankeyData, mountBudgetSankey, budgetFmtK, weddingSlice } = Envoy;
+  const { css, BUDGET_CATS, budgetSankeyData, mountBudgetSankey, budgetFmtK, weddingSlice, budgetCategorySourcesHtml, wireBudgetDonutToggle, withW } = Envoy;
+  const dayof = document.getElementById("dayof-link"); if (dayof) dayof.href = withW("day-of.html");
+  document.getElementById("budget-sources").innerHTML = budgetCategorySourcesHtml();
   const CATS = BUDGET_CATS;
   const w = new URLSearchParams(location.search).get("w") || "em";
   const slice = weddingSlice(w);
@@ -258,18 +261,16 @@ window.addEventListener("envoy:ready", () => {
     Envoy.toast(`Applied <b>${v === "garden" ? "Garden estate" : v === "city" ? "City loft" : "Destination weekend"}</b> tree — tweak amounts in Sheet view`);
   });
 
-  document.getElementById("donut-toggle").addEventListener("click", (e) => {
-    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
-    e.currentTarget.setAttribute("aria-pressed", on);
-    e.currentTarget.textContent = on ? "Hide donut breakdown" : "Show donut breakdown";
-    document.getElementById("donut-wrap").classList.toggle("hidden", !on);
-  });
   let donutChart = null;
-  if (window.Chart) donutChart = new Chart(document.getElementById("donut"), {
-    type: "doughnut",
-    data: { labels: CATS.map(c => c[0]), datasets: [{ data: CATS.map(c => c[1]), backgroundColor: COL, borderColor: css("--surface"), borderWidth: 2, hoverOffset: 4 }] },
-    options: { cutout: "74%", plugins: { tooltip: { callbacks: { label: (x) => ` ${x.label}: $${x.raw.toLocaleString()} budgeted · $${CATS[x.dataIndex][3].toLocaleString()} spent` } } } }
-  });
+  const ensureDonut = () => {
+    if (donutChart || !window.Chart) return;
+    donutChart = new Chart(document.getElementById("donut"), {
+      type: "doughnut",
+      data: { labels: CATS.map(c => c[0]), datasets: [{ data: CATS.map(c => c[1]), backgroundColor: COL, borderColor: css("--surface"), borderWidth: 2, hoverOffset: 4 }] },
+      options: { cutout: "74%", plugins: { tooltip: { callbacks: { label: (x) => ` ${x.label}: $${x.raw.toLocaleString()} budgeted · $${CATS[x.dataIndex][3].toLocaleString()} spent` } } } }
+    });
+  };
+  wireBudgetDonutToggle(document.getElementById("donut-toggle"), document.getElementById("donut-wrap"), document.getElementById("donut"), ensureDonut);
 
   // milestone timeline (Nov 2026 → Oct 2027)
   const start = new Date(2026, 9, 1), end = new Date(2027, 9, 20);
@@ -299,6 +300,15 @@ window.addEventListener("envoy:ready", () => {
 
   if (w === "em") {
     const { totals } = budgetSankeyData();
+    const pctSpent = Math.round((totals.spent / totals.budget) * 100);
+    document.querySelectorAll(".budget-nums .v.num").forEach((el, i) => {
+      const vals = [budgetFmtK(totals.budget), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
+      if (vals[i]) el.textContent = vals[i];
+    });
+    const bar = document.querySelector(".budget-nums + .bar");
+    if (bar) bar.title = `Spent ${budgetFmtK(totals.spent)} of ${budgetFmtK(totals.budget)} budgeted`;
+    const dc = document.querySelector(".donut-center b.num");
+    if (dc) dc.textContent = pctSpent + "%";
     document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
       const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
       if (vals[i]) el.textContent = vals[i];

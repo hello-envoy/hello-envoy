@@ -184,24 +184,8 @@
     </section>
     <section class="card span-7">
       <div class="card-head"><h3>Side by side</h3><span style="display:flex;gap:10px;align-items:center"><span class="chip chip-outline">Florist · 3 of 4</span><a class="btn-link" href="vendor-compare.html">Open full compare →</a></span></div>
-      <div class="table-wrap">
-        <table class="table cmp-table">
-          <thead><tr><th></th>
-            <td><div class="cmp-head"><i style="background:var(--chart-1)"></i>Heron &amp; Fern <span class="chip chip-outline" style="height:22px;font-size:11px">In contact book</span></div></td>
-            <td><div class="cmp-head"><i style="background:var(--chart-2)"></i>Marlowe Flower Co.</div></td>
-            <td><div class="cmp-head"><i style="background:var(--chart-4)"></i>Bloom Theory</div></td></tr></thead>
-          <tbody>
-            <tr><th>Est. price</th><td class="num">$10,800</td><td class="num">$12,400</td><td class="num">$8,900</td></tr>
-            <tr><th>Oct 16 availability</th><td><span class="chip chip-ok">Open</span></td><td><span class="chip chip-ok">Open</span></td><td><span class="chip chip-warn">Tentative</span></td></tr>
-            <tr><th>Avg. response</th><td>4 hrs</td><td>1.5 days</td><td>2 days</td></tr>
-            <tr><th>Package</th><td>Ceremony arch, 14 centerpieces, personals</td><td>Full install + strike, 16 centerpieces</td><td>Personals + 12 centerpieces</td></tr>
-            <tr><th>Weddings with you</th><td>6</td><td>1</td><td>—</td></tr>
-            <tr><th></th>
-              <td><div class="row gap-2 wrap"><button class="btn btn-primary btn-sm" data-draft="Heron &amp; Fern Florals">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Heron &amp; Fern</b> logged as Booked — deposit reminder set">Book</button></div></td>
-              <td><div class="row gap-2 wrap"><button class="btn btn-secondary btn-sm" data-draft="Marlowe Flower Co.">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Marlowe</b> added to contact book">Add to contact book</button></div></td>
-              <td><div class="row gap-2 wrap"><button class="btn btn-secondary btn-sm" data-draft="Bloom Theory">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Bloom Theory</b> added to contact book">Add to contact book</button></div></td></tr>
-          </tbody>
-        </table>
+      <div class="table-wrap matrix-wrap">
+        <table class="matrix" id="florist-matrix" aria-label="Florist comparison matrix"></table>
       </div>
       <div class="card-foot"><span>Send the shortlist to the couple as an A/B pick</span><a class="btn btn-accent btn-sm" href="couple-portal.html#ab"><i data-i="heart" data-s="14"></i>Send A/B to couple</a></div>
     </section>
@@ -221,7 +205,7 @@
         Warmly,<br>Sarah
       </div>
       <div class="card-foot"><span>Sends as you · logs to each contact's thread · status → <b>Waiting</b></span>
-        <div class="row gap-2"><button class="btn btn-ghost btn-sm">Save draft</button><button class="btn btn-primary btn-sm" data-toast="2 inquiries queued · statuses set to <b>Waiting</b>"><i data-i="send" data-s="14"></i>Send 2 inquiries</button></div></div>
+        <div class="row gap-2"><button class="btn btn-ghost btn-sm">Save draft</button><a class="btn btn-primary btn-sm" href="approve-send.html"><i data-i="send" data-s="14"></i>Review in Approve &amp; send</a></div></div>
     </div>
   </section>
 </main>
@@ -246,7 +230,7 @@ window.addEventListener("envoy:ready", () => {
     document.querySelector("main.page").insertBefore(note, document.querySelector("main.page").children[1]);
   }
   const TYPES = ["Venue","Caterer","Photo","Video","Florist","Band/DJ","Officiant","Planner","Beauty","Cake","Rentals","Transport","Hotel block","Other"];
-  // id, name, person, type, status, next, last, email, scope, preferred, website
+  // id, name, person, type, status, next, last, email, scope, inBook (contact book flag), website
   let C = [
     ["ashby","The Ashby Estate","Margaret Ashby","Venue","paid","Send floor plan to rentals","2d","events@ashbyestate.com","project",1,"ashbyestate.com"],
     ["wildflour","Wildflour Catering","Priya Natarajan","Caterer","booked","Log $7,920 deposit · due Nov 6","1d","priya@wildflourcatering.com","project",1,"wildflourcatering.com"],
@@ -509,6 +493,8 @@ window.addEventListener("envoy:ready", () => {
     document.getElementById("draft-to").textContent = d.dataset.draft.replace("&amp;", "&");
     document.getElementById("draft-wrap").scrollIntoView({ behavior: "smooth", block: "center" });
   });
+
+  Envoy.mountFloristCompareMatrix(document.getElementById("florist-matrix"), { compact: true });
 
   // --- radar
   const R = [

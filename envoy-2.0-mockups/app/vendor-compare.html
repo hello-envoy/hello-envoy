@@ -85,59 +85,9 @@
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { css } = Envoy;
-  const V = [
-    { k: "hf", n: "Heron & Fern Florals", who: "Ines Calder · Charleston", c: css("--chart-1"), p: "$10,800", note: "within budget",
-      s: [8, 9.5, 9, 9.5, 8, 9], date: "Open · confirmed Oct 24", reply: "about 4 hrs", pkg: "Arch, 14 centerpieces, personals", rec: "6 weddings with you",
-      why: ["Closest to the couple's garden board, loose and white-green", "Replies within a morning, every time", "Six weddings with you, no day-of surprises"],
-      but: "<b>Watch:</b> strike isn't included. Ask for the add-on (~$600) before booking." },
-    { k: "mf", n: "Marlowe Flower Co.", who: "Theo Marlowe · Mt Pleasant", c: css("--chart-2"), p: "$12,400", note: "$1,400 over",
-      s: [6, 8.5, 9, 6, 9.5, 8], date: "Open · confirmed Oct 27", reply: "about 1.5 days", pkg: "Full install + strike, 16 centerpieces", rec: "1 wedding with you",
-      why: ["The fullest package: install and strike handled", "Strong, editorial style the couple liked on Instagram", "Date confirmed in writing"],
-      but: "<b>Watch:</b> $1,400 over the floral line and slower replies. Fine if the couple loves the look." },
-    { k: "bt", n: "Bloom Theory", who: "Ari Bloom · West Ashley", c: css("--chart-4"), p: "$8,900", note: "$2,100 under",
-      s: [9.5, 7, 5.5, 5, 6.5, 7], date: "Tentative · holding for another couple", reply: "about 2 days", pkg: "Personals + 12 centerpieces", rec: "New to you",
-      why: ["Lowest quote by a wide margin", "Pretty personals work", "Would free $2,100 for the band"],
-      but: "<b>Watch:</b> Oct 16 isn't confirmed and there's no arch. Book only if the date firms up." },
-  ];
-  let lean = "hf", inBook = new Set(["hf"]), booked = null;
+  const { css, mountFloristCompareMatrix, floristCompareVendors } = Envoy;
+  const V = floristCompareVendors();
   const AX = ["Price fit", "Style", "Date", "Replies", "Package", "Track record"];
-  const ROWS = [
-    ["Est. price", (v) => `<span class="num">${v.p}</span> <span class="faint">${v.note}</span>`],
-    ["Oct 16 availability", (v) => v.date],
-    ["Avg. response", (v) => v.reply],
-    ["Package", (v) => v.pkg],
-    ["Weddings with you", (v) => v.rec],
-    ["Fit score (0–10)", (v) => `<span class="num">${(v.s.reduce((a, b) => a + b, 0) / v.s.length).toFixed(1)}</span>`],
-  ];
-  function render() {
-    const head = `<thead><tr><th scope="col">Criterion</th>${V.map((v) => `<th scope="col" class="col-h ${v.k === lean ? "lean" : ""}" data-k="${v.k}"><span class="sw" style="background:${v.c}"></span>${v.n.replace("&", "&amp;")}${v.k === lean ? '<span class="tag">Lean</span>' : ""}<div class="faint text-xs" style="font-weight:400;margin-top:4px">${v.who}</div></th>`).join("")}</tr></thead>`;
-    const body = `<tbody>${ROWS.map(([label, fn]) => `<tr><th scope="row">${label}</th>${V.map((v) => `<td>${fn(v)}</td>`).join("")}</tr>`).join("")}<tr><th scope="row">Actions</th>${V.map((v) => `<td><div class="acts">
-      <a class="btn btn-secondary btn-sm" href="contacts.html#draft"><i data-i="mail" data-s="13"></i>Draft inquiry</a>
-      <button class="btn btn-${booked === v.k ? "secondary" : "primary"} btn-sm" data-act="book" data-k="${v.k}"><i data-i="check" data-s="13"></i>${booked === v.k ? "Drafted" : "Book"}</button>
-      <button class="btn btn-ghost btn-sm" data-act="cb" data-k="${v.k}"><i data-i="attach" data-s="13"></i>${inBook.has(v.k) ? "In contact book" : "Add to contact book"}</button>
-    </div></td>`).join("")}</tr></tbody>`;
-    document.getElementById("matrix").innerHTML = head + body;
-    const L = V.find((v) => v.k === lean);
-    document.getElementById("lean-h").innerHTML = `You’re leaning <em>${L.n.replace("&", "&amp;")}</em> because…`;
-    document.getElementById("lean-why").innerHTML = L.why.map((w) => `<li>${w}</li>`).join("");
-    document.getElementById("lean-but").innerHTML = L.but;
-    document.getElementById("radar-cap").innerHTML = `Bigger shape = better fit · bold line = your lean (${L.n.replace("&", "&amp;")}) · scored 0–10`;
-    if (chart) { chart.data.datasets.forEach((d, i) => { const on = V[i].k === lean; d.borderWidth = on ? 2.5 : 1.25; d.backgroundColor = hexA(V[i].c, on ? .14 : .03); d.borderDash = on ? [] : [4, 3]; }); chart.update("none"); }
-  }
-  document.getElementById("matrix").addEventListener("click", (e) => {
-    const h = e.target.closest(".col-h"); if (h) { lean = h.dataset.k; render(); return; }
-    const b = e.target.closest("[data-act]"); if (!b) return;
-    const k = b.dataset.k, v = V.find((x) => x.k === k);
-    if (b.dataset.act === "cb") {
-      inBook.has(k) ? inBook.delete(k) : inBook.add(k);
-      Envoy.toast(inBook.has(k) ? `${v.n} added to your contact book` : `${v.n} removed from contact book`);
-    } else if (b.dataset.act === "book") {
-      booked = k; lean = k; Envoy.toast(`Booking note to ${v.n} is in Approve & send · nothing sent yet`);
-    }
-    render();
-  });
-  document.getElementById("legend").innerHTML = V.map((v) => `<span><i style="background:${v.c}"></i>${v.n.split(" ")[0]}</span>`).join("");
   const hexA = (h, a) => h + Math.round(a * 255).toString(16).padStart(2, "0");
   let chart = null;
   if (window.Chart) chart = new Chart(document.getElementById("radar"), {
@@ -145,7 +95,25 @@ window.addEventListener("envoy:ready", () => {
     data: { labels: AX, datasets: V.map((v, i) => ({ label: v.n, data: v.s, borderColor: v.c, backgroundColor: hexA(v.c, i === 0 ? .10 : .06), borderWidth: i === 0 ? 2 : 1.5, pointRadius: 2.5, pointBackgroundColor: v.c, borderDash: i === 2 ? [4, 3] : [] })) },
     options: { maintainAspectRatio: false, scales: { r: { min: 0, max: 10, ticks: { display: false, stepSize: 2.5 }, grid: { color: css("--line") }, angleLines: { color: css("--line") }, pointLabels: { color: css("--ink-2"), font: { size: 12, weight: 500 } } } } }
   });
-  render();
+  document.getElementById("legend").innerHTML = V.map((v) => `<span><i style="background:${v.c}"></i>${v.n.split(" ")[0]}</span>`).join("");
+  const syncLean = (lean) => {
+    const L = V.find((v) => v.k === lean);
+    document.getElementById("lean-h").innerHTML = `You’re leaning <em>${L.n.replace("&", "&amp;")}</em> because…`;
+    document.getElementById("lean-why").innerHTML = L.why.map((w) => `<li>${w}</li>`).join("");
+    document.getElementById("lean-but").innerHTML = L.but;
+    document.getElementById("radar-cap").innerHTML = `Bigger shape = better fit · bold line = your lean (${L.n.replace("&", "&amp;")}) · scored 0–10`;
+    if (chart) {
+      chart.data.datasets.forEach((d, i) => {
+        const on = V[i].k === lean;
+        d.borderWidth = on ? 2.5 : 1.25;
+        d.backgroundColor = hexA(V[i].c, on ? .14 : .03);
+        d.borderDash = on ? [] : [4, 3];
+      });
+      chart.update("none");
+    }
+  };
+  mountFloristCompareMatrix(document.getElementById("matrix"), { onRender: syncLean });
+  syncLean("hf");
 });
 </script>
 </body>
