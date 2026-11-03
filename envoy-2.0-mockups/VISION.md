@@ -12,7 +12,7 @@ Do not merge without Jonathan + Github Expert.
 |---|---|
 | All weddings (portfolio) | Start of day across 15–30 clients |
 | Overview | 360° one wedding: needs attention, vendors, budget |
-| Contacts | Replaces chat; preferred-vendor attach; threads |
+| Contacts | Replaces chat; contact-book attach; threads |
 | Project | Milestones / this week / risks — common-man PM |
 | Decisions | Editable insights; couple-visible opt-in |
 | Approve & send | Sacred Gmail send — never auto |

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Envoy — Meet your planning partner</title>
-<meta name="description" content="Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication. Free to plan, no card required.">
+<meta name="description" content="Wedding planning software for planners — vendor threads, couple portal, budget, and day-of in one calm workspace. Open the demo free.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Envoy — Meet your planning partner">
 <meta property="og:description" content="Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication.">
 <meta property="og:image" content="img/hero-wedding.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#F4F5FC">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
   /* ---- neutrals ---- */
   --card:#FFFFFF;        /* cards, sheets, primary fill on dark   */
   --wash:#F4F5FC;        /* quiet panels inside white             */
-  --ground:#EAECFA;      /* the page behind everything            */
+  --ground:#FFFFFF;      /* the page behind everything            */
   --line:#E5E7F4;        /* dividers                              */
   --line-2:#D2D5EA;      /* decorative borders                    */
   --line-3:#7F849F;      /* control boundaries — the only one that clears 3:1 */
@@ -468,7 +468,7 @@ html{-webkit-text-size-adjust:100%}
   /* ---- neutrals ---- */
   --card:#FFFFFF;        /* cards, sheets, primary fill on dark   */
   --wash:#F4F5FC;        /* quiet panels inside white             */
-  --ground:#EAECFA;      /* the page behind everything            */
+  --ground:#FFFFFF;      /* the page behind everything            */
   --line:#E5E7F4;        /* dividers                              */
   --line-2:#D2D5EA;      /* decorative borders                    */
   --line-3:#7F849F;      /* control boundaries — the only one that clears 3:1 */
@@ -757,7 +757,7 @@ html{-webkit-text-size-adjust:100%}
 .vd[hidden],.vm[hidden]{display:none!important}
 @media (max-width:767.98px){ .vd{display:none!important} }
 @media (min-width:768px){ .vm{display:none!important} }
-html,body{background:#EAECFA}   /* one ground for both views */
+html,body{background:#FFFFFF}   /* white page ground — wedding planner marketing */
 body{margin:0}
 </style>
 </head>
@@ -771,12 +771,12 @@ body{margin:0}
 <section class="hero" aria-labelledby="h-hero">
   <div class="stage">
     <div class="photo">
-      <img id="ph-kit" class="on" src="img/hero-kitchen.jpg" alt="A kitchen renovation in progress — a couple reviewing plans with tradespeople while cabinetry and timber are carried in.">
-      <img id="ph-wed" src="img/hero-wedding.jpg" alt="An events team setting up a wedding reception — staff laying tables, arranging white florals and rigging lighting in a timber-framed barn.">
+      <img id="ph-kit" src="img/hero-kitchen.jpg" alt="" hidden>
+      <img id="ph-wed" class="on" src="img/hero-wedding.jpg" alt="A Charleston wedding planner reviewing vendor replies with a couple — estate reception setup in soft evening light.">
       <img id="ph-off" src="img/hero-offsite.jpg" alt="A company offsite being set up in a lodge — staff arranging round tables, place cards and a projector screen.">
     </div>
 
-    <div class="util"><a class="btn btn-chip btn-sm" href="../app/overview.html" style="margin-right:8px">Open the demo →</a><a class="btn btn-chip btn-sm" href="../app/portfolio.html">
+    <div class="util"><a class="btn btn-chip btn-sm" href="../app/portfolio.html" style="margin-right:8px">Open the demo →</a><a class="btn btn-chip btn-sm" href="../app/portfolio.html">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" stroke="currentColor" stroke-width="2"/><path d="M4.8 20c.9-3.4 3.7-5.3 7.2-5.3s6.3 1.9 7.2 5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       Log in</a></div>
 
@@ -790,19 +790,19 @@ body{margin:0}
 
       <div class="ov-copy">
         <div class="ov-mid">
-          <h1 id="h-hero">Meet your planning partner, Envoy.</h1>
-          <p class="ov-lede">Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication.</p>
+          <h1 id="h-hero">Calm wedding planning for planners who juggle twenty at once.</h1>
+          <p class="ov-lede">Envoy is the workspace behind your weddings — vendor threads, couple portal, budget, and day-of — so nothing slips between inbox and spreadsheet.</p>
           <ul class="tipchips" id="tipchips"></ul>
         </div>
 
         <form class="ov-start" id="finder">
           <div class="composer">
             <label for="proj">Describe your project</label>
-            <textarea id="proj" placeholder="Large kitchen renovation"></textarea>
+            <textarea id="proj" placeholder="October estate wedding · 128 guests · Charleston"></textarea>
             <div class="comp-bar">
               <label for="loc">Location</label>
-              <input class="comp-loc" id="loc" type="text" placeholder="Topeka, Kansas" autocomplete="off">
-              <button class="btn btn-primary btn-md" type="submit">Start project</button>
+              <input class="comp-loc" id="loc" type="text" placeholder="Charleston, South Carolina" autocomplete="off">
+              <button class="btn btn-primary btn-md" type="submit">Open demo</button>
             </div>
           </div>
           <p class="micro">Free to plan, no card required.</p>
@@ -811,8 +811,8 @@ body{margin:0}
     </div>
 
     <div class="states" role="tablist" aria-label="Example projects">
-      <button role="tab" type="button" data-k="kit" aria-selected="true"  aria-label="Kitchen renovation"></button>
-      <button role="tab" type="button" data-k="wed" aria-selected="false" aria-label="Outdoor wedding" tabindex="-1"></button>
+      <button role="tab" type="button" data-k="kit" aria-selected="false" aria-label="Kitchen renovation" tabindex="-1"></button>
+      <button role="tab" type="button" data-k="wed" aria-selected="true" aria-label="Outdoor wedding"></button>
       <button role="tab" type="button" data-k="off" aria-selected="false" aria-label="Company offsite" tabindex="-1"></button>
     </div>
   </div>
@@ -947,7 +947,7 @@ body{margin:0}
   <span>© 2026 Envoy · Your digital representative for outreach.</span>
   <span>this site was designed by a human.</span>
   <nav aria-label="Footer">
-    <a href="../app/overview.html">Start a project</a>
+    <a href="../app/portfolio.html">Open demo</a>
     <a href="#pricing">Pricing</a>
     <a href="#biz">For business</a>
     <a href="waitlist.html">Waitlist</a>
@@ -963,7 +963,7 @@ body{margin:0}
   <header class="top">
     <div class="nav">
       <button class="menu-btn" id="m-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="m-menu"><i></i><i></i></button>
-      <a class="btn btn-chip btn-sm login" href="../app/overview.html">Open demo</a>
+      <a class="btn btn-chip btn-sm login" href="../app/portfolio.html">Open demo</a>
     </div>
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track"><span>Envoy, bringing the joy back to planning.</span><span>Envoy, bringing the joy back to planning.</span></div>
@@ -978,7 +978,7 @@ body{margin:0}
     <a href="#m-start" data-close>Start a project</a>
     <a href="#m-pricing" data-close>Pricing</a>
     <a href="#m-business" data-close>For business</a>
-    <a class="dim" href="../app/overview.html" data-close>Open the demo</a>
+    <a class="dim" href="../app/portfolio.html" data-close>Open the demo</a>
     <span class="hint">Tap anywhere to close</span>
   </nav>
 
@@ -1106,10 +1106,10 @@ body{margin:0}
   stage.addEventListener('mouseenter',stop);
   stage.addEventListener('mouseleave',start);
   stage.addEventListener('focusin',stop);
-  document.getElementById('finder').addEventListener('submit',function(e){ e.preventDefault(); proj.focus(); });
+  document.getElementById('finder').addEventListener('submit',function(e){ e.preventDefault(); location.href='../app/portfolio.html'; });
 
   scaleTips();
-  show('kit',false); start();
+  show('wed',false); start();
 })();
 </script>
 <script>

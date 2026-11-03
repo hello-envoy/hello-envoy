@@ -277,13 +277,51 @@
     return draw;
   }
 
-  /* ---------- Demo narrative rail ---------- */
+  /* ---------- Multi-wedding demo slices (portfolio timeline + shell) ---------- */
   const WEDDINGS = [
-    { id: "em", ini: "E&M", label: "Elena & Marcus", href: "overview.html" },
-    { id: "kd", ini: "K&D", label: "Kate & Dom", href: "overview.html?w=kd" },
-    { id: "ne", ini: "N&E", label: "Noor & Eli", href: "overview.html?w=ne" },
-    { id: "ps", ini: "P&S", label: "Priya & Sam", href: "overview.html?w=ps" },
+    { id: "kd", ini: "K&D", label: "Kate & Dom" },
+    { id: "ne", ini: "N&E", label: "Noor & Eli" },
+    { id: "ps", ini: "P&S", label: "Priya & Sam" },
+    { id: "ri", ini: "R&I", label: "Rosa & Ian" },
+    { id: "bj", ini: "B&J", label: "Bea & Jon" },
+    { id: "em", ini: "E&M", label: "Elena & Marcus" },
   ];
+  const WEDDING_SLICES = {
+    em: { label: "Elena & Marcus", tag: "Wedding · October 2027", venue: "The Ashby Estate · Charleston", days: 348, budget: 120000, spent: 80600, booked: 79200, milestones: "5 of 12", contactsOn: 16, contactsBooked: 7, contactsReply: 2, projectMs: "5 of 12 milestones done", projectWeeks: "50 weeks out", projectChecklist: "14 checklist items this month", fullSpine: true },
+    kd: { label: "Kate & Dom", tag: "Rehearsal week — run of show", venue: "Lowndes Grove · Charleston", days: 5, budget: 86000, spent: 71200, booked: 69800, milestones: "11 of 12", contactsOn: 14, contactsBooked: 9, contactsReply: 1, projectMs: "11 of 12 milestones done", projectWeeks: "5 days out", projectChecklist: "Run-of-show + rehearsal dinner", fullSpine: true },
+    ne: { label: "Noor & Eli", tag: "Ceremony layout decision open", venue: "Wavering Place · Eastover", days: 166, budget: 98000, spent: 52400, booked: 51000, milestones: "7 of 12", contactsOn: 12, contactsBooked: 5, contactsReply: 1, projectMs: "7 of 12 milestones done", projectWeeks: "24 weeks out", projectChecklist: "Layout + rental quote", fullSpine: true },
+    ps: { label: "Priya & Sam", tag: "Photo retainer to log", venue: "The Dewberry · Charleston", days: 201, budget: 105000, spent: 63800, booked: 62000, milestones: "8 of 12", contactsOn: 13, contactsBooked: 6, contactsReply: 0, projectMs: "8 of 12 milestones done", projectWeeks: "29 weeks out", projectChecklist: "Retainer + menu lock", fullSpine: true },
+    ri: { label: "Rosa & Ian", tag: "Florist proposals in flight", venue: "Boone Hall · Mt Pleasant", days: 222, budget: 92000, spent: 28400, booked: 26000, milestones: "4 of 12", contactsOn: 9, contactsBooked: 2, contactsReply: 0, projectMs: "4 of 12 milestones done", projectWeeks: "32 weeks out", projectChecklist: "Venue walkthrough prep", fullSpine: false },
+    bj: { label: "Bea & Jon", tag: "Venue walkthrough Dec 9", venue: "Montage Palmetto Bluff", days: 300, budget: 115000, spent: 18200, booked: 15000, milestones: "3 of 12", contactsOn: 7, contactsBooked: 1, contactsReply: 0, projectMs: "3 of 12 milestones done", projectWeeks: "43 weeks out", projectChecklist: "Style board + guest range", fullSpine: false },
+  };
+  function weddingSlice(id) {
+    return WEDDING_SLICES[id || activeWeddingId()] || WEDDING_SLICES.em;
+  }
+  function plannerPageHref(wId) {
+    const page = location.pathname.split("/").pop() || "overview.html";
+    return wId === "em" ? page : `${page}?w=${encodeURIComponent(wId)}`;
+  }
+  function applyWeddingPageHead(suffix) {
+    const s = weddingSlice();
+    const head = document.querySelector(".page-head, .page > .page-head");
+    if (!head) return s;
+    const eb = head.querySelector(".eyebrow");
+    if (eb && suffix) eb.textContent = `${s.label} · ${suffix}`;
+    const h1 = head.querySelector("h1");
+    if (h1 && head.dataset.wTitle === "1") document.title = document.title.replace(/^[^·]+/, s.label);
+    return s;
+  }
+  const BOOK_GATES = {
+    Venue: ["Contract countersigned", "Insurance / COI on file"],
+    Caterer: ["Menu approved by couple", "Tasting date on calendar"],
+    Photo: ["Coverage hours confirmed", "Second shooter if needed"],
+    Florist: ["Design direction from couple", "Delivery + strike included"],
+    "Band/DJ": ["Reception timeline attached", "Sound check window set"],
+    Beauty: ["Trial date held", "Travel / early call confirmed"],
+    Rentals: ["Delivery window matches venue", "Rain backup pieces noted"],
+    Other: ["Scope in writing", "Payment schedule clear"],
+    Planner: ["Scope of services signed", "Day-of contact list shared"],
+  };
   function mountPlannerShell() {
     if (document.body.dataset.shell !== "planner") return;
     const main = document.querySelector("main.page");
@@ -297,10 +335,7 @@
     panel.setAttribute("aria-label", "Weddings");
     panel.innerHTML = `<div class="eyebrow">This wedding</div>` +
       `<a href="portfolio.html"${wid ? "" : ' aria-current="page"'}><span class="ini">24</span>All weddings</a>` +
-      WEDDINGS.map((w) => {
-        const href = w.id === "em" ? "overview.html" : `overview.html?w=${w.id}`;
-        return `<a href="${href}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`;
-      }).join("");
+      WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`).join("");
     wrap.appendChild(panel);
     wrap.appendChild(main);
   }
@@ -308,9 +343,9 @@
   const STORY = [
     ["portfolio.html", "Start the day — portfolio across 24 weddings"],
     ["overview.html#attention", "Open a wedding — Overview surfaces what needs attention"],
-    ["contacts.html#attach", "Attach preferred vendors from your directory"],
+    ["contacts.html#attach", "Attach vendors from your contact book"],
     ["contacts.html#compare", "Compare florists → draft inquiries"],
-    ["couple-portal.html#ab", "Couple picks florist A/B in their portal"],
+    ["couple-portal.html#tasks", "Couple picks florist A/B in their portal"],
     ["project.html#lock", "Milestone “Lock catering” → Done on Booked → Deposit paid"],
   ];
   const IDEAS = [
@@ -363,6 +398,14 @@
     mountBudgetSankey,
     budgetFmtK,
     BUDGET_SANKEY_DEFAULTS,
+    WEDDINGS,
+    WEDDING_SLICES,
+    weddingSlice,
+    applyWeddingPageHead,
+    plannerPageHref,
+    activeWeddingId,
+    withW,
+    BOOK_GATES,
   };
 
   document.addEventListener("DOMContentLoaded", () => {

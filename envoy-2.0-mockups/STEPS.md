@@ -13,7 +13,7 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 | `assets/components.css` | All components: topbar and nav tabs, Ask Envoy bar, buttons, inputs, chips and filter chips, tabs and segmented controls, cards and KPIs, bars, avatars, table with row actions, `.sheet` grid, attention strip, empty state, kanban, toast, demo rail, legend, Sankey, milestone timeline, gantt, utilities. |
 | `assets/app.js` | Shared runtime. It does the following: <br>• Injects the topbar from `body[data-page]`. <br>• Turns `<i data-i>` placeholders into an inline SVG icon set (about 45 icons). <br>• Handles toasts (`[data-toast]`) and tabs (`[data-tabs]`/`[data-tab]`/`[data-panel]`, where `data-hash` syncs the URL). <br>• Sets Chart.js defaults. <br>• Provides a dependency-free SVG `Envoy.sankey()`. <br>• Draws the demo-story rail. <br>• Fires the `envoy:ready` event. |
 | `app/overview.html` | Wedding hero: countdown, venue, guests 128/140, milestones 5/12, and the 5 CTAs. <br>Needs-attention strip: failed send, unanswered >3d, date conflict, missing deposit. <br>Vendor status table with a Needs me / Waiting on them / All toggle. <br>Budget card: total/committed/remaining, donut, and 8 category chips that deep-link to `contacts.html?type=`. <br>Milestone timeline (Booked/Deposit due/Final/Day-of), the Sankey (Total → Category → Booked/Remaining) and recent activity. |
-| `app/contacts.html` | Replaces chat. <br>Filters: this wedding vs preferred directory, status, 14 vendor types, has/missing email. <br>Six row actions: open thread, draft inquiry, log status, attach to another wedding, copy email, website. <br>Contact drawer with a per-contact thread and a thin Ask Envoy bar. <br>Attach-from-directory card (`#attach`). <br>Florist compare (`#compare`): a Chart.js radar on price/style/availability/response/package/vibe with Draft inquiry, Book and Mark preferred, plus "Send A/B to couple". <br>Draft-inquiry composer. |
+| `app/contacts.html` | Replaces chat. <br>Filters: this wedding vs contact book directory, status, 14 vendor types, has/missing email. <br>Six row actions: open thread, draft inquiry, log status, attach to another wedding, copy email, website. <br>Contact drawer with a per-contact thread and a thin Ask Envoy bar. <br>Attach-from-directory card (`#attach`). <br>Florist compare (`#compare`): a Chart.js radar on price/style/availability/response/package/vibe with Draft inquiry, Book, plus "Send A/B to couple". <br>Draft-inquiry composer. |
 | `app/project.html` | Planner-language project view. <br>Focus milestone cards, including "Lock catering" (`#lock`), which auto-completes when the caterer is Booked and the deposit is paid. <br>12-milestone strip. <br>Tabs (default **This week**): This week ("50 weeks out", grouped Me/Couple/Vendor), Board (kanban with drag and drop), Timeline (gantt), Risks & holds (9 rows, red badge = open count). Sheet (editable grid with subtotals) is demoted to a quiet "Sheet view" button next to the owner filter. <br>Owner filter: Me/Couple/Vendor. No story points or velocity. |
 | `app/couple-portal.html` | Couple-facing surface. <br>It shows: date, venue, facts, the florist A/B decision (`#ab`), the deposit acknowledgement, milestones, the team (Booked/Exploring) and a budget glance. <br>"Tell Sarah": guest stepper, style, must-haves and absolutely-not. <br>Leave-a-note box. <br>It never shows drafts, threads, markup, RAID or other clients, and the couple cannot send as the planner. |
 | `design-system/index.html` | Living style guide: principles, color with contrast notes, type scale, spacing, radius/elevation, buttons, inputs, chips/status vocabulary, tabs, cards/KPIs, table and sheet, empty states, chart palette with a live bar chart and Sankey. |
@@ -35,7 +35,7 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 - **Consistent sample data across every page:** Elena & Marcus, Sat Oct 16 2027, The Ashby Estate in Charleston, $120k total / $80k committed, 128 of 140 guests, 348 days, 5 of 12 milestones.
 
 ## Demo script (follow the rail, bottom-right)
-1. `contacts.html#attach`: attach 3 preferred vendors from the directory. The count goes from 16 to 19.
+1. `contacts.html#attach`: attach 3 contact-book vendors from the directory. The count goes from 16 to 19.
 2. `overview.html#attention`: the needs-attention strip flashes. Click **Failed send**: Sweetgrass opens with the email field focused; **Retry send** moves it to Waiting.
 3. `contacts.html#compare`: compare florists on the radar, then draft inquiries and send A/B to the couple.
 4. `couple-portal.html#ab`: Elena picks florist A, which triggers a toast and updates the count.
@@ -59,7 +59,7 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 **Contacts**
 - Eyebrow is now "Elena & Marcus · **Vendors**".
 - The drawer leads with a `.fix` block whenever the contact has a problem (missing email, Needs reply, or the hold conflict). With `?fix=`, it pulses and focuses the primary control. Fixing it updates the ladder status and thread (Needs reply → Waiting, Not contacted → Waiting).
-- Preferred vendors show "**Also on N other weddings**" with names, plus an **Attach to another wedding** picker (N goes up on attach). Non-preferred vendors show "First wedding together · Save to preferred". "Only this wedding" is gone.
+- Contact-book vendors show "**Also on N other weddings**" with names, plus an **Attach to another wedding** picker (N goes up on attach). Others show "First wedding together · **Add to contact book**". "Only this wedding" is gone.
 
 **Project**
 - The 3 in-motion cards and the 12-milestone strip are unchanged.
@@ -163,7 +163,7 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
   - Side-by-side cards show price vs. budget, Oct 16 availability, reply time, package and history.
   - The existing Contacts radar is reused with plain axes (Price fit, Style, Date, Replies, Package, Track record), each explained in one line.
   - "You're leaning X because…" lists reasons and one honest "Watch" caveat. Clicking a card changes the lean.
-  - CTAs: Draft inquiry, Mark preferred, Book (it drafts into Approve & send and never sends) and Send A/B to couple (goes to Share update).
+  - CTAs: Draft inquiry, Book (it drafts into Approve & send and never sends) and Send A/B to couple (goes to Share update).
 - Linked from Contacts → Compare ("Open full compare →"), index "Ideas · round 5", the topbar **More** menu, and the demo rail. VISION.md IA table gained one row.
 
 ## Charts pass (Sankey + radar)
@@ -201,7 +201,7 @@ The "Linen" notes in the sections above are history. Where they conflict with th
 ## Finish pass (Nov 2, 2026)
 
 - **Couple portal florist A/B**: the indigo and grey swatches are now soft gradient tiles that look like photos (roses and apricot with greenery for A; white peonies, candlelight and deep greens for B). These tones belong to the image content and aren't brand colours. They're never the only cue: each moodboard has `role="img"` with descriptive alt text and a visible caption.
-- **Landing links**: an "Open the demo →" chip goes to `../app/overview.html`. "Log in" goes to the portfolio on desktop and the Overview on mobile. "Start a project" in the footer goes to the Overview. The pricing and business CTAs go to `waitlist.html`, and the footer now has a Waitlist link. The layout is unchanged.
+- **Landing links**: "Open the demo →" and "Log in" go to `../app/portfolio.html` (planner home). White page ground on marketing. The pricing and business CTAs go to `waitlist.html`, and the footer has a Waitlist link.
 - **Status colours**: the redesign defines only `--error`. In the kit, ok is ink on wash, warn is indigo-700 on indigo-50, and info is muted on wash, and each status always carries a text label. `--risk-soft: #F8E7E6` (error at about 10% on white, used only as a background tint, never for text) is **the only colour the kit adds**.
 - **Sankey**: `--chart-4` is now indigo-200 (it was line-3), and the default link opacity went from 0.28 to 0.42, so the bands read better while staying ink and indigo.
 - **Hub**: shows the demo path. It links the landing page, the waitlist, the design system and all 11 app screens. Hover colour is indigo (it was clay).

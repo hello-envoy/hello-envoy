@@ -35,7 +35,9 @@
   .wed-list button { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font: inherit; font-size: var(--text-sm); cursor: pointer; text-align: left; }
   .wed-list button:hover { border-color: var(--ink-3); }
   .fix textarea.input { min-height: 110px; padding: 10px; line-height: 20px; resize: vertical; height: auto; }
-  .pref { color: var(--clay); display: inline-flex; }
+  .book-gate { border: 1px dashed var(--line-strong); background: var(--paper-2); }
+  .gate-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: var(--text-sm); }
+  .gate-list label { display: flex; gap: 8px; align-items: center; cursor: pointer; color: var(--ink-2); }
   .attach-card { border-color: var(--clay-3); background: linear-gradient(180deg, #E9E8FD, var(--surface) 70%); }
   .dir-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--s-3); }
   .dir-item { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); cursor: pointer; transition: border-color var(--dur-1); }
@@ -77,7 +79,7 @@
     <div>
       <div class="eyebrow">Elena &amp; Marcus · Vendors</div>
       <h1>Contacts</h1>
-      <div class="meta"><span id="meta-n">16 on this wedding</span><span class="faint">·</span><span>7 booked</span><span class="faint">·</span><span class="accent">2 need your reply</span></div>
+      <div class="meta"><span id="meta-n">16 on this wedding</span><span class="faint">·</span><span id="meta-booked">7 booked</span><span class="faint">·</span><span class="accent" id="meta-reply">2 need your reply</span></div>
     </div>
     <div class="row">
       <button class="btn btn-secondary" data-toast="Import from CSV, Gmail, or HoneyBook"><i data-i="upload"></i>Import</button>
@@ -228,7 +230,21 @@
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { icon, toast, css, hydrateIcons } = Envoy;
+  const { icon, toast, css, hydrateIcons, weddingSlice, applyWeddingPageHead, BOOK_GATES } = Envoy;
+  const wId = new URLSearchParams(location.search).get("w") || "em";
+  const wSlice = weddingSlice(wId);
+  applyWeddingPageHead("Vendors");
+  const mb = document.getElementById("meta-booked");
+  const mr = document.getElementById("meta-reply");
+  document.getElementById("meta-n").textContent = `${wSlice.contactsOn} on this wedding`;
+  if (mb) mb.textContent = `${wSlice.contactsBooked} booked`;
+  if (mr) mr.textContent = `${wSlice.contactsReply} need your reply`;
+  if (wId !== "em" && !wSlice.fullSpine) {
+    const note = document.createElement("div");
+    note.className = "card card-pad mb-4";
+    note.innerHTML = `<span class="text-sm"><b>${wSlice.label}</b> — lighter demo slice. Switch to <a class="btn-link" href="contacts.html">Elena &amp; Marcus</a> for the full vendor spine.</span>`;
+    document.querySelector("main.page").insertBefore(note, document.querySelector("main.page").children[1]);
+  }
   const TYPES = ["Venue","Caterer","Photo","Video","Florist","Band/DJ","Officiant","Planner","Beauty","Cake","Rentals","Transport","Hotel block","Other"];
   // id, name, person, type, status, next, last, email, scope, preferred, website
   let C = [
@@ -393,6 +409,14 @@ window.addEventListener("envoy:ready", () => {
     const o = otherFor(c);
     return `<dt>Weddings</dt><dd><b>Also on ${o.length} other ${o.length === 1 ? "wedding" : "weddings"}</b>${o.length ? `<div class="faint text-xs" style="margin-top:2px">${o.slice(0, 2).join(" · ")}${o.length > 2 ? ` · +${o.length - 2} more` : ""}</div>` : ""}</dd>`;
   }
+  function bookGateHtml(c) {
+    const items = BOOK_GATES[c[3]] || BOOK_GATES.Other;
+    return `<div class="book-gate" id="book-gate">
+      <div class="eyebrow mb-2">Before Booked · ${c[3]} · skippable</div>
+      <p class="faint text-sm mb-2">Quick checklist by vendor type — not a rules engine.</p>
+      <ul class="gate-list">${items.map((t, i) => `<li><label><input type="checkbox" data-gi="${i}"> ${t}</label></li>`).join("")}</ul>
+      <div class="row gap-2 mt-3"><button type="button" class="btn btn-ghost btn-sm" id="gate-skip">Skip for now</button><button type="button" class="btn btn-primary btn-sm" id="gate-book">Mark Booked</button></div></div>`;
+  }
   function drawDrawer() {
     const c = C.concat(DIR).find(x => x[0] === selected) || C[10];
     const [lab, cls] = SLABEL[c[4]];
@@ -409,8 +433,9 @@ window.addEventListener("envoy:ready", () => {
       <div class="drawer-scroll">
         <div class="card-body">
           ${fix ? `<div class="mb-4">${fix}</div>` : ""}
+          ${c._showGate && c[8] !== "dir" ? `<div class="mb-4">${bookGateHtml(c)}</div>` : ""}
           <dl class="kv"><dt>Email</dt><dd>${c[7] || '<span class="accent">Missing</span>'}</dd><dt>Website</dt><dd><a class="btn-link" href="#" onclick="return false">${c[10]}</a></dd><dt>Next action</dt><dd>${c[5]}</dd>${weddingsFor(c)}</dl>
-          ${c[8] !== "dir" ? `<div class="eyebrow mt-4 mb-2">Status</div><div class="ladder" role="group" aria-label="Status">${LADDER.map((s, i) => `${i ? '<span class="arrow">→</span>' : ""}<button data-set="${s}" aria-pressed="${c[4] === s}">${SLABEL[s][0]}</button>`).join("")}</div>` : ""}
+          ${c[8] !== "dir" ? `<div class="eyebrow mt-4 mb-2">Status</div><div class="ladder" role="group" aria-label="Status">${LADDER.map((s, i) => `${i ? '<span class="arrow">→</span>' : ""}<button type="button" data-set="${s}" aria-pressed="${c[4] === s}">${SLABEL[s][0]}</button>`).join("")}</div>` : ""}
           <div class="row gap-2 mt-4 wrap">
             ${c[9] ? `<button class="btn btn-secondary btn-sm" id="attach-other">${icon("attach",13)}Attach to another wedding</button>` : ""}
             ${fix ? "" : `<button class="btn btn-secondary btn-sm" data-draft="${c[1]}">${icon("edit",13)}Draft</button>`}
@@ -447,7 +472,15 @@ window.addEventListener("envoy:ready", () => {
     else if (t.id === "attach-other") { pickWedding = !pickWedding; drawDrawer(); }
     else if (t.dataset.wed) { otherFor(c).push(t.dataset.wed); pickWedding = false; drawDrawer(); toast(`<b>${c[1]}</b> attached to <b>${t.dataset.wed.replace("&","&amp;")}</b>`); }
     else if (t.id === "save-pref") { c[9] = 1; render(); toast(`<b>${c[1]}</b> added to your contact book`); }
-    else if (t.dataset.set) { c[4] = t.dataset.set; render(); toast(`${c[1]} → <b>${SLABEL[t.dataset.set][0]}</b>`); }
+    else if (t.id === "gate-skip") { c._showGate = false; c._bookGateDone = true; c[4] = "booked"; render(); toast(`<b>${c[1]}</b> → Booked (gate skipped)`); }
+    else if (t.id === "gate-book") { c._showGate = false; c._bookGateDone = true; c[4] = "booked"; render(); toast(`<b>${c[1]}</b> → Booked · checklist noted`); }
+    else if (t.dataset.set) {
+      if (t.dataset.set === "booked" && LADDER.indexOf(c[4]) < LADDER.indexOf("booked") && !c._bookGateDone) { c._showGate = true; drawDrawer(); return; }
+      c._showGate = false;
+      c[4] = t.dataset.set;
+      render();
+      toast(`${c[1]} → <b>${SLABEL[t.dataset.set][0]}</b>`);
+    }
   });
 
   // --- attach flow (demo beat 1)

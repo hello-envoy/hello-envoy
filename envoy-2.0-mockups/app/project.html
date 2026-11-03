@@ -48,7 +48,7 @@
     <div>
       <div class="eyebrow">Elena &amp; Marcus · Plan</div>
       <h1>Project</h1>
-      <div class="meta"><span id="ms-count">5 of 12 milestones done</span><span class="faint">·</span><span>50 weeks out</span><span class="faint">·</span><span>14 checklist items this month</span></div>
+      <div class="meta"><span id="ms-count">5 of 12 milestones done</span><span class="faint">·</span><span id="meta-weeks">50 weeks out</span><span class="faint">·</span><span id="meta-checklist">14 checklist items this month</span></div>
     </div>
     <div class="row">
       <button class="btn btn-secondary" data-toast="New milestone"><i data-i="layers"></i>Milestone</button>
@@ -162,7 +162,24 @@
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { icon, toast, hydrateIcons } = Envoy;
+  const { icon, toast, hydrateIcons, weddingSlice, applyWeddingPageHead, withW } = Envoy;
+  const wId = new URLSearchParams(location.search).get("w") || "em";
+  const wSlice = weddingSlice(wId);
+  applyWeddingPageHead("Plan");
+  document.getElementById("ms-count").textContent = wSlice.projectMs;
+  document.getElementById("meta-weeks").textContent = wSlice.projectWeeks;
+  document.getElementById("meta-checklist").textContent = wSlice.projectChecklist;
+  document.querySelectorAll('a[href^="contacts.html"]').forEach((a) => {
+    const raw = a.getAttribute("href");
+    const hash = raw.includes("#") ? raw.slice(raw.indexOf("#")) : "";
+    a.href = withW("contacts.html") + hash;
+  });
+  if (wId !== "em" && !wSlice.fullSpine) {
+    const note = document.createElement("div");
+    note.className = "card card-pad mb-4";
+    note.innerHTML = `<span class="text-sm"><b>${wSlice.label}</b> — project slice for this wedding. Full checklist on <a class="btn-link" href="project.html">Elena &amp; Marcus</a>.</span>`;
+    document.querySelector("main.page").insertBefore(note, document.querySelector("main.page").children[1]);
+  }
 
   // ---------- Milestones ----------
   const MS = [
@@ -211,7 +228,7 @@ window.addEventListener("envoy:ready", () => {
     ["me", "Reply to Lowcountry Glam re: trial", "Attire & beauty", "Mon", 0],
     ["me", "Draft florist inquiries", "Choose florist", "Wed", 0],
     ["me", "Confirm hotel hold → Oct 15–17", "Hotel block", "Thu", 0],
-    ["me", "Attach preferred vendors", "Choose florist", "Mon", 1],
+    ["me", "Attach from contact book", "Choose florist", "Mon", 1],
     ["couple", "Pick florist A or B", "Choose florist", "Mon", 0],
     ["couple", "Pay catering deposit", "Lock catering", "Fri", 0],
     ["vendor", "Countersigned catering contract", "Lock catering", "Sun", 1],

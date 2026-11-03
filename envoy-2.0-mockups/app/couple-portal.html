@@ -7,73 +7,87 @@
 <link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/components.css">
 <style>
-  body { background: var(--paper); }
-  .preview { background: var(--ink); color: #E5E7F4; font-size: var(--text-sm); }
+  html, body { height: 100%; overflow: hidden; background: var(--paper); }
+  body { display: flex; flex-direction: column; min-height: 0; }
+  .preview { flex: none; background: var(--ink); color: #E5E7F4; font-size: var(--text-sm); }
   .preview .in { max-width: 1080px; margin: 0 auto; padding: 8px 32px; display: flex; gap: 12px; align-items: center; }
   .preview a { color: #fff; }
-  .phead { max-width: 1080px; margin: 0 auto; padding: 20px 32px; display: flex; align-items: center; gap: 16px; }
+  .phead { flex: none; max-width: 1080px; width: 100%; margin: 0 auto; padding: 12px 32px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); }
   .phead .by { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--ink-2); font-size: var(--text-sm); }
-  .wrap-p { max-width: 1080px; margin: 0 auto; padding: 0 32px 96px; }
-  .p-hero { padding: 56px 0 48px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: end; }
-  .p-hero h1 { font-family: var(--font-display); font-weight: 500; font-size: 84px; line-height: 84px; letter-spacing: -0.035em;  }
-  .p-hero h1 em { color: var(--clay); font-style: normal; margin: 0 0.06em 0 0.02em; }
-  .p-facts { display: grid; gap: 14px; }
-  .p-facts div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+  .cp-shell { flex: 1; min-height: 0; max-width: 1080px; width: 100%; margin: 0 auto; padding: 0 32px 16px; display: flex; flex-direction: column; }
+  .cp-title { flex: none; padding: 16px 0 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .cp-title h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4vw, 40px); line-height: 1.05; letter-spacing: -0.03em; margin: 0; }
+  .cp-title h1 em { color: var(--clay); font-style: normal; }
+  .cp-title .meta { font-size: var(--text-sm); color: var(--ink-3); }
+  .cp-tabs { flex: none; margin-bottom: 12px; }
+  .cp-tabs.seg { flex-wrap: wrap; }
+  .cp-panels { flex: 1; min-height: 0; position: relative; }
+  .cp-panel { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .cp-panel.hide { display: none !important; }
+  .cp-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-right: 4px; }
+  .cp-panel-inner { padding-bottom: 8px; }
+  .p-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; }
+  .p-facts div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; font-size: var(--text-sm); }
   .p-facts dt { color: var(--ink-3); } .p-facts dd { margin: 0; font-weight: 500; text-align: right; }
-  .p-sec { padding: 48px 0 0; }
-  .p-sec > header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; }
-  .p-sec h2 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 36px; letter-spacing: -0.015em; }
-  .p-sec h2 .n { font-family: var(--font-sans); font-size: var(--text-sm); vertical-align: middle; margin-left: 12px; color: var(--ink-3); font-weight: 400; letter-spacing: 0; }
   .own { font-size: var(--text-sm); color: var(--ink-2); margin-top: 4px; }
   .both { display: flex; align-items: center; gap: 8px; font-size: var(--text-sm); color: var(--ink-3); margin-bottom: 12px; }
   .micro { font-size: var(--text-xs); color: var(--ink-3); margin-top: 4px; text-align: right; }
-  .ab { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ab { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .opt { border: 1px solid var(--line); border-radius: var(--r-xl); background: var(--surface); overflow: hidden; cursor: pointer; transition: border-color var(--dur-2), box-shadow var(--dur-2), opacity var(--dur-2); text-align: left; padding: 0; }
   .opt:hover { border-color: var(--line-strong); box-shadow: var(--e-2); }
   .opt.is-picked { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
   .opt.is-other { opacity: .55; }
-  .ab-preview { min-height: 88px; padding: 14px 16px; background: var(--wash); border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
-  .opt .b { padding: 18px 20px 20px; }
-  .opt .letter { font-family: var(--font-display); font-size: 15px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-strong); display: inline-grid; place-items: center; }
+  .ab-preview { min-height: 72px; padding: 12px 14px; background: var(--wash); border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+  .opt .b { padding: 14px 16px 16px; }
+  .opt .letter { font-family: var(--font-display); font-size: 14px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-strong); display: inline-grid; place-items: center; }
   .opt.is-picked .letter { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .opt h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 28px; margin-top: 10px; }
-  .opt .words { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-  .task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .task-list li { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+  .opt h3 { font-family: var(--font-display); font-weight: 400; font-size: 18px; line-height: 24px; margin-top: 8px; }
+  .opt .words { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .opt p.muted { font-size: var(--text-sm); margin-top: 6px; line-height: 1.45; }
+  .task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .task-list li { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
   .task-list li.done { opacity: .72; }
   .task-list .meta { font-size: var(--text-sm); color: var(--ink-3); margin-top: 2px; }
-  .task-timeline { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--line); display: grid; gap: 8px; font-size: var(--text-sm); color: var(--ink-2); }
+  .task-timeline { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--line); display: grid; gap: 6px; font-size: var(--text-sm); color: var(--ink-2); }
   .task-timeline div { display: flex; justify-content: space-between; gap: 12px; }
-  .mlist { list-style: none; padding: 0; margin: 0; position: relative; }
-  .mlist::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 1.5px; background: var(--line-strong); }
-  .mlist li { position: relative; padding: 0 0 18px 30px; display: flex; justify-content: space-between; gap: 12px; }
-  .mlist li::before { content: ""; position: absolute; left: 0; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper); border: 2px solid var(--line-strong); box-sizing: border-box; }
+  .mlist { list-style: none; padding: 0; margin: 0; position: relative; columns: 2; column-gap: 32px; font-size: var(--text-sm); }
+  .mlist::before { content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 1.5px; background: var(--line-strong); }
+  .mlist li { position: relative; padding: 0 0 12px 26px; display: flex; justify-content: space-between; gap: 8px; break-inside: avoid; }
+  .mlist li::before { content: ""; position: absolute; left: 0; top: 3px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 2px solid var(--line-strong); box-sizing: border-box; }
   .mlist li.d::before { background: var(--ink); border-color: var(--ink); }
-  .mlist li.m::before { border-color: var(--clay); box-shadow: 0 0 0 4px var(--clay-soft); }
+  .mlist li.m::before { border-color: var(--clay); box-shadow: 0 0 0 3px var(--clay-soft); }
   .mlist li .t { font-weight: 500; } .mlist li.d .t { color: var(--ink-2); }
-  .mlist li .w { color: var(--ink-3); font-size: var(--text-sm); white-space: nowrap; }
+  .mlist li .w { color: var(--ink-3); white-space: nowrap; font-size: var(--text-xs); }
   .team { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; }
-  .team .tm { display: flex; gap: 12px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+  .team .tm { display: flex; gap: 10px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: var(--text-sm); }
   .team .tm:nth-child(odd) { border-right: 1px solid var(--line); }
-  .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .tags-edit { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface); min-height: 44px; align-items: center; }
-  .tags-edit .chip { height: 26px; font-size: var(--text-sm); background: var(--paper-2); color: var(--ink); }
+  .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tags-edit { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface); min-height: 40px; align-items: center; }
+  .tags-edit .chip { height: 24px; font-size: var(--text-sm); background: var(--paper-2); color: var(--ink); }
   .tags-edit .chip button { border: 0; background: none; padding: 0; cursor: pointer; color: var(--ink-3); display: inline-flex; }
-  .tags-edit input { border: 0; outline: none; background: none; flex: 1; min-width: 100px; height: 26px; }
+  .tags-edit input { border: 0; outline: none; background: none; flex: 1; min-width: 80px; height: 24px; font-size: var(--text-sm); }
   .stepper { display: flex; align-items: center; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface); width: fit-content; }
-  .stepper button { width: 40px; height: 44px; border: 0; background: none; font-size: 18px; cursor: pointer; color: var(--ink-2); }
+  .stepper button { width: 36px; height: 40px; border: 0; background: none; font-size: 18px; cursor: pointer; color: var(--ink-2); }
   .stepper button:hover { background: var(--paper-2); }
-  .stepper output { min-width: 72px; text-align: center; font-family: var(--font-display); font-size: 26px; font-variant-numeric: lining-nums tabular-nums; }
-  .note-card { display: grid; grid-template-columns: 1fr 260px; gap: 0; overflow: hidden; }
-  .note-card .l { padding: 24px; }
-  .note-card .r { padding: 24px; background: var(--paper-2); border-left: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-2); }
-  .foot { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; color: var(--ink-3); font-size: var(--text-sm); }
-  @media (max-width: 860px) { .p-hero, .ab, .edit-grid, .team, .note-card { grid-template-columns: 1fr; } .p-hero h1 { font-size: 56px; line-height: 58px; } }
-  #sankey .sankey text { font-size: 13px; }
-  #sankey .sankey { overflow: visible; margin-bottom: 14px; }
+  .stepper output { min-width: 64px; text-align: center; font-family: var(--font-display); font-size: 22px; font-variant-numeric: lining-nums tabular-nums; }
+  .note-card { display: grid; grid-template-columns: 1fr 220px; gap: 0; overflow: hidden; }
+  .note-card .l { padding: 16px 20px; }
+  .note-card .r { padding: 16px 20px; background: var(--paper-2); border-left: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-2); line-height: 1.45; }
+  .cp-foot { flex: none; font-size: var(--text-xs); color: var(--ink-3); display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--line); margin-top: 4px; }
+  #sankey.cp-budget .sk-title { font-size: 22px; line-height: 28px; }
+  #sankey.cp-budget .sk-sub { font-size: var(--text-sm); }
+  #sankey.cp-budget .sk-nums .v { font-size: 20px; line-height: 24px; }
+  #sankey .sankey text { font-size: 12px; }
+  #sankey .sankey { overflow: visible; }
+  @media (max-width: 860px) {
+    .phead, .preview .in, .cp-shell { padding-left: 16px; padding-right: 16px; }
+    .ab, .edit-grid, .team, .note-card, .p-facts { grid-template-columns: 1fr; }
+    .mlist { columns: 1; }
+    .cp-tabs.seg button { font-size: var(--text-xs); padding: 6px 10px; }
+  }
 </style>
 </head>
-<body data-page="portal">
+<body data-page="portal" data-rail="off">
 <div class="preview"><div class="in"><i data-i="eye" data-s="14"></i><span>Previewing what <b>Elena &amp; Marcus</b> see. Drafts, vendor threads, risks, and other clients are never shown here.</span><a href="overview.html" style="margin-left:auto">← Back to planner view</a></div></div>
 
 <header class="phead">
@@ -81,196 +95,203 @@
   <div class="by"><span>Planned with</span><span class="av av-ink">SW</span><span><b style="color:var(--ink)">Sarah Whitfield</b> · Whitfield &amp; Co.</span></div>
 </header>
 
-<main class="wrap-p">
-  <section class="p-hero">
+<main class="cp-shell">
+  <div class="cp-title">
     <div>
-      <div class="eyebrow">Your wedding</div>
-      <h1 class="mt-3">Elena <em>&amp;</em> Marcus</h1>
-      <p class="text-lg muted mt-4" style="max-width:520px">348 days to go. The big pieces are in place — venue, photographer, band. This month is about food and flowers.</p>
+      <div class="eyebrow">Your wedding · 348 days to go</div>
+      <h1>Elena <em>&amp;</em> Marcus</h1>
     </div>
-    <dl class="p-facts">
-      <div><dt>Date</dt><dd>Saturday, October 16, 2027</dd></div>
-      <div><dt>Venue</dt><dd>The Ashby Estate · Charleston <span class="chip chip-ok" style="margin-left:6px">Booked</span></dd></div>
-      <div><dt>Guests</dt><dd><span id="g-out">128</span> estimated</dd></div>
-      <div><dt>Open this month</dt><dd>Food &amp; flowers</dd></div>
-    </dl>
-  </section>
+    <span class="meta">Private to you &amp; Sarah · <span id="g-out">128</span> guests</span>
+  </div>
 
-  <section class="p-sec">
-    <header><h2>Your tasks</h2><span class="faint text-sm">From Sarah’s holds &amp; assignments</span></header>
-    <ul class="task-list" id="your-tasks">
-      <li id="task-florist"><div><div style="font-weight:500">Pick florist A or B</div><div class="meta">Due Monday, Nov 9 · unlocks inquiry</div></div><a class="btn btn-secondary btn-sm" href="#ab">Open A/B</a></li>
-      <li id="task-deposit"><div><div style="font-weight:500">Pay catering deposit · $7,920</div><div class="meta">Due Friday, Nov 6 · Wildflour · locks your date</div></div><button class="btn btn-secondary btn-sm" id="mark-paid">Mark as paid</button></li>
-    </ul>
-    <div class="task-timeline" aria-label="Tasks over time">
-      <div class="faint text-xs" style="text-transform:uppercase;letter-spacing:.08em">Coming up</div>
-      <div><span>Share must-haves &amp; style words</span><span class="faint">Nov 9</span></div>
-      <div><span>Florist retainer (after pick)</span><span class="faint">Dec 1</span></div>
-      <div><span>Save-the-dates mail</span><span class="faint">Feb 2027</span></div>
-    </div>
-  </section>
+  <div class="seg cp-tabs" role="tablist" data-tabs="#cp-panels" data-hash>
+    <button type="button" data-tab="tasks" aria-selected="true">Your tasks <span class="count" id="dec-n">2</span></button>
+    <button type="button" data-tab="budget" aria-selected="false">Budget</button>
+    <button type="button" data-tab="team" aria-selected="false">Team</button>
+    <button type="button" data-tab="tell" aria-selected="false">Tell Sarah</button>
+  </div>
 
-  <!-- Decisions -->
-  <section class="p-sec" id="ab">
-    <header><h2>This week <span class="n" id="dec-n">2 things</span></h2><span class="faint text-sm">Sarah needs these by Monday, Nov 9</span></header>
-    <div class="card" style="padding:24px" id="ab-card">
-      <div class="row-between mb-4"><div><div class="eyebrow">Decision 1 of 2 · Florals</div><div class="text-lg mt-2" style="font-weight:500">Which florist feels like you?</div><div class="own">You choose · Sarah inquiries &amp; books.</div></div><span class="faint text-sm">Both are open on your date and within budget.</span></div>
-      <div class="both"><i data-i="users" data-s="14"></i>Marcus can see this too — only one of you needs to tap.</div>
-      <div class="ab">
-        <button class="opt" data-pick="Heron &amp; Fern Florals">
-          <div class="ab-preview" role="img" aria-label="Option A: garden-gathered florals, muted whites and dusty apricot, loose greenery, about ten thousand eight hundred dollars"><span class="chip chip-outline">$9.5k–$11.5k band</span><span class="chip chip-outline">Garden · soft · textured</span></div>
-          <div class="b"><div class="row-between"><span class="letter">A</span><span class="num muted">~ $10,800</span></div>
-            <h3>Heron &amp; Fern Florals</h3>
-            <p class="muted mt-2">Garden-gathered and loose. Muted whites and dusty apricot, lots of texture, a ceremony arch that looks like it grew there.</p>
-            <div class="words"><span class="chip chip-outline">Soft</span><span class="chip chip-outline">Textured</span><span class="chip chip-outline">Wild</span><span class="chip chip-outline">Sarah's worked with them</span></div></div>
-        </button>
-        <button class="opt" data-pick="Marlowe Flower Co.">
-          <div class="ab-preview" role="img" aria-label="Option B: lush composed florals, white peonies and candlelit reception, full install and strike, about twelve thousand four hundred dollars"><span class="chip chip-outline">$11k–$13k band</span><span class="chip chip-outline">Lush · formal · candlelit</span></div>
-          <div class="b"><div class="row-between"><span class="letter">B</span><span class="num muted">~ $12,400</span></div>
-            <h3>Marlowe Flower Co.</h3>
-            <p class="muted mt-2">Lush and composed. Full install and strike, tall centerpieces, a more formal, candlelit evening feel.</p>
-            <div class="words"><span class="chip chip-outline">Lush</span><span class="chip chip-outline">Formal</span><span class="chip chip-outline">Candlelit</span><span class="chip chip-outline">Full service</span></div></div>
-        </button>
-      </div>
-      <p class="faint text-sm mt-4" id="ab-foot">Tap one — you can change your mind until Sarah sends the inquiry.</p>
-    </div>
-  </section>
-
-  <!-- Milestones + Team -->
-  <div class="g-12 p-sec">
-    <section class="span-5">
-      <header class="row-between mb-4"><h2 style="font-family:var(--font-display);font-weight:400;font-size:30px;line-height:36px">Milestones</h2></header>
-      <ul class="mlist">
-        <li class="d"><span class="t">Venue booked</span><span class="w">Oct 3</span></li>
-        <li class="d"><span class="t">Photographer &amp; band booked</span><span class="w">Oct 24</span></li>
-        <li class="d"><span class="t">Guest estimate set</span><span class="w">Oct 30</span></li>
-        <li class="m"><span class="t">Lock catering</span><span class="w accent">This week</span></li>
-        <li class="m"><span class="t">Choose florist</span><span class="w accent">Your pick</span></li>
-        <li><span class="t">Save-the-dates out</span><span class="w">Feb 2027</span></li>
-        <li><span class="t">Attire &amp; beauty</span><span class="w">May 2027</span></li>
-        <li><span class="t">Final numbers</span><span class="w">Sep 2027</span></li>
-        <li><span class="t">The day</span><span class="w">Oct 16, 2027</span></li>
-      </ul>
-    </section>
-    <section class="span-7">
-      <header class="row-between mb-4"><h2 style="font-family:var(--font-display);font-weight:400;font-size:30px;line-height:36px">Your team</h2>
-        <div class="seg" data-tabs="#team"><button data-tab="booked" aria-selected="true">Booked · 6</button><button data-tab="exploring" aria-selected="false">Exploring · 4</button></div></header>
-      <div class="card" id="team">
-        <div class="team" data-panel="booked">
-          <div class="tm"><span class="logo-sq">A</span><div><div class="cell-main">The Ashby Estate</div><div class="cell-sub">Venue</div></div></div>
-          <div class="tm"><span class="logo-sq">W</span><div><div class="cell-main">Wildflour Catering</div><div class="cell-sub">Catering</div></div></div>
-          <div class="tm"><span class="logo-sq">J</span><div><div class="cell-main">Juniper &amp; Vale</div><div class="cell-sub">Photography</div></div></div>
-          <div class="tm"><span class="logo-sq">T</span><div><div class="cell-main">The Tidewater Six</div><div class="cell-sub">Band</div></div></div>
-          <div class="tm" style="border-bottom:0"><span class="logo-sq">I</span><div><div class="cell-main">Inkwell &amp; Oak</div><div class="cell-sub">Stationery</div></div></div>
-          <div class="tm" style="border-bottom:0"><span class="logo-sq">W</span><div><div class="cell-main">Whitfield &amp; Co.</div><div class="cell-sub">Planning</div></div></div>
-        </div>
-        <div class="team hide" data-panel="exploring">
-          <div class="tm"><span class="logo-sq">H</span><div><div class="cell-main">Heron &amp; Fern</div><div class="cell-sub">Florals · option A</div></div></div>
-          <div class="tm"><span class="logo-sq">M</span><div><div class="cell-main">Marlowe Flower Co.</div><div class="cell-sub">Florals · option B</div></div></div>
-          <div class="tm" style="border-bottom:0"><span class="logo-sq">S</span><div><div class="cell-main">Saltmarsh Films</div><div class="cell-sub">Videography</div></div></div>
-          <div class="tm" style="border-bottom:0"><span class="logo-sq">L</span><div><div class="cell-main">Lowcountry Glam</div><div class="cell-sub">Hair &amp; makeup</div></div></div>
-        </div>
-      </div>
-
-      <section class="card mt-4" id="sankey">
-        <div class="card-head" style="align-items:flex-end;padding-top:var(--s-5)">
-          <div>
-            <div class="row-between" style="align-items:baseline;gap:12px"><div class="eyebrow">Budget · $120,000</div><span class="faint text-xs">Shared by Sarah</span></div>
-            <h2 class="sk-title">Where the money goes</h2>
-            <div class="sk-sub">Total budget → each category → <b>booked</b> (contracted) and <b>spent</b> (paid out) separately. Hover a band for the number.</div>
+  <div class="cp-panels" id="cp-panels">
+    <section class="cp-panel" data-panel="tasks" id="ab" aria-label="Your tasks">
+      <div class="cp-scroll"><div class="cp-panel-inner">
+        <div class="card mb-3" style="padding:14px 16px" id="ab-card">
+          <div class="row-between flex-wrap gap-2 mb-2">
+            <div><div class="eyebrow">Due Monday, Nov 9 · Florist</div><div style="font-weight:500">Which feels like you?</div></div>
+            <span class="faint text-sm">Both hold your date</span>
           </div>
-          <div class="sk-nums"><div><span class="k">Booked</span><span class="v num">$79.6k</span></div><div><span class="k">Spent</span><span class="v num">$80.6k</span><span class="faint text-xs">Catering over line</span></div><div><span class="k">Remaining</span><span class="v num accent">$39.4k</span></div></div>
+          <div class="both"><i data-i="users" data-s="14"></i>Marcus sees this too — one tap is enough.</div>
+          <div class="ab">
+            <button type="button" class="opt" data-pick="Heron &amp; Fern Florals">
+              <div class="ab-preview" role="img" aria-label="Option A"><span class="chip chip-outline">$9.5k–$11.5k</span><span class="chip chip-outline">Garden · soft</span></div>
+              <div class="b"><div class="row-between"><span class="letter">A</span><span class="num muted">~ $10,800</span></div>
+                <h3>Heron &amp; Fern Florals</h3>
+                <p class="muted">Garden-gathered, muted whites and dusty apricot.</p>
+                <div class="words"><span class="chip chip-outline">Soft</span><span class="chip chip-outline">Wild</span></div></div>
+            </button>
+            <button type="button" class="opt" data-pick="Marlowe Flower Co.">
+              <div class="ab-preview" role="img" aria-label="Option B"><span class="chip chip-outline">$11k–$13k</span><span class="chip chip-outline">Lush · formal</span></div>
+              <div class="b"><div class="row-between"><span class="letter">B</span><span class="num muted">~ $12,400</span></div>
+                <h3>Marlowe Flower Co.</h3>
+                <p class="muted">Lush centerpieces, candlelit evening, full install.</p>
+                <div class="words"><span class="chip chip-outline">Lush</span><span class="chip chip-outline">Formal</span></div></div>
+            </button>
+          </div>
+          <p class="faint text-sm mt-2" id="ab-foot">Tap one — change your mind until Sarah sends the inquiry.</p>
         </div>
-        <div class="card-body"><div id="sankey-el" style="width:100%"></div>
-          <ul class="sk-legend mt-3" id="sankey-legend"></ul>
-          <p class="faint text-sm mt-2">Your florist pick fits either way — amounts here match what Sarah sees on Overview.</p></div>
-      </section>
+        <ul class="task-list" id="your-tasks">
+          <li id="task-florist"><div><div style="font-weight:500">Pick florist A or B</div><div class="meta">Due Monday, Nov 9</div></div><span class="faint text-sm">↑ above</span></li>
+          <li id="task-deposit"><div><div style="font-weight:500">Pay catering deposit · $7,920</div><div class="meta">Due Fri, Nov 6 · Wildflour</div></div><button class="btn btn-secondary btn-sm" id="mark-paid">Mark as paid</button></li>
+        </ul>
+        <div class="task-timeline" aria-label="Tasks over time">
+          <div class="faint text-xs" style="text-transform:uppercase;letter-spacing:.08em">Coming up</div>
+          <div><span>Share must-haves &amp; style</span><span class="faint">Nov 9</span></div>
+          <div><span>Florist retainer (after pick)</span><span class="faint">Dec 1</span></div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="cp-panel hide" data-panel="budget" aria-label="Budget">
+      <div class="cp-scroll"><div class="cp-panel-inner">
+        <section class="card cp-budget" id="sankey" style="border:0;box-shadow:none;background:transparent">
+          <div class="card-head" style="align-items:flex-end;padding:0 0 var(--s-3);min-height:0">
+            <div>
+              <div class="row-between" style="align-items:baseline;gap:12px"><div class="eyebrow">Budget · $120,000</div><span class="faint text-xs">Shared by Sarah</span></div>
+              <h2 class="sk-title">Where the money goes</h2>
+              <div class="sk-sub">Total budget → each category → <b>booked</b> and <b>spent</b> separately.</div>
+            </div>
+            <div class="sk-nums"><div><span class="k">Booked</span><span class="v num">$79.6k</span></div><div><span class="k">Spent</span><span class="v num">$80.6k</span><span class="faint text-xs">Catering over line</span></div><div><span class="k">Remaining</span><span class="v num accent">$39.4k</span></div></div>
+          </div>
+          <div class="card-body" style="padding:0"><div id="sankey-el" style="width:100%"></div>
+            <ul class="sk-legend mt-2" id="sankey-legend"></ul>
+            <p class="faint text-sm mt-2">Same view Sarah sees on Overview — your florist pick fits either way.</p></div>
+        </section>
+      </div></div>
+    </section>
+
+    <section class="cp-panel hide" data-panel="team" aria-label="Team">
+      <div class="cp-scroll"><div class="cp-panel-inner">
+        <div class="row-between mb-3">
+          <span class="eyebrow">Your team</span>
+          <div class="seg" data-tabs="#team"><button type="button" data-tab="booked" aria-selected="true">Booked · 6</button><button type="button" data-tab="exploring" aria-selected="false">Exploring · 4</button></div>
+        </div>
+        <div class="card" id="team">
+          <div class="team" data-panel="booked">
+            <div class="tm"><span class="logo-sq">A</span><div><div class="cell-main">The Ashby Estate</div><div class="cell-sub">Venue</div></div></div>
+            <div class="tm"><span class="logo-sq">W</span><div><div class="cell-main">Wildflour Catering</div><div class="cell-sub">Catering</div></div></div>
+            <div class="tm"><span class="logo-sq">J</span><div><div class="cell-main">Juniper &amp; Vale</div><div class="cell-sub">Photo</div></div></div>
+            <div class="tm"><span class="logo-sq">T</span><div><div class="cell-main">The Tidewater Six</div><div class="cell-sub">Band</div></div></div>
+            <div class="tm" style="border-bottom:0"><span class="logo-sq">I</span><div><div class="cell-main">Inkwell &amp; Oak</div><div class="cell-sub">Stationery</div></div></div>
+            <div class="tm" style="border-bottom:0"><span class="logo-sq">W</span><div><div class="cell-main">Whitfield &amp; Co.</div><div class="cell-sub">Planning</div></div></div>
+          </div>
+          <div class="team hide" data-panel="exploring">
+            <div class="tm"><span class="logo-sq">H</span><div><div class="cell-main">Heron &amp; Fern</div><div class="cell-sub">Florals · A</div></div></div>
+            <div class="tm"><span class="logo-sq">M</span><div><div class="cell-main">Marlowe Flower Co.</div><div class="cell-sub">Florals · B</div></div></div>
+            <div class="tm" style="border-bottom:0"><span class="logo-sq">S</span><div><div class="cell-main">Saltmarsh Films</div><div class="cell-sub">Video</div></div></div>
+            <div class="tm" style="border-bottom:0"><span class="logo-sq">L</span><div><div class="cell-main">Lowcountry Glam</div><div class="cell-sub">Beauty</div></div></div>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="cp-panel hide" data-panel="tell" aria-label="Tell Sarah">
+      <div class="cp-scroll"><div class="cp-panel-inner">
+        <div class="edit-grid mb-3">
+          <div class="card" style="padding:16px 18px">
+            <div class="field"><label>Guest estimate</label>
+              <div class="row" style="gap:12px"><div class="stepper"><button type="button" id="g-dn" aria-label="Fewer">−</button><output id="g-val">128</output><button type="button" id="g-up" aria-label="More">+</button></div><span class="faint text-sm">Venue cap 140</span></div></div>
+            <div class="field mt-4"><label>Style words</label>
+              <div class="tags-edit" data-tags><span class="chip">Garden <button type="button" aria-label="Remove">×</button></span><span class="chip">Candlelit <button type="button" aria-label="Remove">×</button></span><span class="chip">Warm, not formal <button type="button" aria-label="Remove">×</button></span><input placeholder="Add…"></div></div>
+          </div>
+          <div class="card" style="padding:16px 18px">
+            <div class="field"><label>Must-haves</label>
+              <div class="tags-edit" data-tags><span class="chip">Oyster roast <button type="button" aria-label="Remove">×</button></span><span class="chip">Live band <button type="button" aria-label="Remove">×</button></span><span class="chip">Dog in ceremony <button type="button" aria-label="Remove">×</button></span><input placeholder="Add…"></div></div>
+            <div class="field mt-4"><label>Absolutely not</label>
+              <div class="tags-edit" data-tags><span class="chip">Sparkler exit <button type="button" aria-label="Remove">×</button></span><input placeholder="Add…"></div></div>
+          </div>
+        </div>
+        <div class="card note-card">
+          <div class="l">
+            <div class="eyebrow">Note for Sarah</div>
+            <textarea class="textarea mt-2" rows="2" placeholder="A thought, a link…"></textarea>
+            <div class="row-between mt-2"><span class="faint text-sm">She usually replies within a day.</span><button type="button" class="btn btn-primary btn-sm" data-toast="Note sent to <b>Sarah</b>">Send</button></div>
+          </div>
+          <div class="r">Notes go to Sarah only — never to vendors in your name.</div>
+        </div>
+      </div></div>
     </section>
   </div>
 
-  <!-- Edit -->
-  <section class="p-sec">
-    <header><h2>Tell Sarah</h2><span class="faint text-sm">Changes save automatically and show up on her side</span></header>
-    <div class="edit-grid">
-      <div class="card" style="padding:24px">
-        <div class="field"><label>Guest estimate</label>
-          <div class="row" style="gap:16px"><div class="stepper"><button id="g-dn" aria-label="Fewer">−</button><output id="g-val">128</output><button id="g-up" aria-label="More">+</button></div><span class="faint text-sm">Venue holds up to 140</span></div></div>
-        <div class="field mt-6"><label>Style, in a few words</label>
-          <div class="tags-edit" data-tags><span class="chip">Garden <button aria-label="Remove">×</button></span><span class="chip">Candlelit <button aria-label="Remove">×</button></span><span class="chip">Warm, not formal <button aria-label="Remove">×</button></span><input placeholder="Add a word…"></div></div>
-      </div>
-      <div class="card" style="padding:24px">
-        <div class="field"><label>Must-haves</label>
-          <div class="tags-edit" data-tags><span class="chip">Oyster roast at cocktail hour <button aria-label="Remove">×</button></span><span class="chip">Live band, no DJ <button aria-label="Remove">×</button></span><span class="chip">Grandma's veil <button aria-label="Remove">×</button></span><span class="chip">Dog in the ceremony <button aria-label="Remove">×</button></span><input placeholder="Add a must-have…"></div>
-          <span class="hint">Sarah uses these when drafting vendor inquiries.</span></div>
-        <div class="field mt-6"><label>Absolutely not</label>
-          <div class="tags-edit" data-tags><span class="chip">Sparkler exit <button aria-label="Remove">×</button></span><input placeholder="Add…"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Note -->
-  <section class="p-sec">
-    <div class="card note-card">
-      <div class="l">
-        <div class="eyebrow">Leave a note for Sarah</div>
-        <textarea class="textarea mt-3" rows="3" placeholder="A thought, a question, a Pinterest link…"></textarea>
-        <div class="row-between mt-3"><span class="faint text-sm">Sarah usually replies within a day.</span><button class="btn btn-primary" data-toast="Note sent to <b>Sarah</b>">Leave note</button></div>
-      </div>
-      <div class="r">
-        <div style="font-weight:600;color:var(--ink)" class="mb-2">How this works</div>
-        Notes go to Sarah only. Vendors never see them, and nothing is sent to a vendor in your name — Sarah handles every conversation.
-      </div>
-    </div>
-  </section>
-
-  <footer class="foot"><span>Private to Elena, Marcus &amp; Sarah</span><span>Envoy</span></footer>
+  <footer class="cp-foot"><span>Private to Elena, Marcus &amp; Sarah</span><span>Envoy couple portal</span></footer>
 </main>
 
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { toast } = Envoy;
-  // quiet count — text, not a red badge
+  const { toast, budgetSankeyData, mountBudgetSankey, budgetFmtK } = Envoy;
+  const tabBtn = (name) => document.querySelector('[data-tabs="#cp-panels"] [data-tab="' + name + '"]');
+  const goTab = (name) => { const b = tabBtn(name); if (b) b.click(); };
+
   const left = new Set(["florals", "deposit"]);
-  const syncLeft = () => document.getElementById("dec-n").textContent = left.size ? `${left.size} ${left.size === 1 ? "thing" : "things"}` : "all set";
+  const syncLeft = () => {
+    const n = left.size;
+    const el = document.getElementById("dec-n");
+    if (el) el.textContent = n ? String(n) : "✓";
+  };
+  syncLeft();
+
   document.getElementById("mark-paid").onclick = () => {
     left.delete("deposit"); syncLeft();
     const row = document.getElementById("task-deposit");
     row.classList.add("done");
-    row.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok"><span class="dot"></span>Marked as paid</span><div class="micro">Sarah will confirm with Wildflour.</div>';
+    row.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok"><span class="dot"></span>Paid</span><div class="micro">Sarah confirms with Wildflour.</div>';
     toast("Marked as paid — Sarah will confirm with Wildflour");
   };
-  document.querySelector("#task-florist a").addEventListener("click", () => document.getElementById("ab").scrollIntoView({ behavior: "smooth" }));
-  // A/B pick (demo beat 4)
-  const opts = document.querySelectorAll(".opt");
-  opts.forEach(o => o.addEventListener("click", () => {
-    opts.forEach(x => { x.classList.toggle("is-picked", x === o); x.classList.toggle("is-other", x !== o); });
-    document.getElementById("ab-foot").innerHTML = `<b style="color:var(--ink)">You picked ${o.dataset.pick}.</b> Sarah's been notified and will reach out to book. <a href="#" class="btn-link" onclick="return false">Change</a>`;
+  document.querySelectorAll(".opt").forEach((o) => o.addEventListener("click", () => {
+    document.querySelectorAll(".opt").forEach((x) => { x.classList.toggle("is-picked", x === o); x.classList.toggle("is-other", x !== o); });
+    document.getElementById("ab-foot").innerHTML = `<b style="color:var(--ink)">You picked ${o.dataset.pick}.</b> Sarah's been notified. <a href="#" class="btn-link" onclick="return false">Change</a>`;
     left.delete("florals"); syncLeft();
     const tf = document.getElementById("task-florist");
     if (tf) { tf.classList.add("done"); tf.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok">Picked</span>'; }
     toast(`Picked <b>${o.dataset.pick}</b> — Sarah will take it from here`);
   }));
-  // guest stepper
-  let g = 128; const out = document.getElementById("g-val"), out2 = document.getElementById("g-out");
-  const set = (v) => { g = Math.max(20, Math.min(140, v)); out.textContent = g; out2.textContent = g; };
-  document.getElementById("g-up").onclick = () => set(g + 1);
-  document.getElementById("g-dn").onclick = () => set(g - 1);
-  // tags
-  document.querySelectorAll("[data-tags]").forEach(box => {
+
+  let g = 128;
+  const out = document.getElementById("g-val"), out2 = document.getElementById("g-out");
+  const setG = (v) => { g = Math.max(20, Math.min(140, v)); out.textContent = g; out2.textContent = g; };
+  document.getElementById("g-up").onclick = () => setG(g + 1);
+  document.getElementById("g-dn").onclick = () => setG(g - 1);
+
+  document.querySelectorAll("[data-tags]").forEach((box) => {
     box.addEventListener("click", (e) => { if (e.target.closest(".chip button")) e.target.closest(".chip").remove(); else box.querySelector("input").focus(); });
     box.querySelector("input").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && e.target.value.trim()) { e.preventDefault(); const c = document.createElement("span"); c.className = "chip"; c.innerHTML = `${e.target.value.trim().replace(/</g,"&lt;")} <button aria-label="Remove">×</button>`; box.insertBefore(c, e.target); e.target.value = ""; toast("Saved — Sarah will see it"); }
+      if (e.key === "Enter" && e.target.value.trim()) {
+        e.preventDefault();
+        const c = document.createElement("span");
+        c.className = "chip";
+        c.innerHTML = `${e.target.value.trim().replace(/</g, "&lt;")} <button type="button" aria-label="Remove">×</button>`;
+        box.insertBefore(c, e.target);
+        e.target.value = "";
+        toast("Saved — Sarah will see it");
+      }
     });
   });
-  const { budgetSankeyData, mountBudgetSankey, budgetFmtK } = Envoy;
+
   const { totals } = budgetSankeyData();
   document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
     const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
     if (vals[i]) el.textContent = vals[i];
   });
-  mountBudgetSankey(document.getElementById("sankey-el"), document.getElementById("sankey-legend"));
-  if (location.hash === "#ab") document.getElementById("ab").scrollIntoView();
+  let redrawSankey = null;
+  const ensureSankey = () => {
+    if (!redrawSankey) redrawSankey = mountBudgetSankey(document.getElementById("sankey-el"), document.getElementById("sankey-legend"));
+    else redrawSankey();
+  };
+  addEventListener("envoy:tab", (e) => { if (e.detail === "budget") requestAnimationFrame(ensureSankey); });
+  addEventListener("resize", () => { if (redrawSankey && !document.querySelector('[data-panel="budget"]').classList.contains("hide")) redrawSankey(); });
+
+  const hash = location.hash.replace("#", "");
+  if (hash === "ab" || hash === "decisions" || hash === "tasks") goTab("tasks");
+  else if (hash && tabBtn(hash)) goTab(hash);
 });
 </script>
 </body>
