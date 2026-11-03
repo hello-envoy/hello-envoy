@@ -84,7 +84,7 @@
     <div>
       <div class="eyebrow">Elena &amp; Marcus · Outbox</div>
       <h1>Approve &amp; send</h1>
-      <div class="meta"><span><i data-i="lock" data-s="14"></i>Nothing leaves Envoy without your approval</span><span><i data-i="mail" data-s="14"></i>Sends from your Gmail, lands in your Sent folder</span></div>
+      <div class="meta"><span><i data-i="lock" data-s="14"></i>Nothing leaves Envoy without your approval</span><span><i data-i="mail" data-s="14"></i>Sends from your Gmail, lands in your Sent folder</span><span><i data-i="spark" data-s="14"></i>Auto-send scopes live in your <b>account menu</b> (avatar) — default off</span></div>
     </div>
     <a class="btn btn-ghost" href="contacts.html"><i data-i="users" data-s="14"></i>Back to contacts</a>
   </header>
@@ -160,19 +160,6 @@
         </form>
       </section>
 
-      <section class="card" id="autosend-card">
-        <div class="card-head"><h3>Auto-send</h3><span class="chip chip-outline" style="height:22px;font-size:10px">Demo · default off</span></div>
-        <div class="card-body" style="padding-top:0">
-          <p class="faint text-sm mb-3">Scopes control whether matching <em>future</em> drafts could send without a tap. This screen always needs <b>Approve &amp; send</b> — toggles only change demo settings.</p>
-          <ul class="scope-list" id="autosend-scopes">
-            <li><label><span><b>Account</b><em>All weddings on your Envoy account</em></span><input type="checkbox" class="toggle" data-scope="account" aria-label="Auto-send account"></label></li>
-            <li><label><span><b>Project</b><em>Elena &amp; Marcus · this wedding</em></span><input type="checkbox" class="toggle" data-scope="project" aria-label="Auto-send project"></label></li>
-            <li><label><span><b>Vendor type</b><em>Beauty / hair &amp; makeup</em></span><input type="checkbox" class="toggle" data-scope="vtype" aria-label="Auto-send vendor type"></label></li>
-            <li><label><span><b>Vendor</b><em id="autosend-vendor-label">Lowcountry Glam · this draft</em></span><input type="checkbox" class="toggle" data-scope="vendor" aria-label="Auto-send vendor"></label></li>
-          </ul>
-        </div>
-      </section>
-
       <section class="card">
         <div class="card-head"><h3>Before you send</h3></div>
         <ul class="checks" id="checks"></ul>
@@ -220,11 +207,8 @@ window.addEventListener("envoy:ready", () => {
   const $ = (id) => document.getElementById(id);
   const comp = $("composer"), ask = $("ask"), send = $("send");
   const guardCopy = $("guard-copy"), guardBar = $("send-guard");
-  const scopeLabels = { account: "Account", project: "Project", vtype: "Vendor type · Beauty", vendor: "Vendor" };
-  const scopeEls = [...document.querySelectorAll("#autosend-scopes [data-scope]")];
-  function anyAutoSendOn() { return scopeEls.some((s) => s.checked); }
   function syncGuard() {
-    const on = anyAutoSendOn();
+    const on = Envoy.autoSendAnyOn && Envoy.autoSendAnyOn();
     guardBar.classList.toggle("is-autosend", on);
     guardCopy.innerHTML = on
       ? "<b>This draft still needs Approve &amp; send.</b> Auto-send is on for some scopes (demo) — matching future drafts could skip your tap; nothing leaves from this screen until you approve."
@@ -243,7 +227,6 @@ window.addEventListener("envoy:ready", () => {
     $("sugg-why").innerHTML = d.why.join("");
     $("checks").innerHTML = d.checks.map(([t, s]) => `<li><span class="${t}"><i data-i="${t === "ok" ? "checkc" : "alert"}" data-s="15"></i></span><span>${s}</span></li>`).join("");
     $("quote").textContent = d.quote; $("q-when").textContent = d.when;
-    $("autosend-vendor-label").textContent = `${d.who.split(" at ")[1] || d.who} · this draft`;
     ask.classList.remove("applied"); ask.style.display = "";
     comp.classList.toggle("is-sent", !!sentState[k]); $("sent").classList.toggle("on", !!sentState[k]);
     $("body").contentEditable = !sentState[k];
@@ -286,14 +269,7 @@ window.addEventListener("envoy:ready", () => {
     st.className = `state status ${d.toCls} sm`; st.textContent = d.toSt;
     sentState[cur] = true;
   });
-  scopeEls.forEach((el) => el.addEventListener("change", () => {
-    const key = el.dataset.scope;
-    const name = key === "vendor" ? (D[cur]?.who?.split(" at ")[1] || D[cur]?.who || "Vendor") : scopeLabels[key];
-    Envoy.toast(el.checked
-      ? `Auto-send demo ON · <b>${name}</b> — this draft still waits for Approve &amp; send`
-      : `Auto-send OFF · <b>${name}</b>`);
-    syncGuard();
-  }));
+  window.addEventListener("envoy:autosend", syncGuard);
   syncGuard();
   load(new URLSearchParams(location.search).get("to") === "wild" ? "wild" : "glam");
 });

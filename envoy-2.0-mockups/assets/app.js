@@ -86,16 +86,51 @@
     ["overview", "Overview", "overview.html"],
     ["contacts", "Contacts", "contacts.html"],
     ["project", "Project", "project.html"],
-    ["decisions", "Decisions", "decisions.html"],
     ["approve", "Approve &amp; send", "approve-send.html"],
     ["share", "Share update", "share-update.html"],
-    ["compare", "Compare", "vendor-compare.html"],
   ];
-  function panelNavHtml(page) {
+  const AUTO_SEND_CATALOG = {
+    accounts: [{ id: "whitfield", label: "Whitfield & Co." }],
+    projects: () => WEDDINGS.map((w) => ({ id: w.id, label: w.label })),
+    vtypes: ["Venue", "Caterer", "Photo", "Video", "Florist", "Band/DJ", "Beauty", "Rentals", "Other"],
+    vendors: [
+      { id: "glam", label: "Lowcountry Glam" },
+      { id: "wild", label: "Wildflour Catering" },
+      { id: "heron", label: "Heron & Fern Florals" },
+      { id: "harborline", label: "Harborline Hotel" },
+    ],
+  };
+  const autoSendPick = { accounts: new Set(), projects: new Set(), vtypes: new Set(), vendors: new Set() };
+  function autoSendAnyOn() {
+    return autoSendPick.accounts.size + autoSendPick.projects.size + autoSendPick.vtypes.size + autoSendPick.vendors.size > 0;
+  }
+  function topbarNavHtml(page) {
     const tab = (id, label, href) =>
       `<a href="${withW(href)}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
-    return (page === "portfolio" ? tab("portfolio", "Dashboard", "portfolio.html") : "") +
-      PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
+    return PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
+  }
+  function accountAutoSendHtml() {
+    const chk = (group, id, label) => {
+      const on = autoSendPick[group].has(id);
+      return `<label class="as-pick"><input type="checkbox" data-as-group="${group}" data-as-id="${id}" ${on ? "checked" : ""}><span>${label}</span></label>`;
+    };
+    return `<div class="account-section"><div class="eyebrow">Auto-send scopes</div><p class="faint text-xs">Default off · demo only · Approve &amp; send still required</p>
+      <div class="as-group"><b>Account</b>${AUTO_SEND_CATALOG.accounts.map((a) => chk("accounts", a.id, a.label)).join("")}</div>
+      <div class="as-group"><b>Project</b>${AUTO_SEND_CATALOG.projects().map((p) => chk("projects", p.id, p.label)).join("")}</div>
+      <div class="as-group"><b>Vendor type</b>${AUTO_SEND_CATALOG.vtypes.map((t) => chk("vtypes", t, t)).join("")}</div>
+      <div class="as-group"><b>Vendor</b>${AUTO_SEND_CATALOG.vendors.map((v) => chk("vendors", v.id, v.label)).join("")}</div></div>`;
+  }
+  function wireAccountMenu(root) {
+    root.querySelectorAll("[data-as-group]").forEach((inp) => {
+      inp.addEventListener("change", () => {
+        const g = inp.dataset.asGroup;
+        const id = inp.dataset.asId;
+        if (inp.checked) autoSendPick[g].add(id);
+        else autoSendPick[g].delete(id);
+        toast(inp.checked ? `Auto-send demo ON · <b>${inp.nextElementSibling?.textContent || id}</b>` : `Auto-send OFF · <b>${inp.nextElementSibling?.textContent || id}</b>`);
+        window.dispatchEvent(new CustomEvent("envoy:autosend"));
+      });
+    });
   }
   function ensureFavicon() {
     if (document.querySelector('link[rel="icon"]')) return;
@@ -108,14 +143,20 @@
   function mountTopbar() {
     const host = document.querySelector("[data-topbar]");
     if (!host) return;
+    const page = document.body.dataset.page;
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
-      <a class="brand" href="portfolio.html" title="Envoy">${BRAND}</a>
+      <a class="brand" href="${withW("portfolio.html")}" title="Envoy">${BRAND}</a>
+      <nav class="navtabs navtabs-end" aria-label="Primary">${topbarNavHtml(page)}</nav>
       <div class="topbar-right">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
-        <span class="av av-ink" title="Sarah Whitfield · Planner">SW</span>
+        <details class="menu account-menu">
+          <summary class="account-trigger" title="Sarah Whitfield · Account"><span class="av av-ink">SW</span></summary>
+          <div class="menu-pop account-pop" role="menu">${accountAutoSendHtml()}</div>
+        </details>
       </div>
     </div></header>`;
+    wireAccountMenu(document.querySelector(".account-pop"));
   }
 
   document.addEventListener("click", (e) => { document.querySelectorAll("details.menu[open]").forEach((m) => { if (!m.contains(e.target)) m.open = false; }); });
@@ -474,6 +515,20 @@
     ).join("")}</ul>`;
   }
 
+  /** Salesforce Lightning Path — connected horizontal chevron segments */
+  function mountSalesforcePath(container, steps, opt) {
+    if (!container || !steps?.length) return;
+    opt = opt || {};
+    const compact = opt.compact ? " sf-path--compact" : "";
+    const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    container.innerHTML = `<ol class="sf-path${compact}" role="list">${steps
+      .map(
+        (s) => `<li class="sf-step is-${s.state || "upcoming"}" title="${esc(s.title)}${s.sub ? " — " + esc(s.sub) : ""}">
+      <span class="sf-title">${esc(s.title)}</span>${s.sub && !opt.compact ? `<span class="sf-sub">${esc(s.sub)}</span>` : ""}</li>`,
+      )
+      .join("")}</ol>`;
+  }
+
   function wireBudgetDonutToggle(toggleBtn, wrapEl, canvasEl, onShow) {
     if (!toggleBtn || !wrapEl) return;
     toggleBtn.addEventListener("click", () => {
@@ -508,12 +563,22 @@
     panel.className = "project-panel";
     panel.setAttribute("aria-label", "Weddings");
     const page = document.body.dataset.page;
-    panel.innerHTML = `<div class="panel-brand">${BRAND_MARK}<span class="brand-word">Envoy</span></div>` +
-      `<nav class="panel-nav" aria-label="Primary">${panelNavHtml(page)}</nav>` +
-      `<div class="panel-divider"></div>` +
-      `<div class="eyebrow">This wedding</div>` +
-      `<a href="portfolio.html"${wid ? "" : ' aria-current="page"'}><span class="ini">24</span>All weddings</a>` +
-      WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`).join("");
+    const collapsed = sessionStorage.getItem("envoy-sidebar") === "collapsed";
+    panel.classList.toggle("is-collapsed", collapsed);
+    panel.innerHTML =
+      `<button type="button" class="sidebar-toggle" aria-expanded="${!collapsed}" aria-label="${collapsed ? "Expand sidebar" : "Collapse sidebar"}">${icon("chevr", 14)}</button>` +
+      `<div class="sidebar-shortcuts">` +
+      `<a href="portfolio.html"${page === "portfolio" && !wid ? ' aria-current="page"' : ""} title="Dashboard">${icon("home", 16)}<span>Dashboard</span></a>` +
+      `<a href="${withW("contacts.html")}${weddingQueryString() ? "&" : "?"}scope=dir" title="Contact book">${icon("users", 16)}<span>Contact book</span></a>` +
+      `</div><div class="panel-divider"></div><div class="eyebrow">Weddings</div>` +
+      WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""} title="${w.label}"><span class="ini">${w.ini}</span><span class="w-label">${w.label}</span></a>`).join("");
+    panel.querySelector(".sidebar-toggle").addEventListener("click", () => {
+      const c = panel.classList.toggle("is-collapsed");
+      wrap.classList.toggle("sidebar-collapsed", c);
+      sessionStorage.setItem("envoy-sidebar", c ? "collapsed" : "open");
+      panel.querySelector(".sidebar-toggle").setAttribute("aria-expanded", !c);
+    });
+    wrap.classList.toggle("sidebar-collapsed", collapsed);
     wrap.appendChild(panel);
     wrap.appendChild(main);
   }
@@ -529,10 +594,10 @@
   const IDEAS = [
     ["portfolio.html", "All weddings — start the day across 24"],
     ["approve-send.html", "Approve & send — nothing leaves without you"],
-    ["decisions.html", "Decisions — open vs decided, couple-visible"],
+    ["project.html#decisions", "Decisions — insights & ledger on Project"],
     ["day-of.html", "Day-of packet — calm, printable"],
     ["share-update.html", "Share update — thin couple share"],
-    ["vendor-compare.html", "Vendor compare — three florists, your lean"],
+    ["contacts.html#compare", "Compare florists — matrix on Contacts"],
   ];
   function mountRail() {
     if (document.body.dataset.rail === "off") return;
@@ -592,8 +657,12 @@
     mountFloristCompareMatrix,
     budgetCategorySourcesHtml,
     wireBudgetDonutToggle,
-    panelNavHtml,
+    topbarNavHtml,
     PRIMARY_TABS,
+    AUTO_SEND_CATALOG,
+    autoSendPick,
+    autoSendAnyOn,
+    mountSalesforcePath,
   };
 
   document.addEventListener("DOMContentLoaded", () => {

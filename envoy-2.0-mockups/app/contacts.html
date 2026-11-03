@@ -88,6 +88,14 @@
     </div>
   </div>
 
+  <div class="seg mb-4" role="tablist" data-tabs="#contacts-views" data-hash>
+    <button type="button" data-tab="list" aria-selected="true">Vendors</button>
+    <button type="button" data-tab="compare" aria-selected="false">Compare</button>
+  </div>
+
+  <div id="contacts-views">
+  <div data-panel="list">
+
   <!-- ============ Attach from directory (demo beat 1) ============ -->
   <section class="card attach-card mb-6 hide" id="attach">
     <div class="card-head" style="border-color:var(--clay-3)">
@@ -172,25 +180,6 @@
     <aside class="card drawer-card" id="drawer" aria-label="Contact detail"></aside>
   </div>
 
-  <!-- ============ Compare (radar) ============ -->
-  <div class="section-title" id="compare"><h2>Compare florists</h2><span class="faint text-sm">2–4 vendors of the same type · scores from proposals, replies, and your notes</span></div>
-  <div class="g-12">
-    <section class="card span-5">
-      <div class="card-head"><h3>Fit profile</h3>
-        <div class="legend" id="radar-legend"></div></div>
-      <div class="card-body"><div class="chart-box" style="height:320px"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
-        <p class="lean-line">You’re leaning <em>Heron &amp; Fern</em> because it matches the couple’s garden board, replies within a morning, and has six weddings with you. <span class="faint">Watch: strike isn’t included.</span></p>
-        <p class="faint text-xs" style="margin-top:6px">Bigger shape = better fit · scored 0–10 from proposals, reply times and your notes · the couple never sees scores. <a class="btn-link" href="vendor-compare.html">Full compare →</a></p></div>
-    </section>
-    <section class="card span-7">
-      <div class="card-head"><h3>Side by side</h3><span style="display:flex;gap:10px;align-items:center"><span class="chip chip-outline">Florist · 3 of 4</span><a class="btn-link" href="vendor-compare.html">Open full compare →</a></span></div>
-      <div class="table-wrap matrix-wrap">
-        <table class="matrix" id="florist-matrix" aria-label="Florist comparison matrix"></table>
-      </div>
-      <div class="card-foot"><span>Send the shortlist to the couple as an A/B pick</span><a class="btn btn-accent btn-sm" href="couple-portal.html#ab"><i data-i="heart" data-s="14"></i>Send A/B to couple</a></div>
-    </section>
-  </div>
-
   <!-- ============ Draft inquiry composer ============ -->
   <section class="mt-6" id="draft-wrap">
     <div class="draft">
@@ -208,6 +197,29 @@
         <div class="row gap-2"><button class="btn btn-ghost btn-sm">Save draft</button><a class="btn btn-primary btn-sm" href="approve-send.html"><i data-i="send" data-s="14"></i>Review in Approve &amp; send</a></div></div>
     </div>
   </section>
+
+  </div><!-- /list panel -->
+
+  <div data-panel="compare" class="hide" id="compare">
+  <div class="section-title"><h2>Compare florists</h2><span class="faint text-sm">2–4 vendors of the same type · scores from proposals, replies, and your notes</span></div>
+  <div class="g-12">
+    <section class="card span-5">
+      <div class="card-head"><h3>Fit profile</h3>
+        <div class="legend" id="radar-legend"></div></div>
+      <div class="card-body"><div class="chart-box" style="height:320px"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
+        <p class="lean-line">You’re leaning <em>Heron &amp; Fern</em> because it matches the couple’s garden board, replies within a morning, and has six weddings with you. <span class="faint">Watch: strike isn’t included.</span></p>
+        <p class="faint text-xs" style="margin-top:6px">Bigger shape = better fit · scored 0–10 from proposals, reply times and your notes · the couple never sees scores.</p></div>
+    </section>
+    <section class="card span-7">
+      <div class="card-head"><h3>Side by side</h3><span class="chip chip-outline">Florist · 3 of 4</span></div>
+      <div class="table-wrap matrix-wrap">
+        <table class="matrix" id="florist-matrix" aria-label="Florist comparison matrix"></table>
+      </div>
+      <div class="card-foot"><span>Send the shortlist to the couple as an A/B pick</span><a class="btn btn-accent btn-sm" href="couple-portal.html#ab"><i data-i="heart" data-s="14"></i>Send A/B to couple</a></div>
+    </section>
+  </div>
+  </div><!-- /compare panel -->
+  </div><!-- /contacts-views -->
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -272,7 +284,10 @@ window.addEventListener("envoy:ready", () => {
   const otherFor = (c) => OTHER[c[0]] || (OTHER[c[0]] = c[11] ? ALL_WEDDINGS.slice(0, Math.min(+(c[11].match(/(\d+) past/) || [0, 0])[1], 6)) : []);
   let pickWedding = false;
   const qs = new URLSearchParams(location.search);
-  const F = { scope: "project", status: qs.get("status") || "all", type: qs.get("type") || "", email: "all", q: "", label: "", view: "" };
+  const F = { scope: qs.get("scope") === "dir" ? "dir" : "project", status: qs.get("status") || "all", type: qs.get("type") || "", email: "all", q: "", label: "", view: "" };
+  if (F.scope === "dir") {
+    document.querySelector('[data-f="scope"] [data-v="dir"]')?.click();
+  }
   let selected = qs.get("c") || "glam";
   let fixFocus = qs.get("fix") || (location.hash === "#fix" ? "auto" : "");
   let replyOpen = fixFocus === "reply";
@@ -513,7 +528,12 @@ window.addEventListener("envoy:ready", () => {
 
   render();
   if (location.hash === "#attach") showAttach();
-  if (location.hash === "#compare") setTimeout(() => document.getElementById("compare").scrollIntoView(), 50);
+  const goContactsTab = (name) => {
+    const b = document.querySelector(`[data-tabs="#contacts-views"] [data-tab="${name}"]`);
+    if (b) b.click();
+  };
+  if (location.hash === "#compare") { goContactsTab("compare"); setTimeout(() => document.getElementById("compare").scrollIntoView({ block: "start" }), 50); }
+  else if (location.hash === "#attach") goContactsTab("list");
 });
 </script>
 </body>

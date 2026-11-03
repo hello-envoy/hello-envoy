@@ -81,8 +81,9 @@
         <details class="menu" id="cta-more">
           <summary class="btn btn-secondary"><i data-i="more"></i>More<i data-i="chevd" data-s="14"></i></summary>
           <div class="menu-pop" role="menu">
-            <a role="menuitem" href="contacts.html#compare"><i data-i="users" data-s="15"></i><span>Email shortlist<span class="sub">Filter florists &amp; exploring vendors</span></span></a>
-            <a role="menuitem" href="couple-portal.html"><i data-i="share" data-s="15"></i><span>Share update with couple<span class="sub">Preview what Elena &amp; Marcus see</span></span></a>
+            <a role="menuitem" href="couple-portal.html"><i data-i="eye" data-s="15"></i><span>Preview as couple<span class="sub">Open Elena &amp; Marcus’s portal (planner preview)</span></span></a>
+            <a role="menuitem" href="share-update.html"><i data-i="share" data-s="15"></i><span>Share update<span class="sub">Thin update email · not the full portal</span></span></a>
+            <a role="menuitem" href="contacts.html#compare"><i data-i="flower" data-s="15"></i><span>Compare florists<span class="sub">Matrix &amp; radar on Contacts</span></span></a>
             <a role="menuitem" href="contacts.html#attach"><i data-i="upload" data-s="15"></i><span>Import vendors<span class="sub">From your directory, CSV or Gmail</span></span></a>
             <a role="menuitem" href="project.html#timeline"><i data-i="gantt" data-s="15"></i><span>Open timeline<span class="sub">14-month view in Project</span></span></a>
           </div>
@@ -202,10 +203,10 @@
   <!-- ============ Milestone timeline ============ -->
   <section class="card mt-4">
     <div class="card-head"><h3>Milestones <span class="sub">Booked · Deposit paid · Final · Day-of</span></h3>
-      <div class="row gap-2 wrap"><div class="legend"><span><i class="mtl-chev done" aria-hidden="true"></i>Done</span><span><i class="mtl-chev now" aria-hidden="true"></i>In motion</span><span><i class="mtl-chev" aria-hidden="true"></i>Upcoming</span></div><a class="btn btn-ghost btn-sm" id="dayof-link" href="day-of.html"><i data-i="note" data-s="14"></i>Day-of packet</a></div>
+      <div class="row gap-2 wrap"><div class="legend"><span class="sf-leg"><i class="done" aria-hidden="true"></i>Complete</span><span class="sf-leg"><i class="now" aria-hidden="true"></i>Current</span><span class="sf-leg"><i aria-hidden="true"></i>Upcoming</span></div><a class="btn btn-ghost btn-sm" id="dayof-link" href="day-of.html"><i data-i="note" data-s="14"></i>Day-of packet</a></div>
     </div>
     <div class="card-body" style="padding-bottom:var(--s-2)">
-      <div class="mtl" id="mtl"></div>
+      <div id="mtl" class="sf-path-wrap"></div>
     </div>
   </section>
 
@@ -225,7 +226,7 @@
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { css, BUDGET_CATS, budgetSankeyData, mountBudgetSankey, budgetFmtK, weddingSlice, budgetCategorySourcesHtml, wireBudgetDonutToggle, withW } = Envoy;
+  const { css, BUDGET_CATS, budgetSankeyData, mountBudgetSankey, budgetFmtK, weddingSlice, budgetCategorySourcesHtml, wireBudgetDonutToggle, withW, mountSalesforcePath } = Envoy;
   const dayof = document.getElementById("dayof-link"); if (dayof) dayof.href = withW("day-of.html");
   document.getElementById("budget-sources").innerHTML = budgetCategorySourcesHtml();
   const CATS = BUDGET_CATS;
@@ -272,31 +273,20 @@ window.addEventListener("envoy:ready", () => {
   };
   wireBudgetDonutToggle(document.getElementById("donut-toggle"), document.getElementById("donut-wrap"), document.getElementById("donut"), ensureDonut);
 
-  // milestone timeline (Nov 2026 → Oct 2027)
-  const start = new Date(2026, 9, 1), end = new Date(2027, 9, 20);
-  const pos = (d) => ((d - start) / (end - start)) * 100;
   const M = [
-    ["Venue booked", "Booked · Oct 3", new Date(2026, 9, 3), "done"],
-    ["Photo & band", "Booked · Oct 21", new Date(2026, 9, 21), "done"],
-    ["Lock catering", "Booked → Deposit paid · Nov 6", new Date(2026, 10, 6), "now"],
-    ["Florist chosen", "Booked · Dec 1", new Date(2026, 11, 1), ""],
-    ["Save-the-dates", "Sent · Feb 15", new Date(2027, 1, 15), ""],
-    ["Attire & rentals", "Deposit paid by May", new Date(2027, 4, 10), ""],
-    ["Final numbers", "Final · Sep 16", new Date(2027, 8, 16), ""],
-    ["Day-of", "Oct 16, 2027", new Date(2027, 9, 16), ""],
+    ["Venue booked", "Booked · Oct 3", "done"],
+    ["Photo & band", "Booked · Oct 21", "done"],
+    ["Lock catering", "Deposit due · Nov 6", "now"],
+    ["Florist chosen", "Booked · Dec 1", ""],
+    ["Save-the-dates", "Sent · Feb 15", ""],
+    ["Attire & rentals", "Deposit paid by May", ""],
+    ["Final numbers", "Final · Sep 16", ""],
+    ["Day-of", "Oct 16, 2027", ""],
   ];
-  const today = new Date(2026, 10, 2);
-  // ordinal spacing: milestones are evenly spaced (dates live in the labels); "today" is interpolated between neighbours
-  const opos = (d) => { const t = +d; let i = M.findIndex(m => +m[2] > t); if (i <= 0) i = i === 0 ? 1 : M.length - 1;
-    const a = M[i - 1][2], b = M[i][2]; const f = Math.min(1, Math.max(0, (t - a) / (b - a))); return 5 + ((i - 1 + f) / (M.length - 1)) * 90; };
-  const pos2 = (d) => opos(d);
-  document.getElementById("mtl").innerHTML = `
-    <div class="mtl-track"><div class="mtl-fill" style="width:${pos2(today)}%"></div>
-      <span class="mtl-today" style="left:${pos2(today)}%">Today</span>
-      ${M.map(m => `<span class="mtl-pt ${m[3]}" style="left:${pos2(m[2])}%" title="${m[0]} — ${m[1]}"></span>`).join("")}
-    </div>
-    <div class="mtl-labels">${M.map((m, i) => `<div class="mtl-lab" style="left:${pos2(m[2])}%"><b>${m[0]}</b><span>${m[1]}</span></div>`).join("")}</div>`;
-  document.querySelector(".mtl-labels").style.height = "48px";
+  mountSalesforcePath(
+    document.getElementById("mtl"),
+    M.map(([title, sub, st]) => ({ title, sub, state: st === "done" ? "complete" : st === "now" ? "current" : "upcoming" })),
+  );
 
   {
     const { totals } = w === "em" ? budgetSankeyData() : {

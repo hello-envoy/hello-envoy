@@ -17,10 +17,7 @@
   .ms .rule { font-size: var(--text-xs); color: var(--ink-3); display: flex; gap: 6px; align-items: center; padding: 8px 10px; background: var(--paper); border: 1px dashed var(--line-strong); border-radius: var(--r-sm); }
   .ms.is-done { background: var(--paper-2); }
   .ms.is-done h3::after { content: " ✓"; color: var(--ok); }
-  .ms-summary { display: flex; gap: 2px; margin-top: var(--s-4); }
-  .ms-summary span { flex: 1; height: 28px; border-radius: 4px; background: var(--paper-3); font-size: 10.5px; display: grid; place-items: center; color: var(--ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: block; line-height: 28px; text-align: center; padding: 0 6px; cursor: default; }
-  .ms-summary span.d { background: var(--ink); color: var(--paper); }
-  .ms-summary span.m { background: var(--clay-soft); color: var(--clay-ink); box-shadow: inset 0 0 0 1px var(--clay-3); }
+  .ms-summary { margin-top: var(--s-4); }
   .owner { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--ink-2); }
   .owner::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
   .o-me::before { background: var(--ink); } .o-couple::before { background: var(--clay); } .o-vendor::before { background: var(--chart-4); }
@@ -38,6 +35,20 @@
   .src svg { color: var(--clay); }
   .owner-filter .fchip { height: 28px; }
   .sel-select { appearance: none; border: 0; background: transparent; font: inherit; color: inherit; cursor: pointer; padding: 0; }
+  #decisions-log .insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); margin-bottom: var(--s-6); }
+  #decisions-log .ins { padding: var(--s-5); display: flex; flex-direction: column; gap: 10px; }
+  #decisions-log .ins .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; display: flex; gap: 6px; align-items: center; }
+  #decisions-log .ins .t { font-family: var(--font-display); font-size: 19px; line-height: 25px; }
+  #decisions-log .ins .d { color: var(--ink-2); font-size: var(--text-sm); line-height: 1.55; flex: 1; }
+  #decisions-log .ins.added { opacity: .55; }
+  #decisions-log .bar-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-3); flex-wrap: wrap; }
+  #decisions-log .ledger { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  #decisions-log .ledger li { display: grid; grid-template-columns: 88px 1fr auto; gap: 12px; align-items: baseline; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); font-size: var(--text-sm); }
+  #decisions-log .aa-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin-top: 8px; }
+  #decisions-log .aa-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-sm); padding: 6px 0; border-bottom: 1px solid var(--line); }
+  #decisions-log .aa-all { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--paper-2); font-size: var(--text-sm); margin-bottom: 12px; }
+  #decisions-log .hidden { display: none !important; }
+  @media (max-width: 960px) { #decisions-log .insights, #decisions-log .aa-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body data-shell="planner" data-page="project">
@@ -98,6 +109,7 @@
     <div class="tabs" data-tabs="#views" data-hash style="border:0">
       <button class="tab" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
       <button class="tab" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
+      <button class="tab" data-tab="decisions" aria-selected="false"><i data-i="edit" data-s="15"></i>Decisions</button>
       <button class="tab" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
       <button class="tab hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
     </div>
@@ -132,6 +144,46 @@
       <div class="legend mt-4"><span><i style="background:var(--ink)"></i>Done</span><span><i style="background:var(--clay-soft);border:1px solid var(--clay)"></i>In motion</span><span><i style="background:var(--paper-3);border:1px solid var(--line-strong)"></i>Upcoming</span><span><i style="background:var(--clay);transform:rotate(45deg)"></i>Deadline</span></div>
     </section>
 
+    <!-- Decisions -->
+    <section data-panel="decisions" class="hide" id="decisions-log">
+      <div class="row-between mb-4 flex-wrap gap-2">
+        <p class="faint text-sm" style="margin:0">Insights, auto-approve scopes, and the couple-visible ledger — moved from top-level Decisions.</p>
+        <button class="btn btn-secondary btn-sm" id="pv-btn" aria-pressed="false"><i data-i="eye" data-s="14"></i><span>Preview as couple</span></button>
+      </div>
+      <section class="card mb-4" aria-label="Auto-approve insights">
+        <div class="card-head"><h3>Auto-approve insights</h3><span class="faint text-sm">Demo scopes · default off</span></div>
+        <div class="card-body" style="padding-top:0">
+          <label class="aa-all"><span><b>Auto-approve all</b> — every new insight becomes a decision row without a tap</span><input type="checkbox" class="toggle" id="aa-all" aria-label="Auto-approve all insights"></label>
+          <div class="aa-grid">
+            <div><div class="eyebrow mb-1">By insight type</div>
+              <div class="aa-row"><span><b>Timing</b> · vendor gaps</span><input type="checkbox" class="toggle" data-aa="type-timing"></div>
+              <div class="aa-row"><span><b>Hold</b> · dates &amp; blocks</span><input type="checkbox" class="toggle" data-aa="type-hold"></div>
+              <div class="aa-row"><span><b>Weather</b> · rain / tent</span><input type="checkbox" class="toggle" data-aa="type-weather"></div></div>
+            <div><div class="eyebrow mb-1">By scope</div>
+              <div class="aa-row"><span><b>Account</b> · all weddings</span><input type="checkbox" class="toggle" data-aa="scope-account"></div>
+              <div class="aa-row"><span><b>Project</b> · Elena &amp; Marcus</span><input type="checkbox" class="toggle" data-aa="scope-project"></div>
+              <div class="aa-row"><span><b>Vendor type</b> · Hotel block</span><input type="checkbox" class="toggle" data-aa="vtype-hotel"></div>
+              <div class="aa-row"><span><b>Vendor</b> · Harborline Hotel</span><input type="checkbox" class="toggle" data-aa="vendor-harborline"></div></div>
+          </div>
+          <p class="faint text-sm mt-3" id="aa-note">All scopes off — use <b>Add as decision</b> on each card below.</p>
+        </div>
+      </section>
+      <div class="eyebrow mb-2">Noticed this week</div>
+      <div class="insights mb-6">
+        <article class="card ins" data-ins="0" data-ins-type="timing"><div class="k"><i data-i="clock" data-s="12"></i>Timing</div><div class="t">Videographer is the last open vendor</div><div class="d">October dates in Charleston fill by January. Two shortlisted studios have Oct 16 open today.</div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></article>
+        <article class="card ins" data-ins="1" data-ins-type="hold" data-ins-vendor="harborline"><div class="k"><i data-i="cal" data-s="12"></i>Hold</div><div class="t">Harborline room block releases Oct 8–10 hold</div><div class="d">The 20-room courtesy hold lapses Dec 15 unless the couple confirms a count.</div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></article>
+        <article class="card ins" data-ins="2" data-ins-type="weather"><div class="k"><i data-i="globe" data-s="12"></i>Weather</div><div class="t">Mid-October rain odds are 1 in 4</div><div class="d">Tent hold with Coastal Tents is soft. A firm hold costs $600, refundable to Sep 1.</div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></article>
+      </div>
+      <div class="eyebrow mb-2">Past notices · ledger</div>
+      <ul class="ledger mb-6">
+        <li><span class="when">Oct 24</span><div><span class="tag">Converted</span> <b>Guest count band</b> — decided row (128 vs 140)</div><span class="faint text-xs">You approved</span></li>
+        <li><span class="when">Sep 28</span><div><span class="tag">Notice</span> <b>Harborline hold dates</b> — open in contacts</div><a class="btn-link text-xs" href="contacts.html?c=harborline">Open →</a></li>
+      </ul>
+      <div class="bar-row"><div class="l"><div class="seg" id="filt"><button aria-selected="true" data-f="open">Open <span class="count" data-c="open"></span></button><button aria-selected="false" data-f="decided">Decided <span class="count" data-c="decided"></span></button><button aria-selected="false" data-f="all">All <span class="count" data-c="all"></span></button></div><button class="fchip" id="only-couple" aria-pressed="false"><i data-i="heart" data-s="13"></i>Couple-visible only</button></div><div class="r"><span class="couple-count"><i data-i="eye" data-s="14"></i><b id="vis-n">0</b> of <span id="all-n">0</span> visible to couple</span></div></div>
+      <div id="planner-view"><div class="sheet"><table><thead><tr><th class="idx">#</th><th>Decision</th><th>Options · A / B</th><th>Who decides</th><th>Due</th><th>Status</th><th style="text-align:center">Who can see</th></tr></thead><tbody id="rows"></tbody><tbody><tr class="add-row"><td class="idx">+</td><td colspan="6"><button id="add"><i data-i="plus" data-s="14"></i>Add a decision</button></td></tr></tbody></table></div></div>
+      <section id="couple-view" class="hidden"><div class="cpv" id="cpv"></div></section>
+    </section>
+
     <!-- Risks & holds -->
     <section data-panel="risks" class="hide">
       <div class="card">
@@ -139,7 +191,7 @@
           <div class="seg"><button aria-selected="true">Open</button><button aria-selected="false">All</button></div></div>
         <div class="table-wrap"><table class="table" id="risk-table">
           <thead><tr><th>Kind</th><th>Item</th><th>Impact</th><th>Owner</th><th>By</th><th>Status</th><th>Source</th></tr></thead><tbody></tbody></table></div>
-        <div class="card-foot"><span><i data-i="spark" data-s="13"></i> Envoy suggests risks and holds from vendor threads — you decide what's kept.</span><span style="display:flex;gap:6px"><a class="btn btn-ghost btn-sm" href="decisions.html">Decisions log →</a><button class="btn btn-ghost btn-sm" data-toast="New risk, decision, or hold">+ Add row</button></span></div>
+        <div class="card-foot"><span><i data-i="spark" data-s="13"></i> Envoy suggests risks and holds from vendor threads — you decide what's kept.</span><span style="display:flex;gap:6px"><button type="button" class="btn btn-ghost btn-sm" id="go-decisions">Decisions tab →</button><button class="btn btn-ghost btn-sm" data-toast="New risk, decision, or hold">+ Add row</button></span></div>
       </div>
     </section>
 
@@ -155,9 +207,10 @@
 </main>
 
 <script src="../assets/app.js"></script>
+<script src="../assets/decisions-log.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { icon, toast, hydrateIcons, weddingSlice, applyWeddingPageHead, withW } = Envoy;
+  const { icon, toast, hydrateIcons, weddingSlice, applyWeddingPageHead, withW, mountSalesforcePath } = Envoy;
   const dayof = document.getElementById("dayof-link"); if (dayof) dayof.href = withW("day-of.html");
   const wId = new URLSearchParams(location.search).get("w") || "em";
   const wSlice = weddingSlice(wId);
@@ -187,7 +240,19 @@ window.addEventListener("envoy:ready", () => {
     ["Final numbers", "", "2027-08-15", "2027-09-16"], ["Day-of", "", "2027-10-14", "2027-10-17"],
   ];
   const sumEl = document.getElementById("ms-summary");
-  const drawSummary = () => sumEl.innerHTML = MS.map(m => `<span class="${m[1]}" title="${m[0]}">${m[0]}</span>`).join("");
+  const drawSummary = () => {
+    let cur = false;
+    mountSalesforcePath(
+      sumEl,
+      MS.map((m) => {
+        let state = "upcoming";
+        if (m[1] === "d") state = "complete";
+        else if (m[1] === "m" && !cur) { state = "current"; cur = true; }
+        return { title: m[0], state };
+      }),
+      { compact: true },
+    );
+  };
   drawSummary();
 
   const OWN = { me: "Me", couple: "Couple", vendor: "Vendor" };
@@ -298,6 +363,7 @@ window.addEventListener("envoy:ready", () => {
     toast("<b>Lock catering</b> is Done — couple's portal updated");
   });
 
+  document.getElementById("go-decisions")?.addEventListener("click", () => document.querySelector('[data-tab="decisions"]')?.click());
   if (location.hash === "#lock") document.getElementById("lock").scrollIntoView({ block: "center" });
   document.getElementById("open-sheet").onclick = () => document.getElementById("sheet-tab").click();
   const h = location.hash.slice(1); const t = document.querySelector(`[data-tab="${h}"]`); if (t) t.click();
