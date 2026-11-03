@@ -204,6 +204,79 @@
     el.innerHTML = svg + "</svg>";
   }
 
+  /* ---------- Planner budget Sankey (Overview + couple portal share this) ---------- */
+  const BUDGET_CATS = [
+    ["Venue", 34000, 34000, 34000, "Venue", "Ashby contract · Oct 3"],
+    ["Catering", 28000, 28000, 28600, "Caterer", "Wildflour signed contract + bank receipt"],
+    ["Photo & video", 14000, 8400, 8400, "Photo", "Juniper deposit email"],
+    ["Florals", 12000, 0, 0, "Florist", "A/B pick pending"],
+    ["Music", 8000, 6200, 6200, "Band/DJ", "Tidewater invoice"],
+    ["Attire & beauty", 9000, 3800, 3800, "Beauty", "Trial deposit · Lowcountry Glam"],
+    ["Rentals", 6000, 0, 0, "Rentals", "Quote requested"],
+    ["Other & buffer", 9000, 1200, 1200, "Other", "Stationery deposit"],
+  ];
+  const BUDGET_CHART_KEYS = ["--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5", "--chart-7", "--chart-6", "--chart-8"];
+  const BUDGET_SANKEY_DEFAULTS = {
+    height: 480,
+    gap: 10,
+    nodeW: 12,
+    labelSpace: 150,
+    padL: 110,
+    aria: "Budget flow from total to categories to booked spent and remaining",
+  };
+  function budgetFmtK(v) {
+    return "$" + (v / 1000).toFixed(1) + "k";
+  }
+  function budgetSankeyData() {
+    const COL = BUDGET_CHART_KEYS.map((k) => css(k));
+    const err = css("--error");
+    const nodes = [{ id: "total", label: "Total budget $120k", col: 0, color: css("--ink") }];
+    const links = [];
+    BUDGET_CATS.forEach((c, i) => {
+      const col = COL[i] === css("--chart-8") ? css("--chart-6") : COL[i];
+      nodes.push({ id: "c" + i, label: c[0], col: 1, color: col });
+      links.push({ source: "total", target: "c" + i, value: c[1], color: col, opacity: 0.22 });
+      if (c[2]) links.push({ source: "c" + i, target: "booked", value: c[2], color: css("--ink"), opacity: 0.2 });
+      if (c[3]) {
+        links.push({
+          source: "c" + i,
+          target: "spent",
+          value: c[3],
+          color: c[3] > c[1] ? err : css("--indigo-600"),
+          opacity: c[3] > c[1] ? 0.55 : 0.42,
+        });
+      }
+      const rem = Math.max(0, c[1] - Math.max(c[2], c[3]));
+      if (rem) links.push({ source: "c" + i, target: "remain", value: rem, color: css("--chart-6"), opacity: 0.38 });
+    });
+    nodes.push(
+      { id: "booked", label: "Booked", col: 2, color: css("--ink") },
+      { id: "spent", label: "Spent", col: 2, color: css("--indigo-600") },
+      { id: "remain", label: "Remaining", col: 2, color: css("--chart-6") },
+    );
+    const booked = BUDGET_CATS.reduce((s, c) => s + c[2], 0);
+    const spent = BUDGET_CATS.reduce((s, c) => s + c[3], 0);
+    const budget = BUDGET_CATS.reduce((s, c) => s + c[1], 0);
+    const legendHtml = [
+      ["Booked", css("--ink"), "Contracted / signed"],
+      ["Spent", css("--indigo-600"), "Paid out · source on each row"],
+      ["Remaining", css("--chart-6"), "Still on the line"],
+      ["Over budget", css("--error"), "Spent above category line (Catering)"],
+    ].map(([l, c, d]) => `<li><i style="background:${c}"></i><span><b>${l}</b> — ${d}</span></li>`).join("");
+    return { nodes, links, legendHtml, COL, totals: { budget, booked, spent, remaining: budget - spent } };
+  }
+  function mountBudgetSankey(containerEl, legendEl, optOverride) {
+    if (!containerEl) return () => {};
+    const { nodes, links, legendHtml } = budgetSankeyData();
+    if (legendEl) legendEl.innerHTML = legendHtml;
+    const opt = Object.assign({ fmt: budgetFmtK }, BUDGET_SANKEY_DEFAULTS, optOverride || {});
+    const draw = () => sankey(containerEl, { nodes: JSON.parse(JSON.stringify(nodes)), links }, opt);
+    draw();
+    const onResize = () => draw();
+    window.addEventListener("resize", onResize);
+    return draw;
+  }
+
   /* ---------- Demo narrative rail ---------- */
   const WEDDINGS = [
     { id: "em", ini: "E&M", label: "Elena & Marcus", href: "overview.html" },
@@ -277,7 +350,20 @@
     });
   }
 
-  window.Envoy = { icon, hydrateIcons, toast, sankey, palette, css, chartDefaults };
+  window.Envoy = {
+    icon,
+    hydrateIcons,
+    toast,
+    sankey,
+    palette,
+    css,
+    chartDefaults,
+    BUDGET_CATS,
+    budgetSankeyData,
+    mountBudgetSankey,
+    budgetFmtK,
+    BUDGET_SANKEY_DEFAULTS,
+  };
 
   document.addEventListener("DOMContentLoaded", () => {
     mountTopbar(); mountPlannerShell(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail(); wireBoards();

@@ -217,18 +217,8 @@
 <script src="../assets/app.js"></script>
 <script>
 window.addEventListener("envoy:ready", () => {
-  const { css, sankey } = Envoy;
-  const CATS = [
-    // name, budget, booked, spent, contacts type, source note
-    ["Venue",          34000, 34000, 34000, "Venue", "Ashby contract · Oct 3"],
-    ["Catering",       28000, 28000, 28600, "Caterer", "Wildflour signed contract + bank receipt"],
-    ["Photo & video",  14000,  8400,  8400, "Photo", "Juniper deposit email"],
-    ["Florals",        12000,     0,     0, "Florist", "A/B pick pending"],
-    ["Music",           8000,  6200,  6200, "Band/DJ", "Tidewater invoice"],
-    ["Attire & beauty", 9000,  3800,  3800, "Beauty", "Trial deposit · Lowcountry Glam"],
-    ["Rentals",         6000,     0,     0, "Rentals", "Quote requested"],
-    ["Other & buffer",  9000,  1200,  1200, "Other", "Stationery deposit"],
-  ];
+  const { css, BUDGET_CATS, budgetSankeyData, mountBudgetSankey, budgetFmtK } = Envoy;
+  const CATS = BUDGET_CATS;
   const W_SLICES = {
     em: { label: "Elena & Marcus", days: 348, budget: 120000, spent: 80600, booked: 79200, milestones: "5 of 12" },
     kd: { label: "Kate & Dom", days: 5, budget: 86000, spent: 71200, booked: 69800, milestones: "11 of 12", venue: "Lowndes Grove · Charleston", tag: "Rehearsal week — run of show" },
@@ -306,28 +296,14 @@ window.addEventListener("envoy:ready", () => {
     <div class="mtl-labels">${M.map((m, i) => `<div class="mtl-lab" style="left:${pos2(m[2])}%"><b>${m[0]}</b><span>${m[1]}</span></div>`).join("")}</div>`;
   document.querySelector(".mtl-labels").style.height = "48px";
 
-  // sankey — booked vs spent separate; over-budget spent bands use error tint
-  const err = css("--error");
-  const nodes = [{ id: "total", label: "Total budget $120k", col: 0, color: css("--ink") }];
-  const links = [];
-  CATS.forEach((c, i) => {
-    const col = COL[i] === css("--chart-8") ? css("--chart-6") : COL[i];
-    nodes.push({ id: "c" + i, label: c[0], col: 1, color: col });
-    links.push({ source: "total", target: "c" + i, value: c[1], color: col, opacity: .22 });
-    if (c[2]) links.push({ source: "c" + i, target: "booked", value: c[2], color: css("--ink"), opacity: .2 });
-    if (c[3]) links.push({ source: "c" + i, target: "spent", value: c[3], color: c[3] > c[1] ? err : css("--indigo-600"), opacity: c[3] > c[1] ? .55 : .42 });
-    const rem = Math.max(0, c[1] - Math.max(c[2], c[3]));
-    if (rem) links.push({ source: "c" + i, target: "remain", value: rem, color: css("--chart-6"), opacity: .38 });
-  });
-  nodes.push({ id: "booked", label: "Booked", col: 2, color: css("--ink") }, { id: "spent", label: "Spent", col: 2, color: css("--indigo-600") }, { id: "remain", label: "Remaining", col: 2, color: css("--chart-6") });
-  document.getElementById("sankey-legend").innerHTML = [
-    ["Booked", css("--ink"), "Contracted / signed"],
-    ["Spent", css("--indigo-600"), "Paid out · source on each row"],
-    ["Remaining", css("--chart-6"), "Still on the line"],
-    ["Over budget", css("--error"), "Spent above category line (Catering)"],
-  ].map(([l, c, d]) => `<li><i style="background:${c}"></i><span><b>${l}</b> — ${d}</span></li>`).join("");
-  const draw = () => sankey(document.getElementById("sankey-el"), { nodes: JSON.parse(JSON.stringify(nodes)), links }, { height: 480, gap: 10, nodeW: 12, labelSpace: 150, padL: 110, fmt: (v) => "$" + (v / 1000).toFixed(1) + "k", aria: "Budget flow from total to categories to booked spent and remaining" });
-  draw(); addEventListener("resize", draw);
+  if (w === "em") {
+    const { totals } = budgetSankeyData();
+    document.querySelectorAll("#sankey .sk-nums .v.num").forEach((el, i) => {
+      const vals = [budgetFmtK(totals.booked), budgetFmtK(totals.spent), budgetFmtK(totals.remaining)];
+      if (vals[i]) el.textContent = vals[i];
+    });
+  }
+  mountBudgetSankey(document.getElementById("sankey-el"), document.getElementById("sankey-legend"));
 
   // vendor segmented sort
   addEventListener("envoy:tab", (e) => {
