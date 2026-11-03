@@ -62,6 +62,8 @@
   .draft .body .var { background: var(--clay-soft); color: var(--clay-ink); padding: 0 4px; border-radius: 3px; }
   .new-row { animation: newrow 2.4s var(--ease) 1; }
   @keyframes newrow { 0% { background: var(--clay-soft); } 100% { background: transparent; } }
+  .lean-line { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-2); line-height: 1.6; }
+  .lean-line em { font-family: var(--font-display); font-style: italic; color: var(--clay); font-size: 16px; }
 </style>
 </head>
 <body data-page="contacts">
@@ -156,7 +158,9 @@
     <section class="card span-5">
       <div class="card-head"><h3>Fit profile</h3>
         <div class="legend" id="radar-legend"></div></div>
-      <div class="card-body"><div class="chart-box" style="height:340px"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div></div>
+      <div class="card-body"><div class="chart-box" style="height:320px"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
+        <p class="lean-line">You’re leaning <em>Heron &amp; Fern</em> because it matches the couple’s garden board, replies within a morning, and has six weddings with you. <span class="faint">Watch: strike isn’t included.</span></p>
+        <p class="faint text-xs" style="margin-top:6px">Bigger shape = better fit · scored 0–10 from proposals, reply times and your notes · the couple never sees scores. <a class="btn-link" href="vendor-compare.html">Full compare →</a></p></div>
     </section>
     <section class="card span-7">
       <div class="card-head"><h3>Side by side</h3><span style="display:flex;gap:10px;align-items:center"><span class="chip chip-outline">Florist · 3 of 4</span><a class="btn-link" href="vendor-compare.html">Open full compare →</a></span></div>
@@ -434,7 +438,7 @@ window.addEventListener("envoy:ready", () => {
     type: "radar",
     data: { labels: ["Price fit", "Style", "Date", "Replies", "Package", "Track record"],
       datasets: R.map((r, i) => ({ label: r[0], data: r[1], borderColor: r[2], backgroundColor: hexA(r[2], i === 0 ? .10 : .06), borderWidth: i === 0 ? 2 : 1.5, pointRadius: 2.5, pointBackgroundColor: r[2], borderDash: i === 2 ? [4, 3] : [] })) },
-    options: { scales: { r: { min: 0, max: 10, ticks: { display: false, stepSize: 2.5 }, grid: { color: css("--line") }, angleLines: { color: css("--line") }, pointLabels: { color: css("--ink-2"), font: { size: 12, weight: 500 } } } } }
+    options: { maintainAspectRatio: false, scales: { r: { min: 0, max: 10, ticks: { display: false, stepSize: 2.5 }, grid: { color: css("--line") }, angleLines: { color: css("--line") }, pointLabels: { color: css("--ink-2"), font: { size: 12, weight: 500 } } } } }
   });
 
   render();

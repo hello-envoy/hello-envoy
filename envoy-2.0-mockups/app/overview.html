@@ -29,6 +29,13 @@
   .activity .when { color: var(--ink-3); font-size: var(--text-xs); margin-left: auto; white-space: nowrap; }
   .flash { animation: flash 1.6s var(--ease) 1; }
   @keyframes flash { 0%{ box-shadow: 0 0 0 0 rgba(154,59,39,.0);} 20% { box-shadow: 0 0 0 6px rgba(154,59,39,.18);} 100%{ box-shadow: 0 0 0 0 rgba(154,59,39,0);} }
+  .sk-title { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 38px; letter-spacing: -0.015em; margin-top: 4px; }
+  .sk-sub { color: var(--ink-2); font-size: var(--text-sm); margin-top: 4px; max-width: 560px; }
+  .sk-nums { display: flex; gap: var(--s-8); }
+  .sk-nums > div { display: flex; flex-direction: column; gap: 2px; }
+  .sk-nums .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .sk-nums .v { font-family: var(--font-display); font-size: 26px; line-height: 30px; }
+  #sankey .sankey text { font-size: 13px; }
 </style>
 </head>
 <body data-page="overview">
@@ -122,7 +129,7 @@
     </section>
 
     <section class="card span-4">
-      <div class="card-head"><h3>Budget</h3><a class="btn-link text-sm" href="#sankey">Where it goes ↓</a></div>
+      <div class="card-head"><h3>Budget</h3><a class="btn-link text-sm" href="#sankey">Where the money goes ↓</a></div>
       <div class="card-body">
         <div class="budget-nums">
           <div><div class="k">Budgeted</div><div class="v num">$120k</div></div>
@@ -139,6 +146,17 @@
     </section>
   </div>
 
+  <!-- ============ Budget Sankey (prominent) ============ -->
+  <section class="card mt-4" id="sankey">
+    <div class="card-head" style="align-items:flex-end;padding-top:var(--s-5)">
+      <div><div class="eyebrow">Budget · $120,000</div><h2 class="sk-title">Where the money goes</h2>
+        <div class="sk-sub">Total budget → each category → what's <b>booked &amp; spent</b> vs. what's still <b>remaining</b>. Hover a band for the number.</div></div>
+      <div class="sk-nums"><div><span class="k">Booked &amp; spent</span><span class="v num">$80.0k</span><span class="faint text-xs">67%</span></div><div><span class="k">Remaining</span><span class="v num accent">$40.0k</span><span class="faint text-xs">33%</span></div><div><span class="k">Biggest open line</span><span class="v" style="font-size:18px">Florals $12k</span><span class="faint text-xs">A/B pick pending</span></div></div>
+    </div>
+    <div class="card-body"><div id="sankey-el" style="width:100%"></div>
+      <div class="legend mt-3"><span><i style="background:var(--ink)"></i>Booked &amp; spent</span><span><i style="background:var(--chart-6)"></i>Remaining</span><span class="faint">Category colors match the budget donut</span></div></div>
+  </section>
+
   <!-- ============ Milestone timeline ============ -->
   <section class="card mt-4">
     <div class="card-head"><h3>Milestones <span class="sub">Booked · Deposit paid · Final · Day-of</span></h3>
@@ -149,14 +167,7 @@
     </div>
   </section>
 
-  <!-- ============ Sankey + activity ============ -->
-  <div class="g-12 mt-4">
-    <section class="card span-8" id="sankey">
-      <div class="card-head"><h3>Where the money goes <span class="sub">Total → Category → Booked vs remaining</span></h3>
-        <div class="legend"><span><i style="background:var(--ink)"></i>Booked</span><span><i style="background:var(--chart-6)"></i>Remaining</span></div></div>
-      <div class="card-body"><div id="sankey-el" style="width:100%"></div></div>
-    </section>
-    <section class="card span-4">
+    <section class="card mt-4">
       <div class="card-head"><h3>Recent</h3><span class="faint text-sm">Today</span></div>
       <ul class="list activity">
         <li><span class="av av-sm av-clay">EM</span><div><b>Elena</b> picked <b>Heron &amp; Fern</b> over Marlowe <div class="cell-sub">Florist A/B · couple portal</div></div><span class="when">12m</span></li>
@@ -166,7 +177,6 @@
         <li><span class="av av-sm av-clay">EM</span><div>Marcus updated guest estimate to <b>128</b></div><span class="when">3d</span></li>
       </ul>
     </section>
-  </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -233,8 +243,8 @@ window.addEventListener("envoy:ready", () => {
     if (c[2]) links.push({ source: "c" + i, target: "booked", value: c[2], color: css("--ink"), opacity: .18 });
     if (c[1] - c[2]) links.push({ source: "c" + i, target: "remain", value: c[1] - c[2], color: css("--chart-6"), opacity: .45 });
   });
-  nodes.push({ id: "booked", label: "Booked", col: 2, color: css("--ink") }, { id: "remain", label: "Remaining", col: 2, color: css("--chart-6") });
-  const draw = () => sankey(document.getElementById("sankey-el"), { nodes: JSON.parse(JSON.stringify(nodes)), links }, { height: 380, gap: 8, labelSpace: 120, padL: 96, fmt: (v) => "$" + (v / 1000).toFixed(1) + "k", aria: "Budget flow from total to categories to booked and remaining" });
+  nodes.push({ id: "booked", label: "Booked & spent", col: 2, color: css("--ink") }, { id: "remain", label: "Remaining", col: 2, color: css("--chart-6") });
+  const draw = () => sankey(document.getElementById("sankey-el"), { nodes: JSON.parse(JSON.stringify(nodes)), links }, { height: 480, gap: 10, nodeW: 12, labelSpace: 150, padL: 110, fmt: (v) => "$" + (v / 1000).toFixed(1) + "k", aria: "Budget flow from total to categories to booked and remaining" });
   draw(); addEventListener("resize", draw);
 
   // vendor segmented sort

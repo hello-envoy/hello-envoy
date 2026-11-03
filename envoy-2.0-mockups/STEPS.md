@@ -166,10 +166,15 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
   - CTAs: Draft inquiry, Mark preferred, Book (it drafts into Approve & send and never sends) and Send A/B to couple (goes to Share update).
 - Linked from Contacts → Compare ("Open full compare →"), index "Ideas · round 5", the topbar More menu, and the demo rail. VISION.md IA table gained one row.
 
-## Charts polish (SCRUM-341)
+## Charts pass (Sankey + radar)
 
-- **`app/overview.html`**: Budget card (Budgeted / Spent / Remaining, donut, category chips with Spent/Budgeted) plus a full-width **Sankey** (`#sankey`, `Envoy.sankey()`) — Total → eight categories → Booked vs Remaining. Pure SVG; works offline.
-- **`app/contacts.html#compare`** and **`app/vendor-compare.html`**: Chart.js radar on the same six plain axes (Price fit, Style, Date, Replies, Package, Track record). Full compare adds one-line axis copy and lean / Watch copy.
-- **`app/couple-portal.html`**: Compact **Budget at a glance** (shared totals + bar), not the full Sankey.
-- **`app/project.html`**: Sheet grid stays reachable via **Sheet view** and `#sheet` (demoted from the tab row).
-- Narrative docs: `DEMO-WALKTHROUGH.md`, root `DEMO.md`.
+- **Overview: budget Sankey promoted.** It's now a full-width card right under the top grid, titled **"Where the money goes"**. The chart is 480px tall and flows Total $120k → 8 categories → **Booked & spent $80k** vs **Remaining $40k**.
+  - A headline strip shows Booked & spent, Remaining and Biggest open line.
+  - The legend notes that category colors match the donut.
+  - The Budget card link now reads "Where the money goes ↓". Recent activity moved below the milestones.
+- **Radar, both places:**
+  - Plain axes on both pages: Price fit · Style · Date · Replies · Package · Track record.
+  - Contacts → Compare adds a lean sentence ("You're leaning Heron & Fern because…" plus a Watch note), a how-to-read caption and "Full compare →".
+  - On vendor-compare, clicking a card bolds that florist's shape on the radar and updates the caption.
+- **Couple portal: budget glance.** A small, calm Sankey shows where the $40k left is set aside (florals, buffer, rentals…). It shows amounts only, with no scores or overspend warnings.
+- **Project → Sheet** is still reachable through "Sheet view" (verified: 15 rows).
