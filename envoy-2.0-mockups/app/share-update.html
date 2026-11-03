@@ -43,6 +43,9 @@
   .empty-pv { text-align: center; color: var(--ink-3); font-size: var(--text-sm); padding: var(--s-6); border: 1px dashed var(--line-strong); border-radius: var(--r-lg); }
   .sent-banner { display: none; margin-top: var(--s-5); padding: 14px var(--s-5); border-radius: var(--r-lg); background: var(--ok-soft); color: var(--ink); font-size: var(--text-sm); gap: 10px; align-items: center; }
   .sent-banner.on { display: flex; }
+  .urgent-banner { display: flex; gap: 12px; align-items: flex-start; padding: 14px var(--s-5); margin-bottom: var(--s-5); border-radius: var(--r-lg); border: 1px solid var(--clay-3); background: var(--clay-soft); color: var(--ink); font-size: var(--text-sm); line-height: 1.55; }
+  .urgent-banner b { display: block; font-weight: 600; margin-bottom: 2px; }
+  .urgent-banner .tag { font-size: 10px; letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--clay-ink); font-weight: 600; }
 </style>
 </head>
 <body data-shell="planner" data-page="share">
@@ -57,6 +60,11 @@
     </div>
     <a class="btn btn-ghost" href="couple-portal.html"><i data-i="eye" data-s="14"></i>Open their portal</a>
   </header>
+
+  <div class="urgent-banner" role="status">
+    <span class="tag">Need you by Monday</span>
+    <div><b>Florist A/B is on — Elena hasn’t picked yet</b>They see both options in the portal; your note below nudges them. If you turn off the A/B block, the banner clears on send (demo).</div>
+  </div>
 
   <div class="layout">
     <section>

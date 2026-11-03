@@ -28,12 +28,10 @@
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-mark { width: 22px; height: 22px; }
 .brand-word { font-family: var(--font-display); font-size: 20px; letter-spacing: -0.02em;  }
-.crumb { display: flex; align-items: center; gap: var(--s-2); color: var(--ink-2); font-size: var(--text-sm); }
-.crumb .sep { color: var(--ink-4); }
-.project-switch { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 500; }
-.project-switch .mono-ini { width: 22px; height: 22px; border-radius: 50%; background: var(--clay-soft); color: var(--clay-ink); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: .02em; }
-.navtabs { display: flex; gap: 2px; height: 100%; margin-left: var(--s-4); }
-.navtabs a { position: relative; display: flex; align-items: center; padding: 0 var(--s-3); color: var(--ink-3); text-decoration: none; font-weight: 500; transition: color var(--dur-1) var(--ease); }
+.navtabs { display: flex; gap: 2px; height: 100%; margin-left: var(--s-4); flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+.navtabs::-webkit-scrollbar { height: 4px; }
+.navtabs::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+.navtabs a { position: relative; display: flex; align-items: center; padding: 0 10px; white-space: nowrap; font-size: var(--text-sm); color: var(--ink-3); text-decoration: none; font-weight: 500; transition: color var(--dur-1) var(--ease); }
 .navtabs a:hover { color: var(--ink); }
 .navtabs a[aria-current="page"] { color: var(--ink); }
 .navtabs a[aria-current="page"]::after { content: ""; position: absolute; left: var(--s-3); right: var(--s-3); bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px; }
@@ -327,9 +325,26 @@ tr:hover .row-actions, tr.is-selected .row-actions { opacity: 1; }
 .mtl { position: relative; padding: 8px 0 0; }
 .mtl-track { position: relative; height: 2px; background: var(--line-strong); margin: 28px 8px 0; }
 .mtl-fill { position: absolute; left: 0; top: 0; height: 2px; background: var(--ink); }
-.mtl-pt { position: absolute; top: -6px; transform: translateX(-50%); width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-strong); }
-.mtl-pt.done { background: var(--ink); border-color: var(--ink); }
-.mtl-pt.now { border-color: var(--clay); box-shadow: 0 0 0 4px var(--clay-soft); }
+/* Milestone markers: downward chevrons on the track (not circles/boxes) */
+.mtl-pt {
+  position: absolute; top: -9px; transform: translateX(-50%);
+  width: 14px; height: 10px; border: none; border-radius: 0;
+  background: var(--surface);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+}
+.mtl-pt.done { background: var(--ink); box-shadow: none; }
+.mtl-pt.now {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--clay), 0 0 0 4px var(--clay-soft);
+}
+.mtl-chev {
+  display: inline-block; width: 10px; height: 8px; margin-right: 6px; vertical-align: 1px;
+  clip-path: polygon(50% 100%, 0 0, 100% 0); background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+}
+.mtl-chev.done { background: var(--ink); box-shadow: none; }
+.mtl-chev.now { box-shadow: inset 0 0 0 2px var(--clay), 0 0 0 3px var(--clay-soft); }
 .mtl-labels { position: relative; height: 64px; margin: 0 8px; }
 .mtl-lab { position: absolute; top: 14px; transform: translateX(-50%); text-align: center; width: 120px; font-size: var(--text-sm); }
 .mtl-lab b { display: block; font-weight: 500; }
@@ -395,27 +410,11 @@ tr:hover .row-actions, tr.is-selected .row-actions { opacity: 1; }
 .attn .st { margin-top: 6px; display: inline-flex; }
 .attn .go { display: inline-block; margin-top: 6px; font-size: var(--text-xs); font-weight: 500; color: var(--clay); }
 
-/* ---------- Round 3: topbar crumb + More + rail ideas ---------- */
-.crumb-all { color: var(--ink-2); text-decoration: none; font-weight: 500; }
-.crumb-all:hover, .crumb-all[aria-current="page"] { color: var(--ink); }
-.nav-more { align-self: stretch; display: flex; }
-.nav-more > summary { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; color: var(--ink-3); font-weight: 500; padding: 0 2px; height: 100%; }
-.nav-more > summary:hover, .nav-more > summary.is-cur { color: var(--ink); }
-.nav-more > summary.is-cur { box-shadow: inset 0 -2px 0 var(--clay); }
-.nav-more .menu-pop { top: calc(100% + 2px); }
-.nav-more .menu-pop a[aria-current="page"] { background: var(--paper-2); }
-.nav-more .menu-pop a { box-shadow: none !important; height: auto !important; }
+/* ---------- Demo rail ideas ---------- */
 .rail-ideas { border-top: 1px solid var(--line); padding: 10px 14px 12px; }
 .rail-ideas ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }
 .rail-ideas a { color: var(--ink-2); text-decoration: none; font-size: var(--text-sm); }
 .rail-ideas a:hover, .rail-ideas li.here a { color: var(--clay); }
-.navtabs .menu-pop a { padding: 8px 10px; color: var(--ink); display: flex; align-items: center; }
-.navtabs .menu-pop a::after { display: none; }
-.nav-more > summary { padding: 0 var(--s-3); position: relative; }
-.nav-more > summary.is-cur { box-shadow: none; }
-.nav-more > summary.is-cur::after { content: ""; position: absolute; left: var(--s-3); right: var(--s-3); bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px; }
-.nav-more .menu-pop { right: auto; left: 0; }
-
 /* ==========================================================================
    Redesign alignment (hello-envoy/envoy-redesign) — surfaces & controls
    Ground #EAECFA behind white cards, pill controls, indigo focus, biz dark card.

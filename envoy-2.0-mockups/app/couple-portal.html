@@ -38,7 +38,12 @@
   .opt.is-picked .letter { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .opt h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 28px; margin-top: 10px; }
   .opt .words { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-  .decision-mini { display: flex; gap: 16px; align-items: center; padding: 16px 20px; }
+  .task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .task-list li { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+  .task-list li.done { opacity: .72; }
+  .task-list .meta { font-size: var(--text-sm); color: var(--ink-3); margin-top: 2px; }
+  .task-timeline { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--line); display: grid; gap: 8px; font-size: var(--text-sm); color: var(--ink-2); }
+  .task-timeline div { display: flex; justify-content: space-between; gap: 12px; }
   .mlist { list-style: none; padding: 0; margin: 0; position: relative; }
   .mlist::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 1.5px; background: var(--line-strong); }
   .mlist li { position: relative; padding: 0 0 18px 30px; display: flex; justify-content: space-between; gap: 12px; }
@@ -90,6 +95,20 @@
     </dl>
   </section>
 
+  <section class="p-sec">
+    <header><h2>Your tasks</h2><span class="faint text-sm">From Sarah’s holds &amp; assignments</span></header>
+    <ul class="task-list" id="your-tasks">
+      <li id="task-florist"><div><div style="font-weight:500">Pick florist A or B</div><div class="meta">Due Monday, Nov 9 · unlocks inquiry</div></div><a class="btn btn-secondary btn-sm" href="#ab">Open A/B</a></li>
+      <li id="task-deposit"><div><div style="font-weight:500">Pay catering deposit · $7,920</div><div class="meta">Due Friday, Nov 6 · Wildflour · locks your date</div></div><button class="btn btn-secondary btn-sm" id="mark-paid">Mark as paid</button></li>
+    </ul>
+    <div class="task-timeline" aria-label="Tasks over time">
+      <div class="faint text-xs" style="text-transform:uppercase;letter-spacing:.08em">Coming up</div>
+      <div><span>Share must-haves &amp; style words</span><span class="faint">Nov 9</span></div>
+      <div><span>Florist retainer (after pick)</span><span class="faint">Dec 1</span></div>
+      <div><span>Save-the-dates mail</span><span class="faint">Feb 2027</span></div>
+    </div>
+  </section>
+
   <!-- Decisions -->
   <section class="p-sec" id="ab">
     <header><h2>This week <span class="n" id="dec-n">2 things</span></h2><span class="faint text-sm">Sarah needs these by Monday, Nov 9</span></header>
@@ -113,11 +132,6 @@
         </button>
       </div>
       <p class="faint text-sm mt-4" id="ab-foot">Tap one — you can change your mind until Sarah sends the inquiry.</p>
-    </div>
-    <div class="card mt-4 decision-mini">
-      <span class="logo-sq"><i data-i="dollar" data-s="15"></i></span>
-      <div class="grow"><div style="font-weight:500">Catering deposit · $7,920 to Wildflour</div><div class="faint text-sm">Due Friday, Nov 6 · locks your date with them</div></div>
-      <div id="dep-act"><button class="btn btn-secondary btn-sm" id="mark-paid">Mark as paid</button><div class="micro">Confirms outside Envoy — nothing charges here.</div></div>
     </div>
   </section>
 
@@ -218,15 +232,20 @@ window.addEventListener("envoy:ready", () => {
   const syncLeft = () => document.getElementById("dec-n").textContent = left.size ? `${left.size} ${left.size === 1 ? "thing" : "things"}` : "all set";
   document.getElementById("mark-paid").onclick = () => {
     left.delete("deposit"); syncLeft();
-    document.getElementById("dep-act").innerHTML = '<span class="chip chip-ok"><span class="dot"></span>Marked as paid</span><div class="micro">Sarah will confirm with Wildflour.</div>';
+    const row = document.getElementById("task-deposit");
+    row.classList.add("done");
+    row.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok"><span class="dot"></span>Marked as paid</span><div class="micro">Sarah will confirm with Wildflour.</div>';
     toast("Marked as paid — Sarah will confirm with Wildflour");
   };
+  document.querySelector("#task-florist a").addEventListener("click", () => document.getElementById("ab").scrollIntoView({ behavior: "smooth" }));
   // A/B pick (demo beat 4)
   const opts = document.querySelectorAll(".opt");
   opts.forEach(o => o.addEventListener("click", () => {
     opts.forEach(x => { x.classList.toggle("is-picked", x === o); x.classList.toggle("is-other", x !== o); });
     document.getElementById("ab-foot").innerHTML = `<b style="color:var(--ink)">You picked ${o.dataset.pick}.</b> Sarah's been notified and will reach out to book. <a href="#" class="btn-link" onclick="return false">Change</a>`;
     left.delete("florals"); syncLeft();
+    const tf = document.getElementById("task-florist");
+    if (tf) { tf.classList.add("done"); tf.querySelector("div:last-child").innerHTML = '<span class="chip chip-ok">Picked</span>'; }
     toast(`Picked <b>${o.dataset.pick}</b> — Sarah will take it from here`);
   }));
   // guest stepper

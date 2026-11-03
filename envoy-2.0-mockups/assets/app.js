@@ -62,31 +62,45 @@
 
   const BRAND = `<svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21.5 6.5 12 21 2.5 6.5 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c3.4 1.6 6.6 1.6 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="brand-word">Envoy</span>`;
 
-  /* ---------- App topbar (planner) ---------- */
+  function activeWeddingId() {
+    const q = new URLSearchParams(location.search).get("w");
+    if (q) return q;
+    const p = location.pathname.split("/").pop();
+    if (p === "portfolio.html") return null;
+    return "em";
+  }
+
+  /* ---------- App topbar (planner) — primary tabs always visible (no breadcrumb / no More IA) ---------- */
+  function weddingQueryString() {
+    const w = activeWeddingId();
+    return w && w !== "em" ? `?w=${encodeURIComponent(w)}` : "";
+  }
+  function withW(path) {
+    const [base, hash] = path.split("#");
+    const q = weddingQueryString();
+    return base + q + (hash ? `#${hash}` : "");
+  }
+  const PRIMARY_TABS = [
+    ["overview", "Overview", "overview.html"],
+    ["contacts", "Contacts", "contacts.html"],
+    ["project", "Project", "project.html"],
+    ["decisions", "Decisions", "decisions.html"],
+    ["approve", "Approve &amp; send", "approve-send.html"],
+    ["share", "Share update", "share-update.html"],
+    ["compare", "Compare", "vendor-compare.html"],
+    ["dayof", "Day-of", "day-of.html"],
+  ];
   function mountTopbar() {
     const host = document.querySelector("[data-topbar]");
     if (!host) return;
     const page = document.body.dataset.page;
-    const tab = (id, label, href) => `<a href="${href}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
+    const tab = (id, label, href) => `<a href="${withW(href)}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
+    const tabs = (page === "portfolio" ? tab("portfolio", "Dashboard", "portfolio.html") : "") +
+      PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
-      <a class="brand" href="${page === "portfolio" ? "portfolio.html" : "portfolio.html"}" title="Envoy">${BRAND}</a>
-      ${page === "portfolio" ? `<nav class="navtabs" aria-label="Primary"><a href="portfolio.html" aria-current="page">Dashboard</a></nav>` : `<nav class="navtabs" aria-label="Primary">
-        ${tab("overview", "Overview", "overview.html")}
-        ${tab("contacts", "Contacts", "contacts.html")}
-        ${tab("project", "Project", "project.html")}
-        <details class="menu nav-more">
-          <summary class="${["decisions", "approve", "dayof", "share"].includes(page) ? "is-cur" : ""}">More ${icon("chevd", 13)}</summary>
-          <div class="menu-pop" role="menu">
-            <a role="menuitem" href="decisions.html" ${page === "decisions" ? 'aria-current="page"' : ""}>${icon("listi", 15)}<span>Decisions<span class="sub">Open &amp; decided, couple-visible</span></span></a>
-            <a role="menuitem" href="approve-send.html" ${page === "approve" ? 'aria-current="page"' : ""}>${icon("send", 15)}<span>Approve &amp; send<span class="sub">2 drafts waiting for you</span></span></a>
-            <a role="menuitem" href="vendor-compare.html">${icon("layers", 15)}<span>Vendor compare<span class="sub">Three florists, your lean</span></span></a>
-            <a role="menuitem" href="day-of.html" ${page === "dayof" ? 'aria-current="page"' : ""}>${icon("cal", 15)}<span>Day-of packet<span class="sub">Run of show, call times, rain plan</span></span></a>
-            <a role="menuitem" href="share-update.html" ${page === "share" ? 'aria-current="page"' : ""}>${icon("share", 15)}<span>Share update<span class="sub">Choose what the couple sees</span></span></a>
-            <a role="menuitem" href="portfolio.html">${icon("grid", 15)}<span>All weddings<span class="sub">24 active · start your day here</span></span></a>
-          </div>
-        </details>
-      </nav>`}
+      <a class="brand" href="portfolio.html" title="Envoy">${BRAND}</a>
+      <nav class="navtabs" aria-label="Primary">${tabs}</nav>
       <div class="topbar-right">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
         <a class="btn btn-secondary btn-sm" href="couple-portal.html">${icon("eye", 14)} Couple view</a>
@@ -197,13 +211,6 @@
     { id: "ne", ini: "N&E", label: "Noor & Eli", href: "overview.html?w=ne" },
     { id: "ps", ini: "P&S", label: "Priya & Sam", href: "overview.html?w=ps" },
   ];
-  function activeWeddingId() {
-    const q = new URLSearchParams(location.search).get("w");
-    if (q) return q;
-    const p = location.pathname.split("/").pop();
-    if (p === "portfolio.html") return null;
-    return "em";
-  }
   function mountPlannerShell() {
     if (document.body.dataset.shell !== "planner") return;
     const main = document.querySelector("main.page");
@@ -215,9 +222,12 @@
     const panel = document.createElement("aside");
     panel.className = "project-panel";
     panel.setAttribute("aria-label", "Weddings");
-    panel.innerHTML = `<div class="eyebrow">Weddings</div>` +
+    panel.innerHTML = `<div class="eyebrow">This wedding</div>` +
       `<a href="portfolio.html"${wid ? "" : ' aria-current="page"'}><span class="ini">24</span>All weddings</a>` +
-      WEDDINGS.map((w) => `<a href="${w.href}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`).join("");
+      WEDDINGS.map((w) => {
+        const href = w.id === "em" ? "overview.html" : `overview.html?w=${w.id}`;
+        return `<a href="${href}"${wid === w.id ? ' aria-current="page"' : ""}><span class="ini">${w.ini}</span>${w.label}</a>`;
+      }).join("");
     wrap.appendChild(panel);
     wrap.appendChild(main);
   }

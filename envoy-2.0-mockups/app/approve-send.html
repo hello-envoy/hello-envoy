@@ -17,12 +17,6 @@
   .from-hero.personal .g { background: var(--warn-soft); color: var(--warn); }
   .from-warn { margin-top: 10px; font-size: var(--text-sm); color: var(--warn); display: flex; gap: 6px; align-items: center; }
   .hidden { display: none !important; }
-  .review { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 14px var(--s-6); border-top: 1px solid var(--line); align-items: start; }
-  .review input { width: 18px; height: 18px; accent-color: var(--ink); margin-top: 2px; cursor: pointer; }
-  .review label { cursor: pointer; }
-  .review .rl { font-weight: 500; }
-  .review .snip { margin-top: 6px; padding: 10px 12px; background: var(--paper-2); border-radius: var(--r-md); font-size: var(--text-sm); color: var(--ink-2); line-height: 1.5; }
-  .review .snip b { color: var(--ink); font-weight: 500; display: block; }
   .layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: var(--s-6); align-items: start; }
   .queue { display: flex; gap: 8px; margin-bottom: var(--s-4); }
   .qitem { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); cursor: pointer; text-align: left; font: inherit; color: var(--ink-2); flex: 1; }
@@ -55,7 +49,7 @@
   .sent { display: none; padding: var(--s-6); border-top: 1px solid var(--line); background: var(--ok-soft); }
   .sent.on { display: flex; gap: 14px; align-items: center; }
   .sent .ck { width: 34px; height: 34px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; flex: none; }
-  .is-sent .guard, .is-sent .actions, .is-sent .review { display: none; }
+  .is-sent .guard, .is-sent .actions { display: none; }
   .is-sent .body { color: var(--ink-2); }
   .side .card + .card { margin-top: var(--s-5); }
   .ask-head { display: flex; align-items: center; gap: 10px; }

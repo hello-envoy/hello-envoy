@@ -21,6 +21,9 @@
   .types { display: flex; flex-wrap: wrap; gap: 4px; }
   .types .fchip { height: 26px; padding: 0 9px; font-size: var(--text-xs); }
   .table td { padding-top: 10px; padding-bottom: 10px; }
+  .table tr.type-head td { background: var(--paper-2); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  .label-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .label-chips .chip { height: 20px; font-size: 10px; padding: 0 6px; }
   .table tbody tr { cursor: pointer; }
   .row-actions .btn { color: var(--ink-3); }
   .row-actions .btn:hover { color: var(--ink); }
@@ -86,7 +89,7 @@
   <!-- ============ Attach from directory (demo beat 1) ============ -->
   <section class="card attach-card mb-6 hide" id="attach">
     <div class="card-head" style="border-color:var(--clay-3)">
-      <h3>Attach from your preferred directory <span class="sub">Vendors you trust, reused across weddings. Threads and notes stay with you.</span></h3>
+      <h3>Attach from your contact book <span class="sub">Vendors you reuse across weddings. Threads and notes stay with you.</span></h3>
       <button class="btn btn-ghost btn-sm btn-icon" id="close-attach" title="Close"><i data-i="x" data-s="14"></i></button>
     </div>
     <div class="card-body">
@@ -105,6 +108,21 @@
           <button style="flex:1" data-v="project" aria-selected="true">This wedding</button>
           <button style="flex:1" data-v="dir" aria-selected="false">Directory</button>
         </div>
+      </div>
+      <div class="fgroup">
+        <span class="eyebrow">Saved views</span>
+        <select class="input" id="saved-view" style="height:34px;width:100%;font-size:var(--text-sm)" aria-label="Saved views">
+          <option value="">Custom filters</option>
+          <option value="reply">Needs reply · 2</option>
+          <option value="florists">Florists exploring · 3</option>
+          <option value="booked-team">Booked team · 7</option>
+          <option value="in-book">In contact book · 8</option>
+          <option value="missing-email">Missing email · 1</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <span class="eyebrow">Labels</span>
+        <div class="types" id="label-chips"></div>
       </div>
       <div class="fgroup" data-f="status">
         <span class="eyebrow">Status</span>
@@ -167,7 +185,7 @@
       <div class="table-wrap">
         <table class="table cmp-table">
           <thead><tr><th></th>
-            <td><div class="cmp-head"><i style="background:var(--chart-1)"></i>Heron &amp; Fern <span class="pref" title="Preferred"><i data-i="star" data-s="13"></i></span></div></td>
+            <td><div class="cmp-head"><i style="background:var(--chart-1)"></i>Heron &amp; Fern <span class="chip chip-outline" style="height:22px;font-size:11px">In contact book</span></div></td>
             <td><div class="cmp-head"><i style="background:var(--chart-2)"></i>Marlowe Flower Co.</div></td>
             <td><div class="cmp-head"><i style="background:var(--chart-4)"></i>Bloom Theory</div></td></tr></thead>
           <tbody>
@@ -178,8 +196,8 @@
             <tr><th>Weddings with you</th><td>6</td><td>1</td><td>—</td></tr>
             <tr><th></th>
               <td><div class="row gap-2 wrap"><button class="btn btn-primary btn-sm" data-draft="Heron &amp; Fern Florals">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Heron &amp; Fern</b> logged as Booked — deposit reminder set">Book</button></div></td>
-              <td><div class="row gap-2 wrap"><button class="btn btn-secondary btn-sm" data-draft="Marlowe Flower Co.">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Marlowe</b> marked preferred">Mark preferred</button></div></td>
-              <td><div class="row gap-2 wrap"><button class="btn btn-secondary btn-sm" data-draft="Bloom Theory">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Bloom Theory</b> marked preferred">Mark preferred</button></div></td></tr>
+              <td><div class="row gap-2 wrap"><button class="btn btn-secondary btn-sm" data-draft="Marlowe Flower Co.">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Marlowe</b> added to contact book">Add to contact book</button></div></td>
+              <td><div class="row gap-2 wrap"><button class="btn btn-secondary btn-sm" data-draft="Bloom Theory">Draft inquiry</button><button class="btn btn-ghost btn-sm" data-toast="<b>Bloom Theory</b> added to contact book">Add to contact book</button></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -242,25 +260,43 @@ window.addEventListener("envoy:ready", () => {
   const SLABEL = { none: ["Not contacted","s-none"], waiting: ["Waiting","s-waiting"], reply: ["Needs reply","s-reply"], booked: ["Booked","s-booked"], paid: ["Deposit paid","s-paid"], declined: ["Declined","s-declined"] };
   const LADDER_TXT = LADDER.map(s => SLABEL[s][0]).join(" → ");
   const bucket = (s) => s;
-  // Preferred vendors: how many of Sarah's other weddings they're already on
+  const ALL_LABELS = ["Shortlist", "Charleston", "Garden", "Peak season", "Family-style", "Rain plan"];
+  const CLABELS = {
+    ashby: ["Charleston", "Booked team"], wildflour: ["Family-style", "Booked team"], juniper: ["Booked team"], heron: ["Shortlist", "Garden", "Florist"],
+    marlowe: ["Shortlist", "Florist"], sweetgrass: ["Florist"], glam: ["Peak season"], coastal: ["Rain plan"], stationer: ["Booked team"],
+    bloom: ["Garden", "Florist"], kiawah: ["Charleston"], lantern: ["Peak season"], holycity: ["Charleston"],
+  };
+  // Contact-book vendors: how many of Sarah's other weddings they're already on
   const OTHER = { ashby: ["Priya & Sam · May 2027","Noor & Eli · Apr 2027","Kate & Dom · Nov 2026","Rosa & Ian · Jun 2027"], wildflour: ["Priya & Sam · May 2027","Noor & Eli · Apr 2027","Kate & Dom · Nov 2026"], juniper: ["Priya & Sam · May 2027","Rosa & Ian · Jun 2027","Kate & Dom · Nov 2026","Noor & Eli · Apr 2027","Bea & Jon · Aug 2027","Lila & Max · Sep 2027"], heron: ["Rosa & Ian · Jun 2027","Kate & Dom · Nov 2026"], tidewater: ["Noor & Eli · Apr 2027","Bea & Jon · Aug 2027"], holloway: ["Priya & Sam · May 2027","Rosa & Ian · Jun 2027","Kate & Dom · Nov 2026","Bea & Jon · Aug 2027","Lila & Max · Sep 2027"], stationer: ["Priya & Sam · May 2027","Noor & Eli · Apr 2027","Lila & Max · Sep 2027"] };
   const ALL_WEDDINGS = ["Priya & Sam · May 2027","Noor & Eli · Apr 2027","Rosa & Ian · Jun 2027","Bea & Jon · Aug 2027","Lila & Max · Sep 2027","Kate & Dom · Nov 2026"];
   const otherFor = (c) => OTHER[c[0]] || (OTHER[c[0]] = c[11] ? ALL_WEDDINGS.slice(0, Math.min(+(c[11].match(/(\d+) past/) || [0, 0])[1], 6)) : []);
   let pickWedding = false;
   const qs = new URLSearchParams(location.search);
-  const F = { scope: "project", status: qs.get("status") || "all", type: qs.get("type") || "", email: "all", q: "" };
+  const F = { scope: "project", status: qs.get("status") || "all", type: qs.get("type") || "", email: "all", q: "", label: "", view: "" };
   let selected = qs.get("c") || "glam";
   let fixFocus = qs.get("fix") || (location.hash === "#fix" ? "auto" : "");
   let replyOpen = fixFocus === "reply";
 
   // --- filters UI
   document.getElementById("types").innerHTML = TYPES.map(t => `<button class="fchip" data-type="${t}" aria-pressed="${F.type === t}">${t}</button>`).join("");
-  document.getElementById("types").addEventListener("click", (e) => { const b = e.target.closest("[data-type]"); if (!b) return; F.type = F.type === b.dataset.type ? "" : b.dataset.type; render(); });
+  document.getElementById("types").addEventListener("click", (e) => { const b = e.target.closest("[data-type]"); if (!b) return; F.type = F.type === b.dataset.type ? "" : b.dataset.type; F.view = ""; document.getElementById("saved-view").value = ""; render(); });
+  document.getElementById("label-chips").innerHTML = ALL_LABELS.map(l => `<button class="fchip" data-label="${l}" aria-pressed="${F.label === l}">${l}</button>`).join("");
+  document.getElementById("label-chips").addEventListener("click", (e) => { const b = e.target.closest("[data-label]"); if (!b) return; F.label = F.label === b.dataset.label ? "" : b.dataset.label; F.view = ""; document.getElementById("saved-view").value = ""; render(); });
+  document.getElementById("saved-view").addEventListener("change", (e) => {
+    F.view = e.target.value; F.label = "";
+    if (F.view === "reply") Object.assign(F, { status: "reply", type: "", email: "all" });
+    else if (F.view === "florists") Object.assign(F, { status: "all", type: "Florist", email: "all" });
+    else if (F.view === "booked-team") Object.assign(F, { status: "booked", type: "", email: "all" });
+    else if (F.view === "in-book") Object.assign(F, { status: "all", type: "", email: "all", bookOnly: true });
+    else if (F.view === "missing-email") Object.assign(F, { status: "all", type: "", email: "missing", bookOnly: false });
+    else { F.bookOnly = false; }
+    render();
+  });
   document.querySelectorAll("[data-f] [data-v]").forEach(b => b.addEventListener("click", () => {
     const g = b.closest("[data-f]").dataset.f; F[g] = b.dataset.v; render();
   }));
   document.getElementById("q").addEventListener("input", (e) => { F.q = e.target.value.toLowerCase(); render(); });
-  document.getElementById("reset").onclick = () => { Object.assign(F, { status: "all", type: "", email: "all", q: "" }); document.getElementById("q").value = ""; render(); };
+  document.getElementById("reset").onclick = () => { Object.assign(F, { status: "all", type: "", email: "all", q: "", label: "", view: "", bookOnly: false }); document.getElementById("q").value = ""; document.getElementById("saved-view").value = ""; render(); };
 
   function rowsFor() {
     const src = F.scope === "dir" ? C.filter(c => c[9]).concat(DIR) : C;
@@ -268,7 +304,22 @@ window.addEventListener("envoy:ready", () => {
       (F.status === "all" || bucket(c[4]) === F.status) &&
       (!F.type || c[3] === F.type) &&
       (F.email === "all" || (F.email === "has" ? !!c[7] : !c[7])) &&
-      (!F.q || (c[1] + c[2] + c[7]).toLowerCase().includes(F.q)));
+      (!F.label || (CLABELS[c[0]] || []).includes(F.label)) &&
+      (!F.bookOnly || c[9]) &&
+      (!F.q || (c[1] + c[2] + c[7] + (CLABELS[c[0]] || []).join(" ")).toLowerCase().includes(F.q)));
+  }
+  function rowHtml(c) {
+    const [lab, cls] = SLABEL[c[4]];
+    const isDir = c[8] === "dir";
+    const labels = (CLABELS[c[0]] || []).slice(0, 3).map(l => `<span class="chip chip-outline">${l}</span>`).join("");
+    return `<tr data-id="${c[0]}" class="${c[0] === selected ? "is-selected" : ""} ${c._new ? "new-row" : ""}">
+      <td><div class="row"><span class="logo-sq">${c[1].replace(/^(The|Rev\.) /, "")[0]}</span><div style="min-width:0"><div class="cell-main row gap-2">${c[1]} ${c[9] ? `<span class="chip chip-outline" style="height:20px;font-size:10px">In contact book</span>` : ""}</div><div class="cell-sub">${isDir ? c[11] : c[2]}${!c[7] ? ' · <span class="accent">no email</span>' : ""}</div>${labels ? `<div class="label-chips">${labels}</div>` : ""}</div></div></td>
+      <td class="muted">${c[3]}</td>
+      <td>${isDir ? '<span class="chip chip-outline">Directory</span>' : `<span class="status ${cls}">${lab}</span>`}</td>
+      <td class="${c[4] === "reply" ? "" : "muted"}">${isDir ? `<button class="btn btn-secondary btn-sm" data-attach-one="${c[0]}">${icon("attach", 13)}Attach</button>` : c[5]}</td>
+      <td class="r"><span class="row-actions">
+        ${act("thread","Open thread")}${act("edit","Draft inquiry",`data-draft="${c[1]}"`)}${act("checkc","Log status",'data-toast="Log status: ${LADDER_TXT}"')}${act("attach","Attach to another wedding",`data-toast="Attach <b>${c[1]}</b> to: Priya &amp; Sam · May 2027"`)}${act("copy","Copy email",`data-copy="${c[7]}"`)}${act("globe","Website",`data-toast="Opening ${c[10]}"`)}
+      </span></td></tr>`;
   }
   function act(name, title, extra) { return `<button class="btn btn-ghost btn-sm btn-icon" title="${title}" ${extra || ""}>${icon(name, 14)}</button>`; }
   function render() {
@@ -276,6 +327,7 @@ window.addEventListener("envoy:ready", () => {
     document.querySelectorAll('[data-f="scope"] [data-v]').forEach(b => b.setAttribute("aria-selected", b.dataset.v === F.scope));
     ["status","email"].forEach(g => document.querySelectorAll(`[data-f="${g}"] [data-v]`).forEach(b => b.setAttribute("aria-pressed", b.dataset.v === F[g])));
     document.querySelectorAll("#types [data-type]").forEach(b => b.setAttribute("aria-pressed", b.dataset.type === F.type));
+    document.querySelectorAll("#label-chips [data-label]").forEach(b => b.setAttribute("aria-pressed", b.dataset.label === F.label));
     const base = F.scope === "dir" ? C.filter(c => c[9]).concat(DIR) : C;
     LADDER.forEach(s => document.querySelector(`[data-c="${s}"]`).textContent = base.filter(c => bucket(c[4]) === s).length);
     document.querySelector('[data-c="all"]').textContent = base.length;
@@ -284,18 +336,17 @@ window.addEventListener("envoy:ready", () => {
     document.getElementById("result-n").textContent = `${rows.length} ${rows.length === 1 ? "contact" : "contacts"}${F.type ? " · " + F.type : ""}`;
     document.getElementById("empty").classList.toggle("hide", rows.length > 0);
     document.querySelector("#ctable").classList.toggle("hide", rows.length === 0);
-    document.querySelector("#ctable tbody").innerHTML = rows.map(c => {
-      const [lab, cls] = SLABEL[c[4]];
-      const isDir = c[8] === "dir";
-      return `<tr data-id="${c[0]}" class="${c[0] === selected ? "is-selected" : ""} ${c._new ? "new-row" : ""}">
-        <td><div class="row"><span class="logo-sq">${c[1].replace(/^(The|Rev\.) /, "")[0]}</span><div style="min-width:0"><div class="cell-main row gap-2">${c[1]} ${c[9] ? `<span class="pref" title="Preferred vendor">${icon("star", 12)}</span>` : ""}</div><div class="cell-sub">${isDir ? c[11] : c[2]}${!c[7] ? ' · <span class="accent">no email</span>' : ""}</div></div></div></td>
-        <td class="muted">${c[3]}</td>
-        <td>${isDir ? '<span class="chip chip-outline">Directory</span>' : `<span class="status ${cls}">${lab}</span>`}</td>
-        <td class="${c[4] === "reply" ? "" : "muted"}">${isDir ? `<button class="btn btn-secondary btn-sm" data-attach-one="${c[0]}">${icon("attach", 13)}Attach</button>` : c[5]}</td>
-        <td class="r"><span class="row-actions">
-          ${act("thread","Open thread")}${act("edit","Draft inquiry",`data-draft="${c[1]}"`)}${act("checkc","Log status",'data-toast="Log status: ${LADDER_TXT}"')}${act("attach","Attach to another wedding",`data-toast="Attach <b>${c[1]}</b> to: Priya &amp; Sam · May 2027"`)}${act("copy","Copy email",`data-copy="${c[7]}"`)}${act("globe","Website",`data-toast="Opening ${c[10]}"`)}
-        </span></td></tr>`;
-    }).join("");
+    const group = !F.q && !F.type && F.scope === "project";
+    let body = "";
+    if (group) {
+      const order = [...new Set(rows.map(c => c[3]))].sort();
+      order.forEach(t => {
+        const chunk = rows.filter(c => c[3] === t);
+        if (!chunk.length) return;
+        body += `<tr class="type-head"><td colspan="5">${t} · ${chunk.length}</td></tr>` + chunk.map(rowHtml).join("");
+      });
+    } else body = rows.map(rowHtml).join("");
+    document.querySelector("#ctable tbody").innerHTML = body;
     drawDrawer();
   }
   document.querySelector("#ctable tbody").addEventListener("click", (e) => {
@@ -338,7 +389,7 @@ window.addEventListener("envoy:ready", () => {
     return "";
   }
   function weddingsFor(c) {
-    if (!c[9]) return `<dt>Weddings</dt><dd>First wedding together · <button class="btn-link" id="save-pref" style="font:inherit">Save to preferred</button></dd>`;
+    if (!c[9]) return `<dt>Weddings</dt><dd>First wedding together · <button class="btn-link" id="save-pref" style="font:inherit">Add to contact book</button></dd>`;
     const o = otherFor(c);
     return `<dt>Weddings</dt><dd><b>Also on ${o.length} other ${o.length === 1 ? "wedding" : "weddings"}</b>${o.length ? `<div class="faint text-xs" style="margin-top:2px">${o.slice(0, 2).join(" · ")}${o.length > 2 ? ` · +${o.length - 2} more` : ""}</div>` : ""}</dd>`;
   }
@@ -352,7 +403,7 @@ window.addEventListener("envoy:ready", () => {
       <div class="card-head" style="align-items:flex-start;padding-top:18px;padding-bottom:16px">
         <div class="row" style="align-items:flex-start"><span class="logo-sq" style="width:40px;height:40px;font-size:17px">${c[1].replace(/^(The|Rev\.) /, "")[0]}</span>
           <div><div style="font-weight:600;font-size:var(--text-md)">${c[1]}</div><div class="cell-sub">${c[2]} · ${c[3]}</div>
-          <div class="row gap-2 mt-2">${c[8]==="dir" ? '<span class="chip chip-outline">Directory</span>' : `<span class="status ${cls}">${lab}</span>`}${c[9] ? '<span class="chip chip-outline" style="color:var(--clay)">★ Preferred</span>' : ""}</div></div></div>
+          <div class="row gap-2 mt-2">${c[8]==="dir" ? '<span class="chip chip-outline">Directory</span>' : `<span class="status ${cls}">${lab}</span>`}${c[9] ? '<span class="chip chip-outline">In contact book</span>' : ""}</div></div></div>
         <button class="btn btn-ghost btn-sm btn-icon" title="More">${icon("more",15)}</button>
       </div>
       <div class="drawer-scroll">
@@ -395,7 +446,7 @@ window.addEventListener("envoy:ready", () => {
       render(); toast("Date change requested · <b>Harborline</b> stays <b>Waiting</b>"); }
     else if (t.id === "attach-other") { pickWedding = !pickWedding; drawDrawer(); }
     else if (t.dataset.wed) { otherFor(c).push(t.dataset.wed); pickWedding = false; drawDrawer(); toast(`<b>${c[1]}</b> attached to <b>${t.dataset.wed.replace("&","&amp;")}</b>`); }
-    else if (t.id === "save-pref") { c[9] = 1; render(); toast(`<b>${c[1]}</b> saved to your preferred vendors`); }
+    else if (t.id === "save-pref") { c[9] = 1; render(); toast(`<b>${c[1]}</b> added to your contact book`); }
     else if (t.dataset.set) { c[4] = t.dataset.set; render(); toast(`${c[1]} → <b>${SLABEL[t.dataset.set][0]}</b>`); }
   });
 
@@ -406,7 +457,7 @@ window.addEventListener("envoy:ready", () => {
   document.getElementById("close-attach").onclick = () => attachCard.classList.add("hide");
   document.getElementById("dir-grid").innerHTML = DIR.map((d, i) => `
     <label class="dir-item"><span class="check"><input type="checkbox" value="${d[0]}" ${i < 3 ? "checked" : ""}></span>
-      <div><div class="cell-main">${d[1]} <span class="pref">${icon("star",11)}</span></div><div class="cell-sub">${d[3]} · ${d[11]}</div></div></label>`).join("");
+      <div><div class="cell-main">${d[1]} <span class="chip chip-outline" style="height:18px;font-size:10px">Contact book</span></div><div class="cell-sub">${d[3]} · ${d[11]}</div></div></label>`).join("");
   const upd = () => document.getElementById("attach-n").textContent = document.querySelectorAll("#dir-grid input:checked").length;
   document.getElementById("dir-grid").addEventListener("change", upd);
   function attach(ids) {
@@ -414,7 +465,7 @@ window.addEventListener("envoy:ready", () => {
     F.scope = "project"; F.status = "all"; F.type = "";
     attachCard.classList.add("hide"); render();
     document.getElementById("meta-n").textContent = C.filter(r => r[8] === "project").length + " on this wedding";
-    toast(`Attached <b>${ids.length}</b> preferred ${ids.length === 1 ? "vendor" : "vendors"} — inquiries ready to draft`);
+    toast(`Attached <b>${ids.length}</b> contact-book ${ids.length === 1 ? "vendor" : "vendors"} — inquiries ready to draft`);
   }
   document.getElementById("do-attach").onclick = () => attach([...document.querySelectorAll("#dir-grid input:checked")].map(x => x.value));
 

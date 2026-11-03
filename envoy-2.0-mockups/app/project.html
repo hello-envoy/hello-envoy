@@ -266,15 +266,15 @@ window.addEventListener("envoy:ready", () => {
 
   // ---------- Sheet (editable grid) ----------
   const SHEET = [
-    ["Lock catering", [["Menu B proposal", "Couple", "Oct 30", "Done", 26400, 0, "Family-style, 128"], ["Contract countersigned", "Vendor", "Nov 1", "Done", 0, 0, ""], ["Deposit 30%", "Couple", "Nov 6", "Due", 0, 7920, "Pay via Wildflour portal"], ["Tasting", "Couple", "Feb 12", "Planned", 0, 0, "Bring 4 guests"]]],
-    ["Choose florist", [["Shortlist 3 florists", "Me", "Oct 28", "Done", 0, 0, "H&F, Marlowe, Bloom"], ["Inquiries", "Me", "Nov 4", "Drafted", 0, 0, ""], ["Couple A/B pick", "Couple", "Nov 9", "Waiting", 0, 0, ""], ["Retainer", "Couple", "Dec 1", "Planned", 12000, 0, "Budget cap"]]],
-    ["Hotel block", [["Request 30 rooms", "Me", "Oct 24", "Done", 0, 0, ""], ["Fix hold dates", "Me", "Nov 5", "Open", 0, 0, "Oct 15–17"], ["Block agreement", "Vendor", "Nov 12", "Waiting", 0, 0, "No attrition fee"]]],
+    ["Lock catering", [["Menu B proposal", "Couple", "Oct 30", "Done", 26400, 0, "Family-style, 128", "Couple portal"], ["Contract countersigned", "Vendor", "Nov 1", "Done", 0, 0, "", "Wildflour thread"], ["Deposit 30%", "Couple", "Nov 6", "Due", 0, 7920, "Pay via Wildflour portal", "Invoice PDF"], ["Tasting", "Couple", "Feb 12", "Planned", 0, 0, "Bring 4 guests", "Wildflour email"]]],
+    ["Choose florist", [["Shortlist 3 florists", "Me", "Oct 28", "Done", 0, 0, "H&F, Marlowe, Bloom", "Compare"], ["Inquiries", "Me", "Nov 4", "Drafted", 0, 0, "", "Draft composer"], ["Couple A/B pick", "Couple", "Nov 9", "Waiting", 0, 0, "", "Couple portal"], ["Retainer", "Couple", "Dec 1", "Planned", 12000, 0, "Budget cap", "Sheet line"]]],
+    ["Hotel block", [["Request 30 rooms", "Me", "Oct 24", "Done", 0, 0, "", "Harborline thread"], ["Fix hold dates", "Me", "Nov 5", "Open", 0, 0, "Oct 15–17", "Needs attention"], ["Block agreement", "Vendor", "Nov 12", "Waiting", 0, 0, "No attrition fee", "Harborline PDF"]]],
   ];
   const money = (n) => n ? "$" + n.toLocaleString() : "";
   let r = 0;
   const statusChip = (s) => ({ Done: "chip-ok", Due: "chip-risk", Open: "chip-risk", Waiting: "chip-warn", Drafted: "chip-info" }[s] || "");
-  document.getElementById("sheet").innerHTML = `<thead><tr><th class="idx"></th><th style="min-width:240px">Checklist item</th><th>Owner</th><th>Due</th><th>Status</th><th style="text-align:right">Budget</th><th style="text-align:right">Paid</th><th style="min-width:200px">Notes</th></tr></thead><tbody>` +
-    SHEET.map(([g, rows]) => `<tr class="group"><td class="idx">${icon("chevd", 12)}</td><td colspan="4"><div class="cell">${g} <span class="faint" style="font-weight:400">· ${rows.length} items</span></div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[4], 0))}</div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[5], 0))}</div></td><td></td></tr>` +
+  document.getElementById("sheet").innerHTML = `<thead><tr><th class="idx"></th><th style="min-width:240px">Checklist item</th><th>Owner</th><th>Due</th><th>Status</th><th style="text-align:right">Budget</th><th style="text-align:right">Paid</th><th style="min-width:140px">Source</th><th style="min-width:160px">Notes</th></tr></thead><tbody>` +
+    SHEET.map(([g, rows]) => `<tr class="group"><td class="idx">${icon("chevd", 12)}</td><td colspan="4"><div class="cell">${g} <span class="faint" style="font-weight:400">· ${rows.length} items</span></div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[4], 0))}</div></td><td class="num"><div class="cell">${money(rows.reduce((s, x) => s + x[5], 0))}</div></td><td></td><td></td></tr>` +
       rows.map(x => `<tr><td class="idx">${++r}</td>
         <td><div class="cell" contenteditable="true">${x[0]}</div></td>
         <td><div class="cell" contenteditable="true"><span class="owner o-${x[1].toLowerCase()}">${x[1]}</span></div></td>
@@ -282,8 +282,9 @@ window.addEventListener("envoy:ready", () => {
         <td><div class="cell"><span class="chip ${statusChip(x[3])}">${x[3]}</span></div></td>
         <td class="num"><div class="cell" contenteditable="true">${money(x[4])}</div></td>
         <td class="num"><div class="cell" contenteditable="true">${money(x[5])}</div></td>
+        <td><div class="cell faint">${x[7] || "—"}</div></td>
         <td><div class="cell faint" contenteditable="true">${x[6]}</div></td></tr>`).join("")).join("") +
-    `<tr><td class="idx">+</td><td colspan="7"><div class="cell faint" contenteditable="true" data-ph>Add a checklist item…</div></td></tr></tbody>`;
+    `<tr><td class="idx">+</td><td colspan="8"><div class="cell faint" contenteditable="true" data-ph>Add a checklist item…</div></td></tr></tbody>`;
   document.getElementById("sheet").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.isContentEditable) { e.preventDefault(); e.target.blur(); toast("Saved"); } });
 
   // ---------- Owner filter ----------

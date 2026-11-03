@@ -49,6 +49,15 @@
   .dcard .ph:hover { border-color: var(--ink-3); }
   .dcard.first { background: var(--paper-2); }
   .foot-note { margin-top: var(--s-10); padding-top: var(--s-5); border-top: 1px solid var(--line); color: var(--ink-3); font-size: var(--text-xs); display: flex; justify-content: space-between; }
+  .gen { display: grid; grid-template-columns: 220px 1fr; gap: var(--s-4); margin-bottom: var(--s-8); }
+  .personas { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .personas button { text-align: left; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); cursor: pointer; color: var(--ink-2); }
+  .personas button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 500; box-shadow: 0 0 0 1px var(--ink); }
+  .chat { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); min-height: 160px; display: flex; flex-direction: column; }
+  .chat-log { flex: 1; padding: var(--s-4); display: grid; gap: 10px; font-size: var(--text-sm); line-height: 1.55; max-height: 220px; overflow: auto; }
+  .chat-log .you { color: var(--ink-3); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .06em; }
+  .chat-in { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+  .chat-in .input { flex: 1; height: 36px; }
   @media print {
     [data-topbar], .topbar, .demo-rail, .no-print, .toast-wrap { display: none !important; }
     body { background: #fff; }
@@ -85,6 +94,21 @@
   </section>
 
   <div class="draft-note no-print"><i data-i="edit" data-s="15"></i><span>Working draft, 348 days out. Times fill in from vendor threads as each one books — unbooked vendors are marked, not guessed.</span></div>
+
+  <section class="card no-print gen" aria-label="Generate day-of copy">
+    <div><div class="eyebrow">Personas</div><ul class="personas" id="personas">
+      <li><button type="button" data-p="groom" aria-pressed="true">Groom · timeline + dial</button></li>
+      <li><button type="button" data-p="bridal" aria-pressed="false">Bridal party · hair, photos, arrival</button></li>
+      <li><button type="button" data-p="photo" aria-pressed="false">Photo / video · shot list beats</button></li>
+      <li><button type="button" data-p="other" aria-pressed="false">Other vendor · call times only</button></li>
+    </ul>
+    <div><div class="eyebrow">Ask Envoy · chat-style draft</div>
+      <div class="chat"><div class="chat-log" id="chat-log"></div>
+        <form class="chat-in" id="chat-form"><input class="input" placeholder="e.g. Short version for the groom, no vendor emails…" aria-label="Generate prompt"><button class="btn btn-primary btn-sm" type="submit">Generate</button></form>
+      </div>
+      <p class="faint text-xs mt-2">Demo only — inserts into the <b>master packet</b> below when you generate. Nothing sends.</p>
+    </div>
+  </section>
 
   <div class="cols">
     <section>
@@ -147,5 +171,34 @@
 </div></main>
 
 <script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const { toast } = Envoy;
+  let persona = "groom";
+  const SEED = {
+    groom: [["Envoy", "Run of show for Marcus — ceremony 4:30, first look 3:15, sparkler exit 10:50. Rain: ballroom if called Oct 14."]],
+    bridal: [["Envoy", "Hair starts 10:00 Harborline Suite 4 · dressed 2:30 · first look 3:15 oak allée."]],
+    photo: [["Envoy", "Golden hour 6:35 after dinner entrance · family photos 5:05–5:35 during cocktails."]],
+    other: [["Envoy", "Wildflour load-in 12:30 service road · florist TBD when A/B closes."]],
+  };
+  const log = document.getElementById("chat-log");
+  function paint() { log.innerHTML = (SEED[persona] || []).map(([who, msg]) => `<div><div class="you">${who}</div>${msg}</div>`).join(""); }
+  paint();
+  document.getElementById("personas").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-p]"); if (!b) return;
+    persona = b.dataset.p;
+    document.querySelectorAll("#personas button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    paint();
+  });
+  document.getElementById("chat-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = e.target.querySelector("input").value.trim() || "Refresh this section";
+    SEED[persona].push(["You", q]);
+    SEED[persona].push(["Envoy", `Updated the ${persona} slice in the master packet — still a draft.`]);
+    paint(); e.target.reset();
+    toast("Added to master day-of packet (demo)");
+  });
+});
+</script>
 </body>
 </html>

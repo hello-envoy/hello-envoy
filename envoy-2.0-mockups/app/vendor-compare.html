@@ -7,20 +7,16 @@
 <link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/components.css">
 <style>
-  .vc { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); }
-  .vcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); position: relative; }
-  .vcard.lean { border-color: var(--ink); }
-  .vcard .top { display: flex; gap: 12px; align-items: center; }
-  .vcard .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-  .vcard h3 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 28px; letter-spacing: -0.01em; }
-  .vcard .who { color: var(--ink-3); font-size: var(--text-sm); }
-  .vcard .price { font-family: var(--font-display); font-size: 32px; line-height: 36px; font-variant-numeric: lining-nums; }
-  .vcard .price small { font-family: var(--font-sans); font-size: var(--text-sm); color: var(--ink-3); margin-left: 6px; }
-  .vcard dl { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; font-size: var(--text-sm); margin: 0; }
-  .vcard dt { color: var(--ink-3); } .vcard dd { margin: 0; color: var(--ink-2); }
-  .vcard .acts { display: flex; gap: 6px; flex-wrap: nowrap; margin-top: auto; padding-top: var(--s-4); border-top: 1px solid var(--line); }
-  .vcard .tag { position: absolute; top: -10px; left: var(--s-6); background: var(--ink); color: var(--paper); font-size: 11px; padding: 2px 8px; border-radius: 999px; }
-  .vcard .pref-on { color: var(--clay); }
+  .matrix-wrap { overflow-x: auto; }
+  .matrix { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .matrix th, .matrix td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .matrix thead th { background: var(--paper-2); font-weight: 500; text-align: left; position: sticky; top: 0; z-index: 1; }
+  .matrix tbody th { color: var(--ink-3); font-weight: 400; width: 160px; background: var(--surface); }
+  .matrix .col-h { cursor: pointer; min-width: 200px; }
+  .matrix .col-h.lean { box-shadow: inset 0 -2px 0 var(--ink); }
+  .matrix .col-h .sw { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+  .matrix .tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 99px; background: var(--ink); color: var(--paper); margin-left: 6px; vertical-align: 1px; }
+  .matrix .acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .lower { display: grid; grid-template-columns: 5fr 7fr; gap: var(--s-4); margin-top: var(--s-6); }
   .legend { display: flex; gap: 14px; font-size: var(--text-sm); color: var(--ink-2); }
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
@@ -32,9 +28,10 @@
   .why .but { margin-top: var(--s-4); padding: 12px 14px; background: var(--paper-2); border-radius: var(--r-md); font-size: var(--text-sm); color: var(--ink-2); }
   .why .row { display: flex; gap: 8px; margin-top: var(--s-6); flex-wrap: wrap; }
   .src { font-size: var(--text-xs); color: var(--ink-3); margin-top: var(--s-4); }
+  .book-chip { font-size: var(--text-xs); color: var(--ink-2); display: inline-flex; gap: 4px; align-items: center; }
 </style>
 </head>
-<body data-shell="planner" data-page="contacts">
+<body data-shell="planner" data-page="compare">
 <div data-topbar></div>
 <main class="page">
   <div class="page-head">
@@ -46,7 +43,12 @@
     <a class="btn btn-ghost" href="contacts.html#compare"><i data-i="users" data-s="14"></i>Back to contacts</a>
   </div>
 
-  <div class="vc" id="cards"></div>
+  <section class="card">
+    <div class="card-head"><h3>Criteria across vendors</h3><span class="faint text-sm">Click a column to set your lean</span></div>
+    <div class="card-body matrix-wrap">
+      <table class="matrix" id="matrix" aria-label="Florist comparison matrix"></table>
+    </div>
+  </section>
 
   <div class="lower">
     <section class="card">
@@ -98,37 +100,41 @@ window.addEventListener("envoy:ready", () => {
       why: ["Lowest quote by a wide margin", "Pretty personals work", "Would free $2,100 for the band"],
       but: "<b>Watch:</b> Oct 16 isn't confirmed and there's no arch. Book only if the date firms up." },
   ];
-  let lean = "hf", pref = new Set(["hf"]), booked = null;
+  let lean = "hf", inBook = new Set(["hf"]), booked = null;
   const AX = ["Price fit", "Style", "Date", "Replies", "Package", "Track record"];
+  const ROWS = [
+    ["Est. price", (v) => `<span class="num">${v.p}</span> <span class="faint">${v.note}</span>`],
+    ["Oct 16 availability", (v) => v.date],
+    ["Avg. response", (v) => v.reply],
+    ["Package", (v) => v.pkg],
+    ["Weddings with you", (v) => v.rec],
+    ["Fit score (0–10)", (v) => `<span class="num">${(v.s.reduce((a, b) => a + b, 0) / v.s.length).toFixed(1)}</span>`],
+  ];
   function render() {
-    document.getElementById("cards").innerHTML = V.map((v) => `
-      <article class="vcard ${v.k === lean ? "lean" : ""}" data-k="${v.k}">
-        ${v.k === lean ? `<span class="tag">Your lean</span>` : ""}
-        <div class="top"><span class="sw" style="background:${v.c}"></span><div><h3>${v.n.replace("&", "&amp;")}</h3><div class="who">${v.who}</div></div>
-          ${pref.has(v.k) ? `<span class="pref-on" style="margin-left:auto" title="Preferred"><i data-i="star" data-s="16"></i></span>` : ""}</div>
-        <div class="price">${v.p}<small>${v.note}</small></div>
-        <dl><dt>Oct 16</dt><dd>${v.date}</dd><dt>Replies in</dt><dd>${v.reply}</dd><dt>Package</dt><dd>${v.pkg}</dd><dt>History</dt><dd>${v.rec}</dd></dl>
-        <div class="acts">
-          <a class="btn btn-secondary btn-sm" href="contacts.html#draft" data-act="draft"><i data-i="mail" data-s="13"></i>Draft inquiry</a>
-          <button class="btn btn-ghost btn-sm" data-act="pref"><i data-i="star" data-s="13"></i>${pref.has(v.k) ? "Preferred" : "Mark preferred"}</button>
-          <button class="btn ${booked === v.k ? "btn-secondary" : "btn-primary"} btn-sm" data-act="book" ${booked && booked !== v.k ? "disabled" : ""}><i data-i="check" data-s="13"></i>${booked === v.k ? "Drafted" : "Book"}</button>
-        </div>
-      </article>`).join("");
+    const head = `<thead><tr><th scope="col">Criterion</th>${V.map((v) => `<th scope="col" class="col-h ${v.k === lean ? "lean" : ""}" data-k="${v.k}"><span class="sw" style="background:${v.c}"></span>${v.n.replace("&", "&amp;")}${v.k === lean ? '<span class="tag">Lean</span>' : ""}<div class="faint text-xs" style="font-weight:400;margin-top:4px">${v.who}</div></th>`).join("")}</tr></thead>`;
+    const body = `<tbody>${ROWS.map(([label, fn]) => `<tr><th scope="row">${label}</th>${V.map((v) => `<td>${fn(v)}</td>`).join("")}</tr>`).join("")}<tr><th scope="row">Actions</th>${V.map((v) => `<td><div class="acts">
+      <a class="btn btn-secondary btn-sm" href="contacts.html#draft"><i data-i="mail" data-s="13"></i>Draft inquiry</a>
+      <button class="btn btn-${booked === v.k ? "secondary" : "primary"} btn-sm" data-act="book" data-k="${v.k}"><i data-i="check" data-s="13"></i>${booked === v.k ? "Drafted" : "Book"}</button>
+      <button class="btn btn-ghost btn-sm" data-act="cb" data-k="${v.k}"><i data-i="attach" data-s="13"></i>${inBook.has(v.k) ? "In contact book" : "Add to contact book"}</button>
+    </div></td>`).join("")}</tr></tbody>`;
+    document.getElementById("matrix").innerHTML = head + body;
     const L = V.find((v) => v.k === lean);
     document.getElementById("lean-h").innerHTML = `You’re leaning <em>${L.n.replace("&", "&amp;")}</em> because…`;
     document.getElementById("lean-why").innerHTML = L.why.map((w) => `<li>${w}</li>`).join("");
     document.getElementById("lean-but").innerHTML = L.but;
-    Envoy.hydrateIcons(document.getElementById("cards"));
     document.getElementById("radar-cap").innerHTML = `Bigger shape = better fit · bold line = your lean (${L.n.replace("&", "&amp;")}) · scored 0–10`;
     if (chart) { chart.data.datasets.forEach((d, i) => { const on = V[i].k === lean; d.borderWidth = on ? 2.5 : 1.25; d.backgroundColor = hexA(V[i].c, on ? .14 : .03); d.borderDash = on ? [] : [4, 3]; }); chart.update("none"); }
   }
-  document.getElementById("cards").addEventListener("click", (e) => {
-    const card = e.target.closest(".vcard"); if (!card) return;
-    const b = e.target.closest("[data-act]"); const k = card.dataset.k, v = V.find((x) => x.k === k);
-    if (!b) { lean = k; render(); return; }
-    if (b.dataset.act === "draft") return;
-    if (b.dataset.act === "pref") { pref.has(k) ? pref.delete(k) : pref.add(k); lean = k; Envoy.toast(pref.has(k) ? `${v.n} marked preferred · shows first in Contacts` : `${v.n} no longer preferred`); }
-    if (b.dataset.act === "book") { booked = k; lean = k; Envoy.toast(`Booking note to ${v.n} is in Approve & send · nothing sent yet`); }
+  document.getElementById("matrix").addEventListener("click", (e) => {
+    const h = e.target.closest(".col-h"); if (h) { lean = h.dataset.k; render(); return; }
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const k = b.dataset.k, v = V.find((x) => x.k === k);
+    if (b.dataset.act === "cb") {
+      inBook.has(k) ? inBook.delete(k) : inBook.add(k);
+      Envoy.toast(inBook.has(k) ? `${v.n} added to your contact book` : `${v.n} removed from contact book`);
+    } else if (b.dataset.act === "book") {
+      booked = k; lean = k; Envoy.toast(`Booking note to ${v.n} is in Approve & send · nothing sent yet`);
+    }
     render();
   });
   document.getElementById("legend").innerHTML = V.map((v) => `<span><i style="background:${v.c}"></i>${v.n.split(" ")[0]}</span>`).join("");

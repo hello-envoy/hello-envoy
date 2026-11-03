@@ -78,7 +78,7 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 New pages are linked from `index.html` under "Ideas · round 3", from the demo rail (a new "Ideas · round 3" list under the 5 beats) and from the topbar.
 
 **Topbar (assets/app.js + components.css)**
-- The crumb is now `All weddings / [E&M Elena & Marcus ▾]`. Both "All weddings" and the project switch go to `portfolio.html`. On the portfolio page the wedding switch and tabs are hidden, because you haven't opened a wedding yet.
+- **No breadcrumb trail.** Wedding switching is the left **project panel**; primary IA is always-visible top tabs (not a More menu).
 - The main nav is still Overview | Contacts | Project, with a quiet **More ▾** menu: Decisions, Approve & send (2 drafts waiting), All weddings. More is underlined when you're on one of its pages.
 - The menu close-on-outside-click and Esc handling is now global for every `details.menu`. The overview-only copy was removed.
 
@@ -213,7 +213,7 @@ Authoritative brief: attached `SCRUM-341-rebuild-spec.md`. Kits: `envoy-2.0-mock
 
 - **White page ground** on planner app (`--paper` = white card); landing keeps redesign tints where embedded.
 - **App homepage = portfolio** with Needs-you rollup, **12-month scrollable timeline**, ≥4 openable weddings (E&M full spine; kd/ne/ps overview slice).
-- **Planner shell**: left **project panel** (wedding list) + top tabs Overview | Contacts | Project | More (no breadcrumb trail).
+- **Planner shell**: left **project panel** (wedding list) + top tabs Overview | Contacts | Project | Decisions | Approve & send | Share update | Compare | Day-of (always visible; `?w=` preserved across tabs).
 - **Overview** = single-wedding home; **Sankey primary** with separate **Booked** and **Spent** sinks, over-budget highlight (Catering), list legend, Sheet link; **donut secondary** (toggle).
 - **Couple A/B** = text + price band + tags only (no photos / moodboards).
 - **Approve & send** = inbound thread **above** draft; **single Approve & send** (review checkbox removed).
