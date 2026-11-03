@@ -15,7 +15,7 @@ Vite serves the mockups at [http://localhost:5174/](http://localhost:5174/).
 
 - [Landing](http://localhost:5174/landing/) — envoy-redesign `build/index.html` + [waitlist](http://localhost:5174/landing/waitlist.html)
 - [Overview](http://localhost:5174/app/overview.html) — Email shortlist, Log a booking, More
-- [Contacts](http://localhost:5174/app/contacts.html) — vendors, status ladder, preferred attach
+- [Contacts](http://localhost:5174/app/contacts.html) — **Directory | Compare**; 22rem inbox + wide thread (PM layout); contact book attach
 - [Project](http://localhost:5174/app/project.html) — opens on This week
 - [Couple portal](http://localhost:5174/app/couple-portal.html)
 - [Design system](http://localhost:5174/design-system/)
@@ -24,7 +24,7 @@ Ideas · round 3, also linked from the index, the topbar **More** menu, and the 
 
 - [All weddings](http://localhost:5174/app/portfolio.html) — planner home across weddings
 - [Approve & send](http://localhost:5174/app/approve-send.html) — drafts stay in Gmail until you approve
-- [Decisions](http://localhost:5174/app/decisions.html) — Decision, Options, Owner, Due, Status. Couple-visible starts off. Preview as couple shows only shared rows.
+- [Decisions](http://localhost:5174/app/project.html#decisions) — on Project tab; couple-visible toggles; **Preview as couple** only on Overview → More
 
 Ideas · round 4, same index, **More** menu, and demo rail:
 
@@ -33,7 +33,7 @@ Ideas · round 4, same index, **More** menu, and demo rail:
 
 Ideas · round 5, also in **More** and the demo rail:
 
-- [Vendor compare](http://localhost:5174/app/vendor-compare.html) — Heron & Fern, Marlowe, and Bloom Theory. Contacts → Compare links here with “Open full compare →”.
+- [Vendor compare](http://localhost:5174/app/contacts.html#compare) — Contacts → **Compare** subtab (matrix + radar)
 
 Stop the server with Ctrl+C.
 

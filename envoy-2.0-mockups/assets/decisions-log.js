@@ -223,7 +223,7 @@
       pvBtn.addEventListener("click", (e) => {
         const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
         e.currentTarget.setAttribute("aria-pressed", on);
-        e.currentTarget.querySelector("span").textContent = on ? "Back to planner view" : "Preview as couple";
+        e.currentTarget.querySelector("span").textContent = on ? "Back to planner view" : "Couple view of ledger";
         e.currentTarget.classList.toggle("btn-primary", on);
         e.currentTarget.classList.toggle("btn-secondary", !on);
         $("planner-view").classList.toggle("hidden", on);

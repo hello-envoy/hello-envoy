@@ -8,35 +8,43 @@
 <link rel="stylesheet" href="../assets/components.css">
 <style>
   .page { max-width: min(1440px, 100%); }
-  /* Master-shaped Contacts chrome (filters top · list center-left · thread right) */
+  /* PM / master Contacts: 22rem inbox column · wide thread panel */
   .contacts-chrome { padding: 0; overflow: hidden; display: flex; flex-direction: column; min-height: calc(100vh - var(--topbar-h) - 140px); }
-  .contacts-chrome-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); background: var(--paper); flex-wrap: wrap; }
+  .contacts-chrome-head { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); background: var(--paper); }
   .contacts-chrome-head .seg { margin: 0; }
   .contacts-workspace { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-  .contacts-toolbar { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); background: var(--surface); position: sticky; top: calc(var(--topbar-h) + 8px); z-index: 4; }
-  .toolbar-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); }
-  .toolbar-main { gap: var(--s-3); }
-  .toolbar-main .search { flex: 1 1 220px; max-width: 360px; min-width: 180px; }
-  .toolbar-main .seg { flex: none; }
-  .toolbar-main select.input { width: auto; min-width: 168px; max-width: 220px; }
-  .toolbar-label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); margin-right: 4px; white-space: nowrap; }
-  .status-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  .status-filters .fchip { height: 30px; display: inline-flex; align-items: center; gap: 6px; }
-  .status-filters .fchip[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 600; box-shadow: 0 0 0 1px var(--ink); }
-  .status-filters .sw { width: 7px; height: 7px; border-radius: 50%; flex: none; }
-  .toolbar-types { align-items: flex-start; }
+  .contacts-split { display: grid; grid-template-columns: 22rem minmax(0, 1fr); gap: 0; align-items: stretch; flex: 1; min-height: 520px; }
+  @media (max-width: 960px) { .contacts-split { grid-template-columns: 1fr; } .thread-panel { min-height: 420px; border-left: 0 !important; border-top: 1px solid var(--line); } }
+  .inbox-column { display: flex; flex-direction: column; min-width: 0; max-width: 22rem; border-right: 1px solid var(--line); background: var(--paper); overflow: hidden; }
+  .inbox-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); padding: var(--s-3) var(--s-3) var(--s-2); border-bottom: 1px solid var(--line); background: var(--surface); }
+  .inbox-head strong { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--ink); }
+  .inbox-filters { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--line); background: var(--surface); max-height: 42vh; overflow-y: auto; scrollbar-width: thin; }
+  .inbox-filters .toolbar-row { gap: 6px; }
+  .inbox-filters .seg { width: 100%; }
+  .inbox-filters .seg button { flex: 1; font-size: var(--text-xs); padding: 6px 8px; }
+  .inbox-filters .search { width: 100%; max-width: none; }
+  .inbox-filters .search .input { width: 100%; height: 32px; font-size: var(--text-sm); }
+  .inbox-filters select.input { width: 100%; height: 32px; font-size: var(--text-xs); }
+  .toolbar-label { font-size: 10px; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); margin-right: 2px; white-space: nowrap; }
+  .status-filters { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .status-filters .fchip { height: 26px; font-size: 10px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; }
+  .status-filters .fchip[aria-pressed="true"] { border-color: var(--indigo-600); color: var(--indigo-700); background: var(--indigo-50); font-weight: 600; }
+  .status-filters .sw { width: 6px; height: 6px; border-radius: 50%; flex: none; }
   .toolbar-types .types { flex: 1; min-width: 0; }
   .quick-views .fchip[aria-pressed="true"] { border-color: var(--indigo-600); color: var(--indigo-700); background: var(--indigo-50); font-weight: 600; }
-  .contacts-split { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 0; align-items: stretch; flex: 1; min-height: 480px; border-top: 0; }
-  @media (max-width: 1100px) { .contacts-split { grid-template-columns: 1fr; } .thread-panel { border-left: 0 !important; border-top: 1px solid var(--line); min-height: 440px; } }
-  .contact-main { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 0; border: 0; box-shadow: none; }
-  .contact-main .list-head { padding: var(--s-2) var(--s-4); border-bottom: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-3); display: flex; justify-content: space-between; align-items: center; background: var(--paper); }
-  .contacts-table-wrap { overflow: auto; flex: 1; max-height: calc(100vh - var(--topbar-h) - 300px); }
-  .contact-main .table tbody tr { cursor: pointer; }
-  .contact-main .table tbody tr.is-selected { background: var(--indigo-50); box-shadow: inset 3px 0 0 var(--indigo-600); }
-  .contact-main .table tbody tr.is-selected td { background: transparent; }
-  .type-divider td { background: var(--paper-2); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 1; }
-  .thread-panel { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 0; border: 0; border-left: 1px solid var(--line); box-shadow: none; background: var(--surface); position: sticky; top: calc(var(--topbar-h) + 8px); max-height: calc(100vh - var(--topbar-h) - 24px); }
+  .quick-views .fchip { height: 26px; font-size: 10px; }
+  .inbox-list-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .inbox-list { overflow: auto; flex: 1; }
+  .inbox-type { padding: 6px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--ink-3); font-weight: 600; background: var(--paper-2); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 1; }
+  .inbox-item { display: flex; align-items: flex-start; gap: 8px; width: 100%; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--line); background: var(--surface); cursor: pointer; text-align: left; border-left: 3px solid transparent; }
+  .inbox-item:hover { background: var(--paper); }
+  .inbox-item.is-selected { background: var(--indigo-50); border-left-color: var(--indigo-600); }
+  .inbox-item .logo-sq { width: 28px; height: 28px; font-size: 12px; flex: none; }
+  .inbox-item-main { min-width: 0; flex: 1; }
+  .inbox-name { display: block; font-size: var(--text-sm); font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .inbox-sub { display: block; font-size: 10px; color: var(--ink-3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .inbox-item .status { transform: scale(0.92); transform-origin: top right; }
+  .thread-panel { min-width: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 0; border: 0; box-shadow: none; background: var(--surface); min-height: 520px; }
   .fopt { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: var(--r-sm); border: 0; background: none; color: var(--ink-2); cursor: pointer; font-size: var(--text-sm); }
   .fopt:hover { background: var(--paper-2); color: var(--ink); }
   .fopt[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); font-weight: 500; }
@@ -114,7 +122,7 @@
   <section class="contacts-chrome card" aria-label="Contacts">
   <div class="contacts-chrome-head">
     <div class="seg" role="tablist" data-tabs="#contacts-views" data-hash>
-      <button type="button" data-tab="list" aria-selected="true">Vendors</button>
+      <button type="button" data-tab="list" aria-selected="true">Directory</button>
       <button type="button" data-tab="compare" aria-selected="false">Compare</button>
     </div>
   </div>
@@ -135,70 +143,55 @@
       <button class="btn btn-accent btn-sm" id="do-attach"><i data-i="attach" data-s="14"></i>Attach <span id="attach-n">3</span> to Elena &amp; Marcus</button></div>
   </section>
 
-    <div class="contacts-toolbar" aria-label="Filters">
-      <div class="toolbar-row toolbar-main">
-        <div class="seg" data-f="scope">
-          <button type="button" data-v="project" aria-selected="true">This wedding</button>
-          <button type="button" data-v="dir" aria-selected="false">Contact book</button>
-        </div>
-        <div class="quick-views row gap-2 wrap" role="group" aria-label="Quick filters">
-          <button type="button" class="fchip" data-quick="reply" aria-pressed="false">Needs attention</button>
-          <button type="button" class="fchip" data-quick="waiting" aria-pressed="false">Waiting</button>
-          <button type="button" class="fchip" data-quick="all" aria-pressed="true">All contacts</button>
-        </div>
-        <select class="input" id="saved-view" style="height:34px;font-size:var(--text-sm)" aria-label="Saved views">
-          <option value="">More views…</option>
-          <option value="reply">Needs reply · 2</option>
-          <option value="florists">Florists exploring · 3</option>
-          <option value="booked-team">Booked team · 7</option>
-          <option value="in-book">In contact book · 8</option>
-          <option value="missing-email">Missing email · 1</option>
-        </select>
-        <div class="search grow"><i data-i="search" data-s="15"></i><input class="input" id="q" placeholder="Search name, company, email…" style="height:34px"></div>
-        <span class="faint text-sm" id="result-n"></span>
-      </div>
-      <div class="toolbar-row status-filters" data-f="status">
-        <span class="toolbar-label">Status</span>
-        <button type="button" class="fchip" data-v="all" aria-pressed="true">All <span class="count" data-c="all"></span></button>
-        <button type="button" class="fchip" data-v="none" aria-pressed="false"><span class="sw" style="border:1.5px dashed var(--ink-4)"></span>Not contacted <span class="count" data-c="none"></span></button>
-        <button type="button" class="fchip" data-v="waiting" aria-pressed="false"><span class="sw" style="border:1.5px solid var(--warn)"></span>Waiting <span class="count" data-c="waiting"></span></button>
-        <button type="button" class="fchip" data-v="reply" aria-pressed="false"><span class="sw" style="background:var(--clay)"></span>Needs reply <span class="count" data-c="reply"></span></button>
-        <button type="button" class="fchip" data-v="booked" aria-pressed="false"><span class="sw" style="background:var(--ink)"></span>Booked <span class="count" data-c="booked"></span></button>
-        <button type="button" class="fchip" data-v="paid" aria-pressed="false"><span class="sw" style="background:var(--ok)"></span>Deposit paid <span class="count" data-c="paid"></span></button>
-        <button type="button" class="fchip" data-v="declined" aria-pressed="false"><span class="sw" style="background:var(--ink-4)"></span>Declined <span class="count" data-c="declined"></span></button>
-      </div>
-      <div class="toolbar-row toolbar-types">
-        <span class="toolbar-label">Type</span>
-        <div class="types" id="types"></div>
-      </div>
-      <div class="toolbar-row toolbar-types">
-        <span class="toolbar-label">Labels</span>
-        <div class="types" id="label-chips"></div>
-      </div>
-      <div class="toolbar-row" data-f="email">
-        <span class="toolbar-label">Email</span>
-        <button type="button" class="fopt" data-v="all" aria-pressed="true">Any</button>
-        <button type="button" class="fopt" data-v="has" aria-pressed="false">Has email</button>
-        <button type="button" class="fopt" data-v="missing" aria-pressed="false">Missing email <span class="count" style="color:var(--clay)">1</span></button>
-      </div>
-    </div>
-
     <div class="contacts-split">
-      <section class="contact-main card" aria-label="Contact list">
-        <div class="list-head"><span id="list-title">Contacts on this wedding</span><button type="button" class="btn btn-ghost btn-sm" id="reset">Clear filters</button></div>
-        <div class="contacts-table-wrap">
-          <table class="table" id="ctable">
-            <thead><tr><th>Contact</th><th>Type</th><th>Status</th><th>Next action</th></tr></thead>
-            <tbody></tbody>
-          </table>
+      <aside class="inbox-column" aria-label="Inbox">
+        <div class="inbox-head">
+          <div><span class="eyebrow" style="margin:0">Inbox</span><strong id="list-title">This wedding</strong></div>
+          <button type="button" class="btn btn-secondary btn-sm" data-toast="New thread — pick a contact, then draft"><i data-i="plus" data-s="13"></i>New thread</button>
         </div>
-        <div class="empty hide" id="empty" style="margin:var(--s-6)">
-          <div class="glyph"><i data-i="users" data-s="20"></i></div>
-          <h4>No contacts match</h4>
-          <p>Try a different status or type — or pull trusted vendors in from your contact book.</p>
+        <div class="inbox-filters" aria-label="Filters">
+          <div class="seg" data-f="scope">
+            <button type="button" data-v="project" aria-selected="true">This wedding</button>
+            <button type="button" data-v="dir" aria-selected="false">Contact book</button>
+          </div>
+          <div class="search"><i data-i="search" data-s="14"></i><input class="input" id="q" placeholder="Search…" aria-label="Search contacts"></div>
+          <div class="quick-views row gap-1 wrap" role="group" aria-label="Quick filters">
+            <button type="button" class="fchip" data-quick="reply" aria-pressed="false">Needs attention</button>
+            <button type="button" class="fchip" data-quick="waiting" aria-pressed="false">Waiting</button>
+            <button type="button" class="fchip" data-quick="all" aria-pressed="true">All</button>
+          </div>
+          <select class="input" id="saved-view" aria-label="Saved views">
+            <option value="">More views…</option>
+            <option value="reply">Needs reply · 2</option>
+            <option value="florists">Florists · 3</option>
+            <option value="booked-team">Booked · 7</option>
+            <option value="in-book">In book · 8</option>
+            <option value="missing-email">No email · 1</option>
+          </select>
+          <div class="toolbar-row status-filters" data-f="status">
+            <button type="button" class="fchip" data-v="all" aria-pressed="true">All <span class="count" data-c="all"></span></button>
+            <button type="button" class="fchip" data-v="reply" aria-pressed="false"><span class="sw" style="background:var(--clay)"></span>Reply <span class="count" data-c="reply"></span></button>
+            <button type="button" class="fchip" data-v="waiting" aria-pressed="false"><span class="sw" style="border:1.5px solid var(--warn)"></span>Wait <span class="count" data-c="waiting"></span></button>
+            <button type="button" class="fchip" data-v="booked" aria-pressed="false"><span class="sw" style="background:var(--ink)"></span>Booked <span class="count" data-c="booked"></span></button>
+          </div>
+          <div class="toolbar-row toolbar-types"><span class="toolbar-label">Type</span><div class="types" id="types"></div></div>
+          <div class="toolbar-row toolbar-types"><span class="toolbar-label">Labels</span><div class="types" id="label-chips"></div></div>
+          <div class="toolbar-row" data-f="email">
+            <button type="button" class="fopt" data-v="all" aria-pressed="true">Any email</button>
+            <button type="button" class="fopt" data-v="missing" aria-pressed="false">Missing</button>
+          </div>
+          <div class="row-between"><span class="faint text-xs" id="result-n"></span><button type="button" class="btn btn-ghost btn-sm" id="reset" style="height:26px;font-size:11px">Clear</button></div>
         </div>
-      </section>
-      <aside class="thread-panel" id="drawer" aria-label="Contact thread"></aside>
+        <div class="inbox-list-wrap">
+          <div class="inbox-list" id="inbox-list" role="listbox" aria-label="Contacts"></div>
+          <div class="empty hide" id="empty" style="margin:var(--s-4);padding:var(--s-4)">
+            <div class="glyph"><i data-i="users" data-s="18"></i></div>
+            <h4 style="font-size:var(--text-sm)">No matches</h4>
+            <p class="faint text-xs">Adjust filters or attach from contact book.</p>
+          </div>
+        </div>
+      </aside>
+      <section class="thread-panel" id="drawer" aria-label="Contact thread"></section>
     </div>
 
   <!-- ============ Draft inquiry composer ============ -->
@@ -362,12 +355,13 @@ window.addEventListener("envoy:ready", () => {
   function rowHtml(c) {
     const [lab, cls] = SLABEL[c[4]];
     const isDir = c[8] === "dir";
-    const labels = (CLABELS[c[0]] || []).slice(0, 2).map(l => `<span class="chip chip-outline" style="height:18px;font-size:10px">${l}</span>`).join("");
-    return `<tr data-id="${c[0]}" class="${c[0] === selected ? "is-selected" : ""} ${c._new ? "new-row" : ""}" tabindex="0">
-      <td><div class="row"><span class="logo-sq">${c[1].replace(/^(The|Rev\.) /, "")[0]}</span><div style="min-width:0"><div class="cell-main row gap-2">${c[1]} ${c[9] ? `<span class="chip chip-outline" style="height:20px;font-size:10px">In contact book</span>` : ""}</div><div class="cell-sub">${isDir ? c[11] : c[2]}${!c[7] ? ' · <span class="accent">no email</span>' : ""}</div>${labels ? `<div class="label-chips">${labels}</div>` : ""}</div></div></td>
-      <td class="muted">${c[3]}</td>
-      <td>${isDir ? '<span class="chip chip-outline">Contact book</span>' : `<span class="status ${cls}">${lab}</span>`}</td>
-      <td class="${c[4] === "reply" ? "" : "muted"}">${isDir ? `<button type="button" class="btn btn-secondary btn-sm" data-attach-one="${c[0]}">${icon("attach", 13)}Attach</button>` : c[5]}</td></tr>`;
+    const sel = c[0] === selected ? " is-selected" : "";
+    const sub = isDir ? `${c[3]} · ${c[11]}` : `${c[3]} · ${lab}`;
+    return `<button type="button" class="inbox-item${sel}${c._new ? " new-row" : ""}" data-id="${c[0]}" role="option" aria-selected="${c[0] === selected}">
+      <span class="logo-sq">${c[1].replace(/^(The|Rev\.) /, "")[0]}</span>
+      <span class="inbox-item-main"><span class="inbox-name">${c[1]}${c[9] ? " ★" : ""}</span><span class="inbox-sub">${sub}</span></span>
+      ${isDir ? "" : `<span class="status ${cls}">${lab === "Needs reply" ? "!" : ""}</span>`}
+    </button>`;
   }
   function render() {
     // sync controls
@@ -382,10 +376,9 @@ window.addEventListener("envoy:ready", () => {
     const rows = rowsFor();
     document.getElementById("result-n").textContent = `${rows.length} ${rows.length === 1 ? "contact" : "contacts"}${F.type ? " · " + F.type : ""}`;
     document.getElementById("empty").classList.toggle("hide", rows.length > 0);
-    document.querySelector("#ctable").classList.toggle("hide", rows.length === 0);
-    document.querySelector(".contacts-table-wrap").classList.toggle("hide", rows.length === 0);
+    document.getElementById("inbox-list").classList.toggle("hide", rows.length === 0);
     const lt = document.getElementById("list-title");
-    if (lt) lt.textContent = F.scope === "dir" ? "Contact book" : "Contacts on this wedding";
+    if (lt) lt.textContent = F.scope === "dir" ? "Contact book" : "This wedding";
     syncQuickViews();
     const group = !F.q && !F.type && F.scope === "project";
     let body = "";
@@ -394,19 +387,20 @@ window.addEventListener("envoy:ready", () => {
       order.forEach(t => {
         const chunk = rows.filter(c => c[3] === t);
         if (!chunk.length) return;
-        body += `<tr class="type-head"><td colspan="4">${t} · ${chunk.length}</td></tr>` + chunk.map(rowHtml).join("");
+        body += `<div class="inbox-type">${t} · ${chunk.length}</div>` + chunk.map(rowHtml).join("");
       });
     } else body = rows.map(rowHtml).join("");
-    document.querySelector("#ctable tbody").innerHTML = body;
+    document.getElementById("inbox-list").innerHTML = body;
     if (rows.length && !rows.some((c) => c[0] === selected)) selected = rows[0][0];
     drawDrawer();
   }
-  document.querySelector("#ctable tbody").addEventListener("click", (e) => {
-    const ao = e.target.closest("[data-attach-one]");
-    if (ao) { e.stopPropagation(); attach([ao.dataset.attachOne]); return; }
-    const tr = e.target.closest("tr[data-id]");
-    if (!tr) return;
-    selected = tr.dataset.id;
+  document.getElementById("inbox-list").addEventListener("click", (e) => {
+    const row = e.target.closest(".inbox-item[data-id]");
+    if (!row) return;
+    const id = row.dataset.id;
+    const c = C.concat(DIR).find((x) => x[0] === id);
+    if (c && c[8] === "dir" && e.detail === 2) { attach([id]); return; }
+    selected = id;
     render();
   });
 
