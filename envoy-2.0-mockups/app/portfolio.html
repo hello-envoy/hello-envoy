@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/components.css">
 <style>
-  .greet h1 em { font-style: italic; color: var(--clay); font-weight: 300; }
+  .greet h1 em { font-style: normal; color: var(--clay); font-weight: 500; }
   .needs li { display: grid; grid-template-columns: 14px 150px 190px 1fr auto; gap: var(--s-4); align-items: center; padding: 12px var(--s-6); border-bottom: 1px solid var(--line); transition: opacity var(--dur-2); }
   .needs li:last-child { border-bottom: 0; }
   .needs .who { font-weight: 500; display: grid; } .needs .who small { color: var(--ink-3); font-weight: 400; font-size: var(--text-xs); }
@@ -29,12 +29,12 @@
   .wcard { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: box-shadow var(--dur-2) var(--ease), transform var(--dur-2) var(--ease); cursor: pointer; }
   .wcard:hover { box-shadow: var(--e-3); transform: translateY(-1px); }
   .wcard .top { padding: var(--s-6) var(--s-6) var(--s-4); display: grid; grid-template-columns: 1fr auto; gap: var(--s-4); align-items: start; }
-  .wcard .names { font-family: var(--font-display); font-size: 24px; line-height: 30px; letter-spacing: -0.01em; font-variation-settings: "opsz" 72; }
+  .wcard .names { font-family: var(--font-display); font-size: 24px; line-height: 30px; letter-spacing: -0.01em;  }
   .wcard .where { color: var(--ink-3); font-size: var(--text-sm); margin-top: 4px; display: flex; gap: 6px; align-items: center; }
   .cd { text-align: right; }
-  .cd .n { font-family: var(--font-display); font-weight: 300; font-size: 44px; line-height: 44px; letter-spacing: -0.03em; font-variant-numeric: lining-nums tabular-nums; font-variation-settings: "opsz" 144; }
+  .cd .n { font-family: var(--font-display); font-weight: 500; font-size: 44px; line-height: 44px; letter-spacing: -0.03em; font-variant-numeric: lining-nums tabular-nums;  }
   .cd .u { color: var(--ink-3); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
-  .wcard.soon .cd .n { color: var(--clay); font-style: italic; }
+  .wcard.soon .cd .n { color: var(--clay); font-style: normal; }
   .wcard .rows { padding: 0 var(--s-6) var(--s-5); display: grid; gap: 12px; flex: 1; }
   .wcard .r { display: grid; grid-template-columns: 112px 1fr; gap: var(--s-3); align-items: center; font-size: var(--text-sm); }
   .wcard .r .k { color: var(--ink-3); }

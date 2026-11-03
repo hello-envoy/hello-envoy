@@ -1,6 +1,6 @@
 # Envoy 2.0 vision (SCRUM-341) — flight digest
 
-Demo-ready HTML, not production. Design system: **Linen** (paper neutrals, clay accent, Fraunces + Geist).
+Demo-ready HTML, not production. Design system and landing page: **hello-envoy/envoy-redesign** (`redesign/_system/system.css`, `redesign/build/index.html`). Instrument Sans, ink on a cool ground (#EAECFA), one indigo ramp (#3A34D6). The older "Linen" system has been retired.
 
 ## Open draft PRs
 - Landing: https://github.com/hello-envoy/hello-envoy/pull/4 (`SCRUM-341_Envoy20DemoRedesign` → main)

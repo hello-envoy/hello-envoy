@@ -17,4 +17,4 @@ Open local `index.html` or, in PM repo after checkout: `npm run demo:envoy-2`.
 - https://github.com/hello-envoy/envoy-project-management/pull/138
 
 ## Design
-Linen: paper `#F7F4EE`, clay `#9A3B27`, Fraunces + Geist. No purple AI SaaS look.
+Design system and landing page come from hello-envoy/envoy-redesign (main): Instrument Sans, ground `#EAECFA`, ink `#0C1024`, indigo `#3A34D6`, pill buttons. Linen is retired. See `design-system/index.html`.

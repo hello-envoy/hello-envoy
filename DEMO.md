@@ -1,6 +1,6 @@
 # Envoy 2.0 demo
 
-Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, through round 5, is `envoy-2.0-mockups/STEPS.md`. The 90-second founder walkthrough is `envoy-2.0-mockups/DEMO-WALKTHROUGH.md`. The product map is `envoy-2.0-mockups/VISION.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of the core pages are in `envoy-2.0-mockups/screenshots/`.
+Static mockups for the hello-envoy landing and planner desk, re-skinned to **hello-envoy/envoy-redesign** (Instrument Sans, ground `#EAECFA`, indigo ramp). Tokens and components live in `envoy-2.0-mockups/`. The flight log, through round 5 and redesign alignment, is `envoy-2.0-mockups/STEPS.md`. The 90-second founder walkthrough is `envoy-2.0-mockups/DEMO-WALKTHROUGH.md`. The product map is `envoy-2.0-mockups/VISION.md`. The living design system page is `envoy-2.0-mockups/design-system/index.html`. Reference shots are in `envoy-2.0-mockups/screenshots/`.
 
 ## Run locally
 
@@ -13,7 +13,7 @@ npm run demo
 
 Vite serves the mockups at [http://localhost:5174/](http://localhost:5174/).
 
-- [Landing](http://localhost:5174/landing/) — planner marketing page
+- [Landing](http://localhost:5174/landing/) — envoy-redesign `build/index.html` + [waitlist](http://localhost:5174/landing/waitlist.html)
 - [Overview](http://localhost:5174/app/overview.html) — Email shortlist, Log a booking, More
 - [Contacts](http://localhost:5174/app/contacts.html) — vendors, status ladder, preferred attach
 - [Project](http://localhost:5174/app/project.html) — opens on This week

@@ -1,188 +1,1233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Envoy — Plan the wedding, not the inbox</title>
-<meta name="description" content="Envoy is the calm control center for wedding planners: every vendor, every decision, and a beautiful portal for your couples.">
-<link rel="stylesheet" href="../assets/tokens.css">
-<link rel="stylesheet" href="../assets/components.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoy — Meet your planning partner</title>
+<meta name="description" content="Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication. Free to plan, no card required.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Envoy — Meet your planning partner">
+<meta property="og:description" content="Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication.">
+<meta property="og:image" content="img/hero-wedding.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F4F5FC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  .lw { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .lnav { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid transparent; }
-  .lnav.scrolled { border-color: var(--line); }
-  .lnav .lw { display: flex; align-items: center; height: 64px; gap: 32px; }
-  .lnav nav { display: flex; gap: 24px; }
-  .lnav nav a { text-decoration: none; color: var(--ink-2); font-weight: 500; }
-  .lnav nav a:hover { color: var(--ink); }
-  .lnav .r { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-  .hero { padding: 96px 0 56px; text-align: center; }
-  .hero .pill { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line-strong); border-radius: 99px; padding: 4px 12px 4px 4px; font-size: var(--text-sm); color: var(--ink-2); background: var(--surface); text-decoration: none; }
-  .hero .pill b { background: var(--clay-soft); color: var(--clay-ink); border-radius: 99px; padding: 2px 8px; font-weight: 500; }
-  .hero h1 { font-family: var(--font-display); font-weight: 300; font-size: 96px; line-height: 92px; letter-spacing: -0.04em; margin: 28px auto 0; max-width: 960px; font-variation-settings: "opsz" 144; }
-  .hero h1 em { font-style: italic; color: var(--clay); }
-  .hero p.lead { font-size: 20px; line-height: 30px; color: var(--ink-2); max-width: 620px; margin: 28px auto 0; }
-  .hero .ctas { display: flex; gap: 10px; justify-content: center; margin-top: 36px; }
-  .hero .fine { margin-top: 14px; color: var(--ink-3); font-size: var(--text-sm); }
-  .shot { margin: 64px auto 0; max-width: 1100px; border: 1px solid var(--line-strong); border-radius: 18px; background: var(--paper); box-shadow: 0 40px 80px -40px rgba(28,26,23,.28), 0 0 0 8px rgba(255,253,249,.7); overflow: hidden; text-align: left; }
-  .shot .chrome { height: 40px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-size: var(--text-sm); }
-  .shot .chrome .dots { display: flex; gap: 6px; } .shot .chrome .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--paper-3); }
-  .shot .chrome .tabs-m { display: flex; gap: 18px; color: var(--ink-3); font-weight: 500; margin-left: 20px; } .shot .chrome .tabs-m b { color: var(--ink); }
-  .shot .body { padding: 28px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
-  .shot .mini-kpi { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; grid-column: span 2; }
-  .shot .mini-kpi .card { padding: 16px 18px; }
-  .shot .mini-kpi .v { font-family: var(--font-display); font-size: 32px; line-height: 36px; margin-top: 4px; }
-  .logos { padding: 56px 0; border-bottom: 1px solid var(--line); }
-  .logos .row { justify-content: center; gap: 40px; flex-wrap: wrap; opacity: .7; }
-  .logos .lg { font-family: var(--font-display); font-size: 22px; color: var(--ink-2); letter-spacing: -0.01em; }
-  .logos .lg.i { font-style: italic; } .logos .lg.c { font-family: var(--font-sans); font-weight: 600; letter-spacing: .14em; font-size: 14px; text-transform: uppercase; }
-  .sec { padding: 112px 0 0; }
-  .sec-head { max-width: 860px; }
-  .sec-head h2 { font-family: var(--font-display); font-weight: 300; font-size: 56px; line-height: 60px; letter-spacing: -0.03em; margin-top: 14px; font-variation-settings: "opsz" 144; }
-  .sec-head h2 em { color: var(--clay); font-style: italic; }
-  .sec-head p { font-size: var(--text-lg); line-height: 28px; color: var(--ink-2); margin-top: 18px; }
-  .story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 56px; border-top: 1px solid var(--ink); }
-  .story > div { padding: 28px 28px 0 0; }
-  .story > div + div { padding-left: 28px; border-left: 1px solid var(--line); }
-  .story .k { font-family: var(--font-mono); font-size: 12px; color: var(--clay); }
-  .story h3 { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 32px; margin-top: 12px; letter-spacing: -0.01em; }
-  .story p { color: var(--ink-2); margin-top: 10px; font-size: var(--text-md); line-height: 24px; }
-  .story .vis { margin-top: 24px; }
-  .feat { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 56px; border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; background: var(--surface); }
-  .feat > div { padding: 32px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .feat > div:nth-child(3n) { border-right: 0; } .feat > div:nth-last-child(-n+3) { border-bottom: 0; }
-  .feat .ic { width: 36px; height: 36px; border-radius: 10px; background: var(--clay-soft); color: var(--clay); display: grid; place-items: center; }
-  .feat h4 { font-weight: 600; font-size: var(--text-md); margin-top: 18px; }
-  .feat p { color: var(--ink-2); margin-top: 6px; }
-  .quote { margin-top: 112px; padding: 80px 0; background: var(--ink); color: var(--paper); }
-  .quote blockquote { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: 44px; line-height: 54px; letter-spacing: -0.02em; max-width: 920px; font-variation-settings: "opsz" 144; }
-  .quote blockquote em { color: var(--clay-3); }
-  .quote .who { display: flex; gap: 12px; align-items: center; margin-top: 32px; color: #CFC6B7; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; padding-top: 32px; border-top: 1px solid #3A3631; }
-  .stats .v { font-family: var(--font-display); font-size: 56px; line-height: 60px; font-weight: 300; }
-  .stats .l { color: #B8B0A4; margin-top: 4px; }
-  .price { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
-  .price .card { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
-  .price .card.hl { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
-  .price .amt { font-family: var(--font-display); font-size: 48px; line-height: 52px; font-weight: 300; }
-  .price .amt small { font-family: var(--font-sans); font-size: var(--text-base); color: var(--ink-3); }
-  .price ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; color: var(--ink-2); }
-  .price li { display: flex; gap: 8px; } .price li svg { color: var(--clay); flex: none; margin-top: 3px; }
-  .final { margin: 112px 0 0; padding: 96px 0; text-align: center; border-top: 1px solid var(--line); }
-  .final h2 { font-family: var(--font-display); font-weight: 300; font-size: 72px; line-height: 74px; letter-spacing: -0.035em; font-variation-settings: "opsz" 144; }
-  .final h2 em { color: var(--clay); font-style: italic; }
-  .lfoot { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--ink-3); font-size: var(--text-sm); }
-  .lfoot .lw { display: flex; justify-content: space-between; }
-  .ph { position: relative; } .ph::after { content: "placeholder"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: .06em; }
-  @media (max-width: 900px) { .hero h1 { font-size: 56px; line-height: 58px; } .story, .feat, .price, .stats, .shot .body { grid-template-columns: 1fr; } .story > div + div { padding-left: 0; border-left: 0; } .feat > div { border-right: 0; } .lnav nav { display: none; } .sec-head h2 { font-size: 40px; line-height: 44px; } }
+/* ================= desktop (04-final), scoped to .vd ================= *//* ==ENVOY-SYSTEM:START== */
+/* =============================================================================
+   ENVOY DESIGN SYSTEM — the single source of truth.
+
+   This file is injected verbatim into every page between the markers
+       /* ==ENVOY-SYSTEM:START== */ /*  and  */ /* ==ENVOY-SYSTEM:END== */ /*
+   by redesign/_system/apply.py. Do not edit the copy inside a page — it is
+   overwritten on every build, and check.mjs fails the build if it drifts.
+
+   Rules enforced by redesign/_system/check.mjs:
+     1. Every interactive control is at least 24x24 (WCAG 2.5.8), hit area included.
+     2. Every interactive control has a visible hover change and a focus ring.
+     3. Every .btn resolves to the token values for its variant — no local overrides.
+     4. No colour outside the palette below may appear on a system component.
+     5. Text contrast >= 4.5:1, boundaries and focus rings >= 3:1, on every surface.
+   ============================================================================= */
+
+.vd{
+  /* ---- neutrals ---- */
+  --card:#FFFFFF;        /* cards, sheets, primary fill on dark   */
+  --wash:#F4F5FC;        /* quiet panels inside white             */
+  --ground:#EAECFA;      /* the page behind everything            */
+  --line:#E5E7F4;        /* dividers                              */
+  --line-2:#D2D5EA;      /* decorative borders                    */
+  --line-3:#7F849F;      /* control boundaries — the only one that clears 3:1 */
+
+  /* ---- text ---- */
+  --ink:#0C1024;
+  --muted:#484D6B;
+  --faint:#5A5F7D;
+
+  /* ---- indigo ramp — button states are positions on this ramp ---- */
+  --indigo-50:#E9E8FD;
+  --indigo-100:#C9C3FF;
+  --indigo-200:#A79BFF;
+  --indigo-300:#8F86FF;
+  --indigo-600:#3A34D6;
+  --indigo-700:#2B26AC;
+
+  /* ---- dark surface ---- */
+  --biz:#191735;
+  --on-dark:#FFFFFF;
+  --on-dark-muted:#C6C4DE;
+  --on-dark-eyebrow:#B3AEE8;
+
+  /* ---- roles ---- */
+  --focus:var(--indigo-600);        /* 6.77:1 on the ground, 7.95:1 on white */
+  --focus-dark:var(--indigo-200);   /* 7.22:1 on the business card — indigo-600 is only 2.17:1 there */
+  --error:#B3261E;                  /* semantic, not brand: 5.56:1 on the ground, holds under all CVD sims */
+  --shadow-ink:8,10,26;             /* one shadow ink for the whole site */
+
+  /* ---- aliases kept so existing rules keep resolving ---- */
+  --indigo:var(--indigo-600);
+  --indigo-hi:var(--indigo-700);
+  --indigo-soft:var(--indigo-50);
+  --tag:var(--indigo-100);
+  --tip-stroke:var(--muted);
+
+  --f:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  /* ---- type scale — rem so it follows the reader's own font size,
+          and the fluid steps use rem at both ends so the floor moves too ---- */
+  --t-display:clamp(2rem, 1.45rem + 1.4vw, 2.75rem);      /* 32 → 44 */
+  --t-h1:clamp(1.625rem, 1.1rem + 1.4vw, 2.375rem);       /* 26 → 38 */
+  --t-h2:clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem);       /* 20 → 26 */
+  --t-lead:1.125rem;                                       /* 18 */
+  --t-body:1rem;                                           /* 16 */
+  --t-ui:0.875rem;                                         /* 14 */
+  --t-small:0.8125rem;                                     /* 13 */
+  --t-micro:0.6875rem;                                     /* 11 */
+  /* decorative outlined words — aria-hidden, clipped by design, fluid so they
+     don't swamp a small screen */
+  --t-ghost-xl:clamp(6rem, 14vw, 13.75rem);
+  --t-ghost-l:clamp(4.5rem, 9vw, 9.375rem);
+  --t-ghost-m:clamp(3.5rem, 6vw, 6.125rem);
+
+  /* ---- spacing scale, 4px grid ---- */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px;
+  --sp-6:32px; --sp-7:40px; --sp-8:56px; --sp-9:80px;
+
+  /* ---- comfortable measure for body copy ---- */
+  --measure:65ch;
+}
+
+/* =============================== BUTTONS ================================== */
+.vd .btn{
+  font-family:var(--f);font-weight:600;border-radius:999px;
+  border:1px solid transparent;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  white-space:nowrap;text-decoration:none;cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .06s ease;
+}
+.vd .btn-sm{font-size:var(--t-small);line-height:16px;padding:var(--sp-2) var(--sp-4);min-height:34px}
+.vd .btn-md{font-size:var(--t-ui);line-height:17px;padding:var(--sp-3) var(--sp-5);min-height:44px}
+.vd .btn-lg{font-size:var(--t-body);line-height:18px;padding:var(--sp-4) var(--sp-5);min-height:50px}
+
+.vd .btn:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+/* pressed never rests on colour: fill steps down the ramp, the button shifts, and it gains a lip */
+.vd .btn:active{transform:translateY(1px);box-shadow:inset 0 1px 2px rgba(var(--shadow-ink),.22)}
+.vd .btn[disabled],.vd .btn[aria-disabled="true"]{opacity:.42;cursor:not-allowed;transform:none}
+
+/* ---- primary: the one action that matters ---- */
+.vd .btn-primary{background:var(--ink);color:var(--card)}
+.vd .btn-primary:hover{background:var(--indigo-600)}
+.vd .btn-primary:active{background:var(--indigo-700)}
+
+/* ---- secondary: a real but lesser choice ---- */
+.vd .btn-secondary{background:transparent;color:var(--ink);border-color:var(--line-3)}
+.vd .btn-secondary:hover{background:rgba(12,16,36,.06);border-color:var(--ink)}
+.vd .btn-secondary:active{background:rgba(12,16,36,.12);border-color:var(--ink)}
+
+/* ---- ghost: recedes ---- */
+.vd .btn-ghost{background:transparent;color:var(--muted)}
+.vd .btn-ghost:hover{background:rgba(12,16,36,.06);color:var(--ink)}
+.vd .btn-ghost:active{background:rgba(12,16,36,.12);color:var(--ink)}
+
+/* ---- chip: a white pill on photography or a tinted ground ---- */
+.vd .btn-chip{background:var(--card);color:var(--ink)}
+.vd .btn-chip:hover{background:var(--indigo-100)}
+.vd .btn-chip:active{background:var(--indigo-200)}
+
+/* ---- on dark: same ramp, mirrored from the pale end ---- */
+/* on a dark surface every control uses the dark ring, not just buttons */
+.vd .on-dark :focus-visible{outline-color:var(--focus-dark)}
+.vd .on-dark .btn:focus-visible{outline-color:var(--focus-dark)}
+.vd .on-dark .btn-primary{background:var(--card);color:var(--ink)}
+.vd .on-dark .btn-primary:hover{background:var(--indigo-200)}
+.vd .on-dark .btn-primary:active{background:var(--indigo-300)}
+.vd .on-dark .btn-secondary{background:transparent;color:var(--on-dark);border-color:rgba(255,255,255,.48)}
+.vd .on-dark .btn-secondary:hover{background:rgba(255,255,255,.06);border-color:var(--on-dark)}
+.vd .on-dark .btn-secondary:active{background:rgba(255,255,255,.12);border-color:var(--on-dark)}
+.vd .on-dark .btn-ghost{background:transparent;color:var(--on-dark-muted)}
+.vd .on-dark .btn-ghost:hover{background:rgba(255,255,255,.06);color:var(--on-dark)}
+.vd .on-dark .btn-ghost:active{background:rgba(255,255,255,.12);color:var(--on-dark)}
+
+/* ---- icon button ---- */
+.vd .btn-icon{
+  width:40px;height:40px;padding:0;border-radius:999px;border:1px solid transparent;
+  background:rgba(255,255,255,.94);color:var(--ink);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background-color .15s ease,transform .06s ease;
+}
+.vd .btn-icon:hover{background:var(--card)}
+.vd .btn-icon:active{transform:translateY(1px);box-shadow:inset 0 1px 2px rgba(var(--shadow-ink),.22)}
+.vd .btn-icon:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.vd .on-dark .btn-icon:focus-visible{outline-color:var(--focus-dark)}
+
+/* ---- any control that is smaller than 24px gets its hit area extended here,
+        never by changing layout ---- */
+.vd .hit-extend{position:relative}
+.vd .hit-extend::after{content:"";position:absolute;inset:-9px -6px}
+
+@media (prefers-reduced-motion:reduce){
+  .vd .btn,.vd .btn-icon{transition:none}
+}
+
+/* ==ENVOY-SYSTEM:END== */
+
+/* ============================================================
+   Tokens — read directly from the Figma file, not eyeballed
+   ============================================================ */
+.vd{ --pad:34px }
+.vd *,.vd *::before,.vd *::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+.vd{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+.vd img{max-width:100%;display:block}
+.vd a{color:var(--indigo-hi)}
+.vd :focus-visible{outline:2.5px solid var(--indigo);outline-offset:3px;border-radius:8px}
+.vd h1,.vd h2,.vd h3{margin:0;font-weight:500}
+.vd p{margin:0}
+.vd .skip{position:absolute;left:10px;top:-60px;background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;z-index:400;transition:top .2s;font-size:var(--t-ui);text-decoration:none}
+.vd .skip:hover{background:var(--indigo-600)}
+.vd .skip:focus{top:10px}
+.vd .sec{max-width:1440px;margin:0 auto;padding-inline:var(--pad)}
+
+/* rule label — 10.5px Bold / .19em / 72×1 rule / 12px gap */
+.vd .rule-lab{display:inline-flex;align-items:center;gap:12px;font-size:var(--t-micro);font-weight:700;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--faint);line-height:13px}
+.vd .rule-lab::after{content:"";width:72px;height:1px;background:var(--line-2);flex:none}
+
+/* ============================================================
+   1 · HERO — stage 1372×830 r38 · card 563×764 @22,22 p26 r30
+   ============================================================ */
+.vd .hero{padding:var(--pad) var(--pad) 0}
+.vd .stage{position:relative;max-width:1372px;margin:0 auto;border-radius:38px;overflow:hidden;background:#0C1024;aspect-ratio:1372/830}
+.vd .photo{position:absolute;inset:0}
+.vd .photo img{position:absolute;opacity:0;transition:opacity .7s ease;max-width:none}
+.vd .photo img.on{opacity:1}
+/* exact Figma crop rects, expressed against the 1372×830 stage */
+.vd #ph-wed{left:-12.828%;top:-3.133%;width:143.878%;height:132.771%}
+.vd #ph-kit{left:-39.723%;top:-2.530%;width:149.854%;height:105.060%}
+.vd #ph-off{left:-41.691%;top:-4.337%;width:154.956%;height:108.675%}
+
+/* Log in pill — 86×32 @1264,22 · p8/15/8/11 · r999 · #fff@94 */
+.vd .util{position:absolute;top:2.651%;right:1.604%;z-index:8}
+.vd .util svg{width:15px;height:15px;flex:none}
+
+/* tooltips — 66px tall · #0C1024 · 1px #484D6B · 13px Medium / 18px · white · centred */
+.vd .tips{position:absolute;inset:0;z-index:6;pointer-events:none}
+.vd .tip{position:absolute;transform:scale(var(--tip-k,1));transform-origin:top left;
+  background:var(--ink);color:#fff;
+  border:1px solid var(--tip-stroke);width:var(--tw);min-height:66px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;white-space:nowrap;
+  box-shadow:0 6px 12px rgba(0,0,0,.20);opacity:0;transition:opacity .5s ease;
+  font-size:var(--t-small);font-weight:500;line-height:18px}
+.vd .tip.on{opacity:1}
+.vd .tip.r22{border-radius:22px}
+.vd .tip.r14{border-radius:14px}
+/* tail: --tb base along the edge, --tp protrusion, --to centre offset — all from Figma */
+.vd .tip::after{content:"";position:absolute;width:0;height:0;border-style:solid;border-color:transparent}
+.vd .tip[data-tail="down"]::after{top:100%;left:var(--to);transform:translateX(-50%);
+  border-width:var(--tp) calc(var(--tb)/2) 0;border-top-color:var(--ink)}
+.vd .tip[data-tail="up"]::after{bottom:100%;left:var(--to);transform:translateX(-50%);
+  border-width:0 calc(var(--tb)/2) var(--tp);border-bottom-color:var(--ink)}
+.vd .tip[data-tail="right"]::after{left:100%;top:var(--to);transform:translateY(-50%);
+  border-width:calc(var(--tb)/2) 0 calc(var(--tb)/2) var(--tp);border-left-color:var(--ink)}
+.vd .tip[data-tail="left"]::after{right:100%;top:var(--to);transform:translateY(-50%);
+  border-width:calc(var(--tb)/2) var(--tp) calc(var(--tb)/2) 0;border-right-color:var(--ink)}
+
+/* overlay card */
+.vd .overlay{position:absolute;left:1.604%;top:2.651%;width:41.035%;height:94.699%;z-index:7;
+  background:var(--card);border-radius:30px;padding:26px;display:flex;flex-direction:column;
+  box-shadow:0 30px 70px -24px rgba(var(--shadow-ink),.35)}
+.vd .brand{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);
+  font-weight:600;font-size:var(--t-lead);letter-spacing:-.02em;line-height:21px;align-self:flex-start;padding-block:4px}
+.vd .brand:hover{color:var(--indigo-600)}
+.vd .brand svg{width:20px;height:20px;flex:none;color:var(--indigo)}
+/* Hero copy: 30px top pad, space-between — the large gap is deliberate */
+.vd .ov-copy{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding-top:30px;min-height:0}
+/* Figma "Frame 1": fixed 219px, space-between -> ~51px gap under the headline */
+.vd .ov-mid{min-height:219px;display:flex;flex-direction:column;justify-content:space-between}
+.vd .ov-mid h1{font-size:var(--t-display);line-height:1.06;letter-spacing:-.035em;max-width:403px}
+.vd .ov-lede{font-size:var(--t-lead);line-height:1.55;color:var(--muted);max-width:371px}
+.vd .ov-start{display:flex;flex-direction:column;align-items:center;gap:16px}
+.vd .composer{width:100%;border:1px solid var(--line-2);border-radius:22px;overflow:hidden;background:var(--card);
+  box-shadow:0 26px 60px -40px rgba(var(--shadow-ink),.40)}
+.vd .composer:focus-within{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(58,52,214,.14)}
+.vd .composer label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.vd .composer textarea{display:block;width:100%;min-height:92px;border:0;resize:none;background:transparent;
+  font:inherit;font-size:var(--t-body);line-height:1.5;color:var(--ink);padding:19px 19px 0}
+.vd .composer textarea::placeholder{color:var(--faint)}
+.vd .composer textarea:focus{outline:none}
+.vd .comp-bar{display:flex;align-items:center;gap:10px;padding:10px 12px 12px 19px;border-top:1px solid var(--line);min-height:63px}
+.vd .comp-loc{flex:1 1 auto;min-width:0;border:0;background:transparent;font:inherit;font-size:var(--t-ui);color:var(--ink);
+  padding-block:4px;margin-block:-4px;padding-inline:0}  /* 22px -> 30px tap height; negative margin keeps the bar identical */
+.vd .comp-loc::placeholder{color:var(--faint)}
+.vd .comp-loc:focus{outline:2px solid var(--indigo);outline-offset:2px;border-radius:8px}
+.vd .micro{font-size:var(--t-small);color:var(--muted);text-align:center;line-height:16px}
+
+.vd .states{position:absolute;right:22px;bottom:22px;z-index:8;display:flex;gap:2px;
+  background:rgba(var(--shadow-ink),.5);backdrop-filter:blur(10px);padding:4px 8px;border-radius:999px}
+.vd .states button{width:24px;height:24px;padding:0;border:0;background:transparent;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center}
+.vd .states button::before{content:"";width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.42);transition:.2s}
+.vd .states button[aria-selected="true"]::before{background:#fff;width:22px}
+.vd .tipchips{display:none}
+
+/* ============================================================
+   white shell — overlaps the hero by 38px
+   ============================================================ */
+/* Figma: hero wrapper ends y864, White shell starts y904 -> a 40px band of --ground shows through */
+.vd .shell{max-width:1440px;margin:var(--sp-7) auto 0;background:var(--card);border-radius:38px;position:relative;z-index:2}
+
+/* ---- 2 · About — fixed 369 · p80/34 · gap30 · content centred ---- */
+.vd .about{position:relative;min-height:369px;padding:80px var(--pad);display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;gap:var(--sp-6);overflow:hidden}
+.vd .about .wm{position:absolute;right:-20px;top:34px;z-index:0;pointer-events:none;
+  font-size:var(--t-ghost-xl);font-weight:700;letter-spacing:-.06em;line-height:.8;white-space:nowrap;
+  color:transparent;-webkit-text-stroke:1.5px rgba(12,16,36,.05)}
+.vd .about>*{position:relative;z-index:1}
+.vd .about-stmt{width:1032px;max-width:100%;font-size:var(--t-display);font-weight:500;line-height:1.24;letter-spacing:-.035em}
+
+/* ---- 3 · Features — fixed 544 · p80/34 · rail 982×384 · panels overlap ---- */
+.vd .features{min-height:544px;padding:80px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-6)}
+/* Figma: each frame is 201px inactive / 331px active with a 16px gap, but the art inside is
+   always 331px and does NOT clip — so a later panel covers the overflow of the one before it.
+   201*3 + 331 + 16*3 = 982, so the rail stays exact whichever card is active. Hovering a card
+   widens its frame to 331 and the others shuffle aside. At rest the last card is the active one. */
+.vd .rail{position:relative;width:982px;min-height:384px;flex:none;overflow:hidden;
+  --w1:201px;--w2:201px;--w3:201px;--w4:331px}
+.vd .rail:has(.cell:nth-child(1):hover),.vd .rail:has(.cell:nth-child(1):focus-within){--w1:331px;--w2:201px;--w3:201px;--w4:201px}
+.vd .rail:has(.cell:nth-child(2):hover),.vd .rail:has(.cell:nth-child(2):focus-within){--w1:201px;--w2:331px;--w3:201px;--w4:201px}
+.vd .rail:has(.cell:nth-child(3):hover),.vd .rail:has(.cell:nth-child(3):focus-within){--w1:201px;--w2:201px;--w3:331px;--w4:201px}
+.vd .rail:has(.cell:nth-child(4):hover),.vd .rail:has(.cell:nth-child(4):focus-within){--w1:201px;--w2:201px;--w3:201px;--w4:331px}
+/* the cell is the 331px art plus the 16px gap, so neighbours touch and hover never falls in a hole */
+.vd .cell{position:absolute;top:0;width:347px;min-height:384px;
+  transition:left .45s cubic-bezier(.22,.61,.36,1)}
+.vd .cell:nth-child(1){z-index:1} .vd .cell:nth-child(2){z-index:2}
+.vd .cell:nth-child(3){z-index:3} .vd .cell:nth-child(4){z-index:4}
+.vd .cell:nth-child(1){left:0}
+.vd .cell:nth-child(2){left:calc(var(--w1) + 16px)}
+.vd .cell:nth-child(3){left:calc(var(--w1) + var(--w2) + 32px)}
+.vd .cell:nth-child(4){left:calc(var(--w1) + var(--w2) + var(--w3) + 48px)}
+@media(prefers-reduced-motion:reduce){ .vd .cell{transition:none} }
+.vd .art{position:absolute;left:0;top:0;width:331px;height:384px;border-radius:22px;overflow:hidden}
+.vd .a1{background:radial-gradient(130% 130% at 20% 16%,#7A66E8,#332A8E)}
+.vd .a2{background:radial-gradient(130% 130% at 20% 16%,#4C8FC8,#1B3F63)}
+.vd .a3{background:radial-gradient(130% 130% at 20% 16%,#3FA98F,#14464F)}
+.vd .a4{background:radial-gradient(130% 130% at 20% 16%,#6E7CE6,#26306F)}
+/* ghost + label: 31px in, 13px down, space-between, staircase heights */
+.vd .stack{position:absolute;left:31px;top:13px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.vd .ghost{font-size:var(--t-ghost-m);font-weight:700;line-height:.8;letter-spacing:-.06em;white-space:nowrap;
+  color:transparent;-webkit-text-stroke:1px rgba(12,16,36,.25)}
+.vd .lab{font-size:var(--t-h2);font-weight:600;line-height:1.18;letter-spacing:-.02em;width:149px}
+.vd .cell:nth-child(1) .stack{min-height:195px} .vd .cell:nth-child(1) .lab{color:#FFFFFF;width:147px}
+.vd .cell:nth-child(2) .stack{min-height:242px} .vd .cell:nth-child(2) .lab{color:#FFFFFF}
+.vd .cell:nth-child(3) .stack{min-height:292px} .vd .cell:nth-child(3) .lab{color:#FFFFFF}
+.vd .cell:nth-child(4) .stack{min-height:344px} .vd .cell:nth-child(4) .lab{color:#FFFFFF}
+.vd .go{position:absolute;left:278px;bottom:13px}  /* 40px icon button, right edge still 13px in */
+.vd .states button:hover::before{background:#fff}
+.vd .states button[aria-selected="true"]:hover::before{background:var(--indigo-100)}
+.vd .go svg{width:14px;height:14px}
+.vd .feat-head{width:334px;flex:none;display:flex;flex-direction:column;gap:var(--sp-6)}
+.vd .feat-head h2{font-size:var(--t-display);line-height:1.06;letter-spacing:-.035em;max-width:244px}
+.vd .feat-head p{font-size:var(--t-ui);line-height:1.55;color:var(--muted);max-width:221px}
+
+/* ---- 4 · Pricing — p80/34 · panel p56 gap38 r38 · tiers 409×408 p26 r30 ---- */
+.vd .pricing{padding:80px var(--pad)}
+.vd .pr-panel{background:var(--wash);border-radius:38px;padding:var(--sp-8);display:flex;flex-direction:column;align-items:center;gap:var(--sp-7)}
+.vd .pr-head{display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);text-align:center}
+.vd .pr-head h2{font-size:var(--t-display);line-height:1.06;letter-spacing:-.035em}
+.vd .pr-head p{font-size:var(--t-body);line-height:1.6;color:var(--muted);max-width:min(448px,var(--measure))}
+.vd .tier .cta{margin-top:auto}
+.vd .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-4);width:100%}
+.vd .tier{background:var(--card);border-radius:30px;padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-3);min-height:408px}
+.vd .tier.pop{background:linear-gradient(160deg,var(--biz),var(--ink));color:var(--on-dark)}
+.vd .tier.pop p,.vd .tier.pop li{color:#C6C4DE}
+.vd .tier.pop li svg{color:var(--indigo-200)}
+.vd .ptag{align-self:flex-start;font-size:var(--t-micro);font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink);background:#C9C3FF;padding:5px 11px;border-radius:999px}
+.vd .tier h3{font-size:var(--t-h2);font-weight:600;letter-spacing:-.02em;line-height:26px}
+.vd .price{font-size:var(--t-h1);font-weight:500;letter-spacing:-.04em;line-height:47px}
+.vd .price small{font-size:var(--t-ui);font-weight:500;color:var(--muted);letter-spacing:0}
+.vd .tier.pop .price small{color:#C6C4DE}
+.vd .tier>p{font-size:var(--t-ui);color:var(--muted);line-height:21px}
+.vd .tier ul{list-style:none;margin:0;padding:var(--sp-1) 0 0;display:grid;gap:var(--sp-2);font-size:var(--t-ui);color:var(--muted)}
+.vd .tier li{display:flex;gap:var(--sp-2);align-items:flex-start;line-height:20px}
+.vd .tier li svg{flex:none;margin-top:4px;color:var(--indigo)}
+
+/* ---- 5 · For business — card p62 gap50 r38 · rail 765 wide ---- */
+.vd .biz-sec{padding:80px var(--pad)}
+.vd .biz{position:relative;border-radius:38px;overflow:hidden;padding:var(--sp-8);display:flex;align-items:center;gap:var(--sp-8);
+  background:linear-gradient(150deg,var(--biz),var(--ink));color:var(--on-dark)}
+.vd .biz .scrim{position:absolute;inset:0;z-index:0;
+  background:linear-gradient(100deg,rgba(var(--shadow-ink),.93) 0%,rgba(var(--shadow-ink),.76) 46%,rgba(var(--shadow-ink),.34) 72%,rgba(var(--shadow-ink),.06) 100%)}
+.vd .biz>*:not(.scrim){position:relative;z-index:1}
+.vd .biz-copy{width:433px;flex:none;display:flex;flex-direction:column;gap:var(--sp-4)}
+.vd .biz-copy .rule-lab{color:var(--on-dark-eyebrow)}
+.vd .biz-copy .rule-lab::after{background:rgba(255,255,255,.32)}
+.vd .biz-copy h2{font-size:var(--t-display);line-height:1.06;letter-spacing:-.035em;color:#fff;max-width:409px}
+.vd .biz-copy>p{font-size:var(--t-body);line-height:1.6;color:var(--on-dark-muted)}
+.vd .biz-cta{display:flex;flex-wrap:wrap;gap:11px;padding-top:12px}
+.vd .biz .rail{width:765px;--w3:331px;--w4:201px}   /* 201*2 + 331 + 16*2 = 765 */
+.vd .biz .rail .lab{width:170px}
+.vd .biz .rail .cell:nth-child(1) .stack{min-height:242px}
+.vd .biz .rail .cell:nth-child(1) .lab{color:#FFFFFF;width:170px}
+.vd .biz .rail .cell:nth-child(2) .stack{min-height:292px}
+.vd .biz .rail .cell:nth-child(2) .lab{color:#FFFFFF;width:170px}
+.vd .biz .rail .cell:nth-child(3) .stack{min-height:344px}
+.vd .biz .rail .cell:nth-child(3) .lab{color:#FFFFFF;width:170px}
+
+/* ---- footer — p34/34/26/34 · space-between ---- */
+.vd footer{max-width:1440px;margin:0 auto;min-height:122px;padding:34px var(--pad) 26px;display:flex;flex-wrap:wrap;gap:var(--sp-4);
+  align-items:center;justify-content:space-between;font-size:var(--t-small);color:var(--faint)}
+.vd footer nav{display:flex;gap:var(--sp-4);flex-wrap:wrap}
+.vd footer nav a{font-size:var(--t-ui);color:var(--muted);text-decoration:none;display:inline-block;padding-block:6px}
+.vd footer nav a:hover{color:var(--ink)}
+
+/* ============================================================
+   Responsive — 1440 is pixel-exact; below that it adapts
+   ============================================================ */
+@media(max-width:1400px){ .vd .rail{width:100%;max-width:982px} .vd .about-stmt{width:100%} }
+@media(max-width:1420px){
+  .vd .features{height:auto;min-height:0;flex-direction:column;align-items:flex-start;gap:var(--sp-7);padding-block:64px}
+  .vd .feat-head{width:100%}
+  .vd .feat-head h2,.vd .feat-head p{max-width:none}
+  .vd .feat-head p{max-width:var(--measure)}
+}
+@media(max-width:1460px){
+  .vd .biz{flex-direction:column;align-items:flex-start;gap:var(--sp-7);padding:var(--sp-7)}
+  .vd .biz-copy{width:100%}
+  .vd .biz .rail{width:100%}
+  .vd .biz-copy>p{max-width:var(--measure)}
+}
+@media(max-width:1100px){
+  /* Tablet: the stage becomes the white container. The photo is cropped to the
+     same 1372:830 frame the desktop uses — so the tooltip percentages still land
+     on the right part of the picture — and the copy and the conversation starter
+     sit beneath it inside the same card. */
+  .vd .stage{aspect-ratio:auto;background:var(--card);border-radius:38px;overflow:hidden;
+    padding:8px;box-shadow:0 30px 70px -24px rgba(var(--shadow-ink),.35)}
+  .vd .photo{position:relative;inset:auto;aspect-ratio:1372/830;border-radius:30px;overflow:hidden}
+  /* the tooltip layer sits exactly over the photo, in the same proportions */
+  .vd .tips{left:8px;right:8px;top:8px;bottom:auto;aspect-ratio:1372/830}
+  .vd .util{top:22px;right:22px}
+  .vd .states{left:22px;right:auto;bottom:auto;top:22px}
+  .vd .overlay{position:static;width:auto;height:auto;min-height:0;background:transparent;
+    box-shadow:none;margin:0;padding:var(--sp-5) var(--sp-3) var(--sp-3)}
+  .vd .ov-copy{padding-top:0;gap:var(--sp-5)}
+  .vd .ov-mid{height:auto;min-height:0;display:block}
+  .vd .ov-mid h1{font-size:clamp(1.8rem,5.2vw,2.5rem);max-width:none}
+  .vd .ov-lede{font-size:var(--t-body);max-width:var(--measure);margin-top:16px}
+  /* the tooltip layer is aria-hidden, so the chips stay for screen readers —
+     visually hidden rather than removed, or the vendor counts are lost here */
+  .vd .tipchips{position:absolute;width:1px;min-height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media(max-width:900px){
+  .vd .tier{height:auto;min-height:0}
+  .vd footer{min-height:0}
+  .vd .tipchips li{font-size:var(--t-small);font-weight:600;color:var(--ink);background:var(--indigo-soft);
+    border:1px solid var(--line-2);border-radius:999px;padding:6px 12px}
+  .vd .tipchips li span{color:var(--muted);font-weight:500}
+  .vd .shell{margin-top:26px;border-radius:30px}
+  .vd .about{height:auto;min-height:0;padding:56px var(--pad)}
+  .vd .about-stmt{font-size:clamp(1.5rem,5.2vw,2.2rem)}
+  .vd .about .wm{font-size:var(--t-ghost-l);right:-30px;top:10px}
+  .vd .rail,.vd .biz .rail{height:auto;min-height:0;display:grid;grid-template-columns:1fr;gap:12px;width:100%;overflow:visible}
+  .vd .cell{position:relative!important;left:auto!important;width:100%;min-height:280px;transition:none}
+  .vd .art{width:100%;height:100%}
+  .vd .go{left:auto;right:13px}
+  .vd .stack{height:auto!important;min-height:0!important;right:31px}
+  .vd .ghost{font-size:var(--t-ghost-m)}
+  .vd .pricing{padding:56px var(--pad)}
+  .vd .pr-panel{padding:var(--sp-5);border-radius:30px}
+  .vd .tiers{grid-template-columns:1fr}
+  .vd .biz{padding:var(--sp-5);border-radius:30px}
+  .vd .biz-copy h2{font-size:clamp(1.6rem,6vw,2.2rem);max-width:none}
+}
+@media(max-width:560px){ .vd .comp-bar{flex-wrap:wrap} }
+@media(prefers-reduced-motion:reduce){.vd *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ================= mobile (05-mobile), scoped to .vm ================= *//* ==ENVOY-SYSTEM:START== */
+/* =============================================================================
+   ENVOY DESIGN SYSTEM — the single source of truth.
+
+   This file is injected verbatim into every page between the markers
+       /* ==ENVOY-SYSTEM:START== */ /*  and  */ /* ==ENVOY-SYSTEM:END== */ /*
+   by redesign/_system/apply.py. Do not edit the copy inside a page — it is
+   overwritten on every build, and check.mjs fails the build if it drifts.
+
+   Rules enforced by redesign/_system/check.mjs:
+     1. Every interactive control is at least 24x24 (WCAG 2.5.8), hit area included.
+     2. Every interactive control has a visible hover change and a focus ring.
+     3. Every .btn resolves to the token values for its variant — no local overrides.
+     4. No colour outside the palette below may appear on a system component.
+     5. Text contrast >= 4.5:1, boundaries and focus rings >= 3:1, on every surface.
+   ============================================================================= */
+
+.vm{
+  /* ---- neutrals ---- */
+  --card:#FFFFFF;        /* cards, sheets, primary fill on dark   */
+  --wash:#F4F5FC;        /* quiet panels inside white             */
+  --ground:#EAECFA;      /* the page behind everything            */
+  --line:#E5E7F4;        /* dividers                              */
+  --line-2:#D2D5EA;      /* decorative borders                    */
+  --line-3:#7F849F;      /* control boundaries — the only one that clears 3:1 */
+
+  /* ---- text ---- */
+  --ink:#0C1024;
+  --muted:#484D6B;
+  --faint:#5A5F7D;
+
+  /* ---- indigo ramp — button states are positions on this ramp ---- */
+  --indigo-50:#E9E8FD;
+  --indigo-100:#C9C3FF;
+  --indigo-200:#A79BFF;
+  --indigo-300:#8F86FF;
+  --indigo-600:#3A34D6;
+  --indigo-700:#2B26AC;
+
+  /* ---- dark surface ---- */
+  --biz:#191735;
+  --on-dark:#FFFFFF;
+  --on-dark-muted:#C6C4DE;
+  --on-dark-eyebrow:#B3AEE8;
+
+  /* ---- roles ---- */
+  --focus:var(--indigo-600);        /* 6.77:1 on the ground, 7.95:1 on white */
+  --focus-dark:var(--indigo-200);   /* 7.22:1 on the business card — indigo-600 is only 2.17:1 there */
+  --error:#B3261E;                  /* semantic, not brand: 5.56:1 on the ground, holds under all CVD sims */
+  --shadow-ink:8,10,26;             /* one shadow ink for the whole site */
+
+  /* ---- aliases kept so existing rules keep resolving ---- */
+  --indigo:var(--indigo-600);
+  --indigo-hi:var(--indigo-700);
+  --indigo-soft:var(--indigo-50);
+  --tag:var(--indigo-100);
+  --tip-stroke:var(--muted);
+
+  --f:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  /* ---- type scale — rem so it follows the reader's own font size,
+          and the fluid steps use rem at both ends so the floor moves too ---- */
+  --t-display:clamp(2rem, 1.45rem + 1.4vw, 2.75rem);      /* 32 → 44 */
+  --t-h1:clamp(1.625rem, 1.1rem + 1.4vw, 2.375rem);       /* 26 → 38 */
+  --t-h2:clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem);       /* 20 → 26 */
+  --t-lead:1.125rem;                                       /* 18 */
+  --t-body:1rem;                                           /* 16 */
+  --t-ui:0.875rem;                                         /* 14 */
+  --t-small:0.8125rem;                                     /* 13 */
+  --t-micro:0.6875rem;                                     /* 11 */
+  /* decorative outlined words — aria-hidden, clipped by design, fluid so they
+     don't swamp a small screen */
+  --t-ghost-xl:clamp(6rem, 14vw, 13.75rem);
+  --t-ghost-l:clamp(4.5rem, 9vw, 9.375rem);
+  --t-ghost-m:clamp(3.5rem, 6vw, 6.125rem);
+
+  /* ---- spacing scale, 4px grid ---- */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px;
+  --sp-6:32px; --sp-7:40px; --sp-8:56px; --sp-9:80px;
+
+  /* ---- comfortable measure for body copy ---- */
+  --measure:65ch;
+}
+
+/* =============================== BUTTONS ================================== */
+.vm .btn{
+  font-family:var(--f);font-weight:600;border-radius:999px;
+  border:1px solid transparent;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  white-space:nowrap;text-decoration:none;cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .06s ease;
+}
+.vm .btn-sm{font-size:var(--t-small);line-height:16px;padding:var(--sp-2) var(--sp-4);min-height:34px}
+.vm .btn-md{font-size:var(--t-ui);line-height:17px;padding:var(--sp-3) var(--sp-5);min-height:44px}
+.vm .btn-lg{font-size:var(--t-body);line-height:18px;padding:var(--sp-4) var(--sp-5);min-height:50px}
+
+.vm .btn:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+/* pressed never rests on colour: fill steps down the ramp, the button shifts, and it gains a lip */
+.vm .btn:active{transform:translateY(1px);box-shadow:inset 0 1px 2px rgba(var(--shadow-ink),.22)}
+.vm .btn[disabled],.vm .btn[aria-disabled="true"]{opacity:.42;cursor:not-allowed;transform:none}
+
+/* ---- primary: the one action that matters ---- */
+.vm .btn-primary{background:var(--ink);color:var(--card)}
+.vm .btn-primary:hover{background:var(--indigo-600)}
+.vm .btn-primary:active{background:var(--indigo-700)}
+
+/* ---- secondary: a real but lesser choice ---- */
+.vm .btn-secondary{background:transparent;color:var(--ink);border-color:var(--line-3)}
+.vm .btn-secondary:hover{background:rgba(12,16,36,.06);border-color:var(--ink)}
+.vm .btn-secondary:active{background:rgba(12,16,36,.12);border-color:var(--ink)}
+
+/* ---- ghost: recedes ---- */
+.vm .btn-ghost{background:transparent;color:var(--muted)}
+.vm .btn-ghost:hover{background:rgba(12,16,36,.06);color:var(--ink)}
+.vm .btn-ghost:active{background:rgba(12,16,36,.12);color:var(--ink)}
+
+/* ---- chip: a white pill on photography or a tinted ground ---- */
+.vm .btn-chip{background:var(--card);color:var(--ink)}
+.vm .btn-chip:hover{background:var(--indigo-100)}
+.vm .btn-chip:active{background:var(--indigo-200)}
+
+/* ---- on dark: same ramp, mirrored from the pale end ---- */
+/* on a dark surface every control uses the dark ring, not just buttons */
+.vm .on-dark :focus-visible{outline-color:var(--focus-dark)}
+.vm .on-dark .btn:focus-visible{outline-color:var(--focus-dark)}
+.vm .on-dark .btn-primary{background:var(--card);color:var(--ink)}
+.vm .on-dark .btn-primary:hover{background:var(--indigo-200)}
+.vm .on-dark .btn-primary:active{background:var(--indigo-300)}
+.vm .on-dark .btn-secondary{background:transparent;color:var(--on-dark);border-color:rgba(255,255,255,.48)}
+.vm .on-dark .btn-secondary:hover{background:rgba(255,255,255,.06);border-color:var(--on-dark)}
+.vm .on-dark .btn-secondary:active{background:rgba(255,255,255,.12);border-color:var(--on-dark)}
+.vm .on-dark .btn-ghost{background:transparent;color:var(--on-dark-muted)}
+.vm .on-dark .btn-ghost:hover{background:rgba(255,255,255,.06);color:var(--on-dark)}
+.vm .on-dark .btn-ghost:active{background:rgba(255,255,255,.12);color:var(--on-dark)}
+
+/* ---- icon button ---- */
+.vm .btn-icon{
+  width:40px;height:40px;padding:0;border-radius:999px;border:1px solid transparent;
+  background:rgba(255,255,255,.94);color:var(--ink);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background-color .15s ease,transform .06s ease;
+}
+.vm .btn-icon:hover{background:var(--card)}
+.vm .btn-icon:active{transform:translateY(1px);box-shadow:inset 0 1px 2px rgba(var(--shadow-ink),.22)}
+.vm .btn-icon:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.vm .on-dark .btn-icon:focus-visible{outline-color:var(--focus-dark)}
+
+/* ---- any control that is smaller than 24px gets its hit area extended here,
+        never by changing layout ---- */
+.vm .hit-extend{position:relative}
+.vm .hit-extend::after{content:"";position:absolute;inset:-9px -6px}
+
+@media (prefers-reduced-motion:reduce){
+  .vm .btn,.vm .btn-icon{transition:none}
+}
+
+/* ==ENVOY-SYSTEM:END== */
+
+/* Source: Claude Design · "Envoy Mobile" · screen 1c (402 × 874 iPhone frame).
+   Every value below is transcribed from that file. */
+.vm{
+  --inset-top:calc(env(safe-area-inset-top,0px) + 18px);
+  --inset-bottom:max(12px, calc(env(safe-area-inset-bottom,0px) + 6px));
+}
+:root.framed .vm{ --inset-top:62px; --inset-bottom:40px }
+
+.vm *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+.vm{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f);-webkit-font-smoothing:antialiased}
+:root.framed{scrollbar-width:none} :root.framed::-webkit-scrollbar{display:none}
+.vm a{color:inherit;text-decoration:none}
+.vm button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer}
+.vm textarea{font-family:inherit}
+.vm :focus-visible{outline:2px solid var(--indigo);outline-offset:3px}
+.vm .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.vm .page{position:relative;min-height:100vh;max-width:520px;margin:0 auto;background:var(--ground)}
+
+/* ---------- top ---------- */
+.vm .top{padding:var(--inset-top) 22px 0;overflow:hidden;position:relative}
+.vm .nav{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.vm .menu-btn{width:38px;height:32px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line-2);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px}
+.vm .menu-btn:hover{background:var(--indigo-50)}
+.vm .menu-btn i{display:block;width:14px;height:1.5px;background:var(--ink)}
+
+/* the 0.9 line-height crops tall letters and descenders, so the clipping box is
+   grown and the growth taken back out of the margin — nothing moves, nothing cuts */
+.vm .marquee{margin:16px -22px -10px;padding-block:10px;overflow:hidden}
+.vm .marquee-track{display:flex;width:max-content;animation:marquee 22s linear infinite}
+.vm .marquee-track span{font-weight:700;font-size:var(--t-ghost-m);line-height:.9;letter-spacing:-.06em;white-space:nowrap;padding-right:40px}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.vm h1{margin:var(--sp-6) 0 0;font-weight:500;font-size:var(--t-display);line-height:1.02;letter-spacing:-.04em;text-wrap:pretty}
+.vm .lede{margin:var(--sp-4) 0 0;font-size:var(--t-body);line-height:1.55;color:var(--muted);max-width:min(320px,var(--measure))}
+.vm .micro{margin:var(--sp-3) 0 0;font-size:var(--t-small);color:var(--muted)}
+
+/* ---------- menu ---------- */
+.vm .menu{position:fixed;inset:0;z-index:40;background:rgba(234,236,250,.97);
+  padding:calc(var(--inset-top) + 58px) 34px calc(var(--inset-top) + 58px);
+  display:none;flex-direction:column;gap:var(--sp-5);
+  font-weight:500;font-size:var(--t-h1);letter-spacing:-.035em;line-height:1.06}
+.vm .menu.open{display:flex}
+@media (min-width:521px){ .vm .menu{left:calc(50% - 260px);right:calc(50% - 260px)} }
+.vm .menu a{align-self:flex-start}
+.vm .menu a:hover{color:var(--indigo)}
+.vm .menu .dim{color:var(--muted)}
+.vm .menu .hint{margin-top:auto;font-size:var(--t-small);letter-spacing:0;font-weight:400;line-height:normal;color:var(--faint)}
+
+/* ---------- white shell ---------- */
+.vm .shell{margin-top:56px;background:var(--card);border-radius:38px 38px 0 0;padding:var(--sp-7) var(--sp-5) 0}
+.vm .stmt{margin:0;font-weight:500;font-size:var(--t-h1);line-height:1.2;letter-spacing:-.035em;text-wrap:pretty}
+.vm .feat-head{display:flex;justify-content:space-between;align-items:flex-end;margin-top:64px}
+.vm .h-36{margin:0;font-weight:500;font-size:var(--t-h1);line-height:1.06;letter-spacing:-.035em}
+.vm .feat-head .h-36{max-width:200px}
+.vm .step{font-weight:700;font-size:var(--t-micro);letter-spacing:.19em;color:var(--faint)}
+
+/* ---------- stacked decks ---------- */
+.vm .deck:hover{filter:brightness(1.06)}
+.vm .deck{position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:22px}
+.vm .deck-f{min-height:470px;margin-top:20px}
+.vm .deck-b{min-height:340px;margin-top:30px}
+.vm .card{position:absolute;left:0;right:0;border-radius:22px;overflow:hidden;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.vm .deck-f .card{top:40px;min-height:420px;box-shadow:0 24px 44px -28px rgba(var(--shadow-ink),.5)}
+.vm .deck-b .card{top:30px;min-height:300px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.vm .ghost{position:absolute;font-weight:700;line-height:.8;letter-spacing:-.06em;white-space:nowrap;
+  color:transparent;-webkit-text-stroke:1px rgba(12,16,36,.25)}
+.vm .deck-f .ghost{left:-6px;top:-22px;font-size:var(--t-ghost-l)}
+.vm .deck-b .ghost{left:-4px;top:-18px;font-size:var(--t-ghost-l)}
+.vm .cap{position:absolute;margin:0;font-weight:600}
+.vm .deck-f .cap{left:28px;bottom:28px;width:220px;font-size:var(--t-h2);line-height:1.14;letter-spacing:-.025em}
+.vm .deck-b .cap{left:24px;bottom:24px;width:200px;font-size:var(--t-h2);line-height:1.18;letter-spacing:-.02em}
+.vm .go{position:absolute;right:13px;bottom:13px;width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center}
+.vm .go i{display:block;width:7px;height:7px;border-top:1.5px solid var(--ink);border-right:1.5px solid var(--ink);transform:rotate(45deg)}
+
+/* ---------- pricing ---------- */
+.vm #m-pricing{margin-top:80px;scroll-margin-top:24px}
+.vm .pr-sub{margin:var(--sp-3) 0 0;font-size:var(--t-body);line-height:1.6;color:var(--muted)}
+.vm .tiers{margin-top:24px;display:flex;flex-direction:column;gap:var(--sp-2)}
+.vm .tier{border-radius:26px;overflow:hidden;cursor:pointer;transition:background .3s;
+  background:var(--wash);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);
+  --sub:var(--muted);--dot:var(--line-2)}
+.vm .tier.open{background:linear-gradient(159deg,var(--biz) 0%,var(--ink) 77%);color:var(--on-dark);box-shadow:none;
+  --sub:var(--on-dark-muted);--dot:var(--tag)}
+.vm .tier-head:hover{background:rgba(12,16,36,.06)}
+.vm .tier.on-dark .tier-head:hover{background:rgba(255,255,255,.06)}
+.vm .tier-head{width:100%;display:flex;justify-content:space-between;align-items:center;padding:20px 24px;text-align:left}
+.vm .tier-name{display:flex;align-items:center;gap:12px}
+.vm .tier-name b{font-weight:600;font-size:var(--t-h2);letter-spacing:-.02em}
+.vm .badge{border-radius:999px;background:var(--tag);color:var(--ink);padding:5px 10px;font-weight:700;font-size:var(--t-micro);letter-spacing:.13em}
+.vm .tier-price{display:flex;gap:4px;align-items:baseline;white-space:nowrap}
+.vm .tier-price b{font-weight:500;font-size:var(--t-h2);letter-spacing:-.04em}
+.vm .tier-price small{font-weight:500;font-size:var(--t-small);color:var(--sub)}
+.vm .tier-body{padding:0 24px 24px;display:none;flex-direction:column;gap:13px}
+.vm .tier.open .tier-body{display:flex}
+.vm .tier-desc{margin:0;font-size:var(--t-ui);line-height:1.5;color:var(--sub)}
+.vm .tier ul{list-style:none;margin:0;padding:var(--sp-1) 0;display:flex;flex-direction:column;gap:var(--sp-2)}
+.vm .tier li{display:flex;gap:var(--sp-2);align-items:center;font-size:var(--t-ui);color:var(--sub)}
+.vm .tier li::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--dot)}
+
+/* ---------- business ---------- */
+.vm .biz{margin:var(--sp-9) -22px 0;padding:var(--sp-7) var(--sp-5) 140px;border-radius:38px 38px 0 0;color:#fff;scroll-margin-top:0;
+  background:linear-gradient(115deg,var(--biz) 6%,var(--ink) 70%)}
+.vm .eyebrow{display:flex;align-items:center;gap:var(--sp-3)}
+.vm .eyebrow span{font-weight:700;font-size:var(--t-micro);letter-spacing:.19em;color:var(--on-dark-eyebrow)}
+.vm .eyebrow i{display:block;width:40px;height:1px;background:rgba(255,255,255,.32)}
+.vm .biz h2{margin:var(--sp-4) 0 0;font-weight:500;font-size:var(--t-h1);line-height:1.04;letter-spacing:-.035em;text-wrap:pretty}
+.vm .biz-p{margin:var(--sp-3) 0 0;font-size:var(--t-body);line-height:1.6;color:var(--on-dark-muted)}
+.vm .biz-ctas{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.vm footer{margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);
+  display:flex;flex-direction:column;gap:var(--sp-3);font-size:var(--t-small);color:var(--on-dark-muted)}
+.vm footer nav{display:flex;gap:var(--sp-4);flex-wrap:wrap;color:#fff}
+.vm footer nav a{position:relative}
+/* 16px of text is below the 24px minimum; extend the hit area only — no layout shift */
+.vm footer nav a::after{content:"";position:absolute;inset:-9px -6px}
+.vm footer nav a:hover{color:var(--tag)}
+
+/* ---------- sticky composer ---------- */
+.vm .dock{position:sticky;bottom:0;z-index:30;padding:12px 12px var(--inset-bottom);pointer-events:none;
+  background:linear-gradient(180deg,rgba(234,236,250,0) 0%,rgba(234,236,250,.9) 40%)}
+.vm .composer{pointer-events:auto;border-radius:22px;background:#fff;
+  box-shadow:inset 0 0 0 1px var(--line-2),0 26px 60px -30px rgba(var(--shadow-ink),.5);
+  display:flex;align-items:center;gap:8px;padding:14px 10px 14px 18px;width:100%;min-height:75px}
+.vm .composer:focus-within{box-shadow:inset 0 0 0 1.5px var(--indigo),0 26px 60px -30px rgba(var(--shadow-ink),.5)}
+.vm .composer textarea{flex:1;min-width:0;border:0;resize:none;overflow:hidden;padding:10px 0;margin:0;
+  font-size:var(--t-body);line-height:1.4;color:var(--ink);background:transparent;min-height:52px}
+.vm .composer textarea::placeholder{color:var(--faint)}
+.vm .composer textarea:focus{outline:none}
+
+@media (prefers-reduced-motion:reduce){
+  .vm .marquee-track{animation:none}
+  .vm .card,.vm .tier{transition:none}
+}
+
+/* Under 400px the button goes full width beneath the field: the label survives
+   and the target becomes a comfortable 44px across. */
+@media(max-width:399px){
+  .vm .composer{flex-direction:column;align-items:stretch;height:auto;min-height:0;gap:10px;padding:14px}
+  .vm .composer textarea{height:auto;min-height:72px}
+  .vm .composer .start{width:100%}
+}
+/* A reader's own text-spacing settings must never cost content (WCAG 1.4.12). */
+.vm .composer textarea{min-height:72px;height:auto;overflow:auto}
+
+/* ================= view switch ================= */
+.vd[hidden],.vm[hidden]{display:none!important}
+@media (max-width:767.98px){ .vd{display:none!important} }
+@media (min-width:768px){ .vm{display:none!important} }
+html,body{background:#EAECFA}   /* one ground for both views */
+body{margin:0}
 </style>
 </head>
-<body data-rail="off">
-<header class="lnav" id="lnav"><div class="lw">
-  <a class="brand" href="#"><svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="#1C1A17" stroke-width="1.6"/><path d="M3.5 7.2 12 13l8.5-5.8" stroke="#9A3B27" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-word">Envoy</span></a>
-  <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#couples">For couples</a><a href="#pricing">Pricing</a></nav>
-  <div class="r"><a class="btn btn-ghost" href="../app/overview.html">Sign in</a><a class="btn btn-primary" href="../app/overview.html">Start free</a></div>
-</div></header>
+<body>
+<div class="vd">
+<a class="skip" href="#main">Skip to content</a>
 
-<main>
-  <section class="hero lw">
-    <a class="pill" href="#how"><b>New</b> Envoy 2.0 — built for wedding planners <i data-i="arrowr" data-s="14"></i></a>
-    <h1>Plan the wedding, <em>not</em> the&nbsp;inbox.</h1>
-    <p class="lead">Envoy keeps every vendor, deadline, and decision in one calm place — and gives your couple a beautiful window into it, without the group-chat chaos.</p>
-    <div class="ctas"><a class="btn btn-primary btn-lg" href="../app/overview.html">Start your first wedding</a><a class="btn btn-secondary btn-lg" href="../app/couple-portal.html"><i data-i="eye"></i>See the couple view</a></div>
-    <div class="fine">Free for your first two weddings · Imports from Gmail, HoneyBook &amp; spreadsheets</div>
+<main id="main">
 
-    <div class="shot" aria-label="Product preview">
-      <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><b style="font-family:var(--font-display);font-weight:400">Envoy</b><span class="faint">/ Elena &amp; Marcus</span><span class="tabs-m"><b>Overview</b><span>Contacts</span><span>Project</span></span></div>
-      <div class="body">
-        <div class="mini-kpi">
-          <div class="card"><div class="faint text-sm">Countdown</div><div class="v">348 <span class="italic accent" style="font-size:22px">days</span></div></div>
-          <div class="card"><div class="faint text-sm">Committed</div><div class="v">$80k <span class="faint" style="font-family:var(--font-sans);font-size:13px">of $120k</span></div></div>
-          <div class="card"><div class="faint text-sm">Vendors booked</div><div class="v">6 <span class="faint" style="font-family:var(--font-sans);font-size:13px">of 13</span></div></div>
+<!-- ==================== 1 · HERO ==================== -->
+<section class="hero" aria-labelledby="h-hero">
+  <div class="stage">
+    <div class="photo">
+      <img id="ph-kit" class="on" src="img/hero-kitchen.jpg" alt="A kitchen renovation in progress — a couple reviewing plans with tradespeople while cabinetry and timber are carried in.">
+      <img id="ph-wed" src="img/hero-wedding.jpg" alt="An events team setting up a wedding reception — staff laying tables, arranging white florals and rigging lighting in a timber-framed barn.">
+      <img id="ph-off" src="img/hero-offsite.jpg" alt="A company offsite being set up in a lodge — staff arranging round tables, place cards and a projector screen.">
+    </div>
+
+    <div class="util"><a class="btn btn-chip btn-sm" href="#">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" stroke="currentColor" stroke-width="2"/><path d="M4.8 20c.9-3.4 3.7-5.3 7.2-5.3s6.3 1.9 7.2 5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Log in</a></div>
+
+    <div class="tips" id="tips" aria-hidden="true"></div>
+
+    <div class="overlay">
+      <a class="brand" href="#">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21.5 6.5 12 21 2.5 6.5 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c3.4 1.6 6.6 1.6 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Envoy
+      </a>
+
+      <div class="ov-copy">
+        <div class="ov-mid">
+          <h1 id="h-hero">Meet your planning partner, Envoy.</h1>
+          <p class="ov-lede">Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication.</p>
+          <ul class="tipchips" id="tipchips"></ul>
         </div>
-        <div class="card">
-          <div class="card-head" style="min-height:44px;padding:10px 18px"><h3>Needs you</h3><span class="chip chip-risk">5</span></div>
-          <table class="table"><tbody>
-            <tr><td style="padding-left:18px"><span class="cell-main">Wildflour Catering</span></td><td><span class="status s-booked">Booked</span> <span class="faint text-xs">· deposit due Fri</span></td></tr>
-            <tr><td style="padding-left:18px"><span class="cell-main">Lowcountry Glam</span></td><td><span class="status s-reply">Needs reply</span> <span class="faint text-xs">· 4d</span></td></tr>
-            <tr><td style="padding-left:18px"><span class="cell-main">Harborline Hotel</span></td><td><span class="status s-waiting">Waiting</span> <span class="faint text-xs">· date conflict</span></td></tr>
-          </tbody></table>
-        </div>
-        <div class="card card-pad">
-          <div class="eyebrow">Couple decided</div>
-          <div style="font-family:var(--font-display);font-size:22px;line-height:28px;margin-top:8px">Heron &amp; Fern for florals</div>
-          <div class="faint text-sm mt-2">Elena picked option A · 12 min ago</div>
-          <div class="bar mt-4"><i style="width:67%"></i></div>
-          <div class="faint text-xs mt-2">5 of 12 milestones</div>
-        </div>
+
+        <form class="ov-start" id="finder">
+          <div class="composer">
+            <label for="proj">Describe your project</label>
+            <textarea id="proj" placeholder="Large kitchen renovation"></textarea>
+            <div class="comp-bar">
+              <label for="loc">Location</label>
+              <input class="comp-loc" id="loc" type="text" placeholder="Topeka, Kansas" autocomplete="off">
+              <button class="btn btn-primary btn-md" type="submit">Start project</button>
+            </div>
+          </div>
+          <p class="micro">Free to plan, no card required.</p>
+        </form>
+      </div>
+    </div>
+
+    <div class="states" role="tablist" aria-label="Example projects">
+      <button role="tab" type="button" data-k="kit" aria-selected="true"  aria-label="Kitchen renovation"></button>
+      <button role="tab" type="button" data-k="wed" aria-selected="false" aria-label="Outdoor wedding" tabindex="-1"></button>
+      <button role="tab" type="button" data-k="off" aria-selected="false" aria-label="Company offsite" tabindex="-1"></button>
+    </div>
+  </div>
+</section>
+
+<div class="shell">
+
+  <!-- ==================== 2 · ABOUT ==================== -->
+  <section class="about" aria-labelledby="h-about">
+    <span class="wm" aria-hidden="true">Envoy</span>
+    <span class="rule-lab">Bringing the joy back to planning</span>
+    <h2 class="about-stmt" id="h-about">Envoy finds the vendors and handles the communication, so you can focus on the big decisions.</h2>
+  </section>
+
+  <!-- ==================== 3 · FEATURES ==================== -->
+  <section class="features" aria-labelledby="h-feat">
+    <div class="rail">
+      <article class="cell">
+        <div class="art a1"></div>
+        <div class="stack"><span class="ghost" aria-hidden="true">search</span><p class="lab">Envoy does the research</p></div>
+        <button class="btn-icon go" type="button" aria-label="More about research"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </article>
+      <article class="cell">
+        <div class="art a2"></div>
+        <div class="stack"><span class="ghost" aria-hidden="true">draft</span><p class="lab">Envoy drafts each message</p></div>
+        <button class="btn-icon go" type="button" aria-label="More about drafting"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </article>
+      <article class="cell">
+        <div class="art a3"></div>
+        <div class="stack"><span class="ghost" aria-hidden="true">approve</span><p class="lab">You approve the responses</p></div>
+        <button class="btn-icon go" type="button" aria-label="More about approvals"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </article>
+      <article class="cell">
+        <div class="art a4"></div>
+        <div class="stack"><span class="ghost" aria-hidden="true">track</span><p class="lab">Envoy keeps it all in one place</p></div>
+        <button class="btn-icon go" type="button" aria-label="More about tracking"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </article>
+    </div>
+    <div class="feat-head">
+      <h2 id="h-feat">Big plans made easy.</h2>
+      <p>Envoy handles the admin while you make the decisions.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 4 · PRICING ==================== -->
+  <section class="pricing" id="pricing" aria-labelledby="h-pricing">
+    <div class="pr-panel">
+      <div class="pr-head">
+        <h2 id="h-pricing">Plan with Envoy</h2>
+        <p>Envoy is free. Paid plans enjoy automated outreach.</p>
+      </div>
+      <div class="tiers">
+        <article class="tier">
+          <h3>Free</h3>
+          <div class="price">Free</div>
+          <p>Plan projects and reach out to vendors yourself.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>1 active project</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Envoy-built vendor lineups</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Reach out to vendors yourself</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Track every reply in one place</li>
+          </ul>
+          <a class="btn btn-secondary btn-md cta" href="#">Get started free</a>
+        </article>
+
+        <article class="tier pop on-dark">
+          <span class="ptag">Most popular</span>
+          <h3>Pro</h3>
+          <div class="price">$96<small> /yr</small></div>
+          <p>Unlock unlimited projects and Pro mode.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Free</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Pro mode</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited projects</li>
+          </ul>
+          <a class="btn btn-primary btn-md cta" href="#">Choose Pro</a>
+        </article>
+
+        <article class="tier">
+          <h3>Agency</h3>
+          <div class="price">$200<small> /yr per user</small></div>
+          <p>Let Envoy draft and send outreach for your whole team.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Pro</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Automated Envoy outreach to vendors</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Envoy drafts replies &amp; follow-ups in your voice</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Multiple seats for your whole team</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority vendor responses</li>
+          </ul>
+          <a class="btn btn-secondary btn-md cta" href="#">Choose Agency</a>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="logos"><div class="lw">
-    <div class="eyebrow" style="text-align:center;margin-bottom:24px">Planners in early access <span class="faint">(placeholder names)</span></div>
-    <div class="row"><span class="lg">Whitfield &amp; Co.</span><span class="lg i">Magnolia Lane</span><span class="lg c">Tidewater Events</span><span class="lg">Holloway House</span><span class="lg i">Oak &amp; Ember</span><span class="lg c">Ninth Bloom</span></div>
-  </div></section>
-
-  <section class="sec lw" id="how">
-    <div class="sec-head"><div class="eyebrow">How it works</div><h2>From forty threads to <em>one</em> clear next step.</h2>
-      <p>Planners don't need another chat app. They need to know who's booked, who's waiting, and what the couple still has to decide.</p></div>
-    <div class="story">
-      <div><div class="k">01 — Attach</div><h3>Bring your trusted vendors.</h3><p>Your preferred directory follows you wedding to wedding. Attach a florist you love in one click — their details, notes, and history come along.</p>
-        <div class="vis card" style="padding:14px"><div class="row"><span class="logo-sq">H</span><div class="grow"><div class="cell-main">Heron &amp; Fern Florals</div><div class="cell-sub">Florist · 6 weddings with you</div></div><span class="btn btn-secondary btn-sm"><i data-i="attach" data-s="13"></i>Attach</span></div></div></div>
-      <div><div class="k">02 — Know</div><h3>See what needs you.</h3><p>Envoy reads the replies so you don't miss the deposit, the bounced email, or the hotel that held the wrong weekend.</p>
-        <div class="vis card" style="padding:14px"><div class="row"><span class="display" style="font-size:28px;color:var(--clay)">4</span><div><div class="cell-main">Things need attention</div><div class="cell-sub">Deposit · unanswered · date conflict</div></div></div></div></div>
-      <div><div class="k">03 — Share</div><h3>Bring the couple in, gently.</h3><p>A private portal for the two people who matter: milestones, a budget glance, and simple A/B choices. Never your drafts or vendor threads.</p>
-        <div class="vis card" style="padding:14px"><div class="row"><span class="chip chip-ink">A</span><div class="grow cell-main">Heron &amp; Fern</div><span class="chip chip-outline">B</span><span class="faint text-sm">Marlowe</span></div></div></div>
+  <!-- ==================== 5 · FOR BUSINESS ==================== -->
+  <section class="biz-sec" id="biz" aria-labelledby="h-biz">
+    <div class="biz on-dark">
+      <div class="scrim" aria-hidden="true"></div>
+      <div class="biz-copy">
+        <span class="rule-lab">Envoy for Business</span>
+        <h2 id="h-biz">Do you want to win more work, without chasing leads?</h2>
+        <p>Envoy puts your business in front of potential customers and helps you respond faster than the competition.</p>
+        <div class="biz-cta">
+          <a class="btn btn-primary btn-lg" href="#">Join Envoy for Business</a>
+          <a class="btn btn-secondary btn-lg" href="#pricing">See pricing</a>
+        </div>
+      </div>
+      <div class="rail">
+        <article class="cell">
+          <div class="art a2"></div>
+          <div class="stack"><span class="ghost" aria-hidden="true">48hrs</span><p class="lab">48 hours average time to first reply</p></div>
+        </article>
+        <article class="cell">
+          <div class="art a3"></div>
+          <div class="stack"><span class="ghost" aria-hidden="true">4x</span><p class="lab">4x more qualified leads</p></div>
+        </article>
+        <article class="cell">
+          <div class="art a4"></div>
+          <div class="stack"><span class="ghost" aria-hidden="true">250</span><p class="lab">250 credits to start</p></div>
+          <button class="btn-icon go" type="button" aria-label="More about getting started"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </article>
+      </div>
     </div>
   </section>
 
-  <section class="sec lw" id="features">
-    <div class="sec-head"><div class="eyebrow">Built for the work</div><h2>Everything a planner juggles, <em>quietly</em> handled.</h2></div>
-    <div class="feat">
-      <div><span class="ic"><i data-i="home" data-s="18"></i></span><h4>An Overview that leads</h4><p>Countdown, budget, and vendor status at a glance — sorted by what moves the wedding forward.</p></div>
-      <div><span class="ic"><i data-i="users" data-s="18"></i></span><h4>Contacts, not chat</h4><p>Every venue, vendor, and person with their status, thread, and next action. Draft an inquiry in seconds.</p></div>
-      <div><span class="ic"><i data-i="layers" data-s="18"></i></span><h4>Milestones that close themselves</h4><p>“Lock catering” turns done when the caterer is booked and the deposit lands. No checkbox hunting.</p></div>
-      <div><span class="ic"><i data-i="star" data-s="18"></i></span><h4>Compare like a pro</h4><p>Put 2–4 florists side by side on price, style, availability, and response time. Send the couple an A/B.</p></div>
-      <div><span class="ic"><i data-i="shield" data-s="18"></i></span><h4>Risks &amp; holds, kept short</h4><p>Ten rows, not a spreadsheet. Envoy suggests risks from vendor threads; you decide what stays.</p></div>
-      <div><span class="ic"><i data-i="dollar" data-s="18"></i></span><h4>Budget you can explain</h4><p>Total to category to booked vs remaining — a single picture your couple will actually understand.</p></div>
-    </div>
-  </section>
+</div>
 
-  <section class="quote" id="couples"><div class="lw">
-    <div class="eyebrow" style="color:#A39B8F">From early access <span style="opacity:.7">(placeholder testimonial)</span></div>
-    <blockquote class="mt-4">“I used to run three weddings out of my inbox and a color-coded spreadsheet. Now I open Envoy, see the <em>four things</em> that matter, and my couples stop texting me at midnight.”</blockquote>
-    <div class="who"><span class="av av-clay">SW</span><span><b style="color:var(--paper)">Sarah Whitfield</b> · Lead planner, Whitfield &amp; Co. · Charleston</span></div>
-    <div class="stats">
-      <div><div class="v">6 hrs</div><div class="l">saved per wedding, per week*</div></div>
-      <div><div class="v">0</div><div class="l">missed deposits across pilot weddings*</div></div>
-      <div><div class="v">3×</div><div class="l">faster couple decisions with A/B picks*</div></div>
-    </div>
-    <div class="text-xs mt-4" style="color:#8A8276">*Illustrative targets for demo purposes — not measured results.</div>
-  </div></section>
-
-  <section class="sec lw" id="pricing">
-    <div class="sec-head"><div class="eyebrow">Pricing</div><h2>Priced per wedding season, <em>not</em> per seat.</h2></div>
-    <div class="price">
-      <div class="card"><div class="eyebrow">Starter</div><div class="amt">Free</div><p class="muted">For your first two weddings.</p><ul><li><i data-i="check" data-s="14"></i>Overview, Contacts, Project</li><li><i data-i="check" data-s="14"></i>Couple portal</li><li><i data-i="check" data-s="14"></i>Gmail import</li></ul><a class="btn btn-secondary mt-4" href="../app/overview.html">Start free</a></div>
-      <div class="card hl"><div class="row-between"><div class="eyebrow">Studio</div><span class="chip chip-ink">Most planners</span></div><div class="amt">$49 <small>/ month</small></div><p class="muted">Unlimited weddings for an independent planner.</p><ul><li><i data-i="check" data-s="14"></i>Preferred vendor directory</li><li><i data-i="check" data-s="14"></i>Ask Envoy drafting</li><li><i data-i="check" data-s="14"></i>Vendor compare &amp; A/B</li><li><i data-i="check" data-s="14"></i>Budget flows</li></ul><a class="btn btn-primary mt-4" href="../app/overview.html">Try Studio for 30 days</a></div>
-      <div class="card"><div class="eyebrow">House</div><div class="amt">$129 <small>/ month</small></div><p class="muted">For teams with coordinators and assistants.</p><ul><li><i data-i="check" data-s="14"></i>Up to 6 teammates</li><li><i data-i="check" data-s="14"></i>Shared directory</li><li><i data-i="check" data-s="14"></i>Day-of handoff</li></ul><a class="btn btn-secondary mt-4" href="#">Talk to us</a></div>
-    </div>
-    <p class="faint text-xs mt-4">Pricing shown is a placeholder for the demo.</p>
-  </section>
-
-  <section class="final lw">
-    <h2>Your next wedding,<br><em>calmer</em>.</h2>
-    <div class="row mt-8" style="justify-content:center"><a class="btn btn-primary btn-lg" href="../app/overview.html">Start your first wedding</a><a class="btn btn-ghost btn-lg" href="../design-system/index.html">View the design system</a></div>
-  </section>
 </main>
 
-<footer class="lfoot"><div class="lw"><span>© 2026 Envoy</span><span>Made for planners, by people who've stood at the back of the aisle.</span></div></footer>
+<footer>
+  <span>© 2026 Envoy · Your digital representative for outreach.</span>
+  <span>this site was designed by a human.</span>
+  <nav aria-label="Footer">
+    <a href="#">Start a project</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#biz">For business</a>
+    <a href="#">Privacy</a>
+  </nav>
+</footer>
 
-<script src="../assets/app.js"></script>
+</div>
+
+<div class="vm">
+<div class="page">
+
+  <header class="top">
+    <div class="nav">
+      <button class="menu-btn" id="m-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="m-menu"><i></i><i></i></button>
+      <a class="btn btn-chip btn-sm login" href="#">Log in</a>
+    </div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track"><span>Envoy, bringing the joy back to planning.</span><span>Envoy, bringing the joy back to planning.</span></div>
+    </div>
+    <p class="sr">Envoy, bringing the joy back to planning.</p>
+    <h1>Meet your planning partner, Envoy.</h1>
+    <p class="lede">Describe your project. Get an instant vendor lineup. Envoy reaches out for you and keeps track of quotes and communication.</p>
+    <p class="micro">Free to plan, no card required.</p>
+  </header>
+
+  <nav class="menu" id="m-menu" aria-label="Menu" hidden>
+    <a href="#m-start" data-close>Start a project</a>
+    <a href="#m-pricing" data-close>Pricing</a>
+    <a href="#m-business" data-close>For business</a>
+    <a class="dim" href="#" data-close>Log in</a>
+    <span class="hint">Tap anywhere to close</span>
+  </nav>
+
+  <main class="shell">
+    <p class="stmt">Envoy finds the vendors and handles the communication, so you can focus on the big decisions.</p>
+
+    <div class="feat-head">
+      <h2 class="h-36">Big plans made easy.</h2>
+      <span class="step" id="m-feat-step" aria-hidden="true">01 / 04</span>
+    </div>
+    <div class="deck deck-f" id="m-deck-f" role="button" tabindex="0" aria-describedby="m-feat-live"></div>
+    <p class="sr" id="m-feat-live" aria-live="polite"></p>
+
+    <h2 class="h-36" id="m-pricing">Plan with Envoy</h2>
+    <p class="pr-sub">Envoy is free. Paid plans enjoy automated outreach.</p>
+    <div class="tiers" id="m-tiers"></div>
+
+    <section class="biz on-dark" id="m-business" aria-labelledby="m-h-biz">
+      <div class="eyebrow"><span>ENVOY FOR BUSINESS</span><i></i></div>
+      <h2 id="m-h-biz">Do you want to win more work, without chasing leads?</h2>
+      <p class="biz-p">Envoy puts your business in front of potential customers and helps you respond faster than the competition.</p>
+      <div class="deck deck-b" id="m-deck-b" role="button" tabindex="0" aria-describedby="m-biz-live"></div>
+      <p class="sr" id="m-biz-live" aria-live="polite"></p>
+      <div class="biz-ctas"><a class="btn btn-primary btn-lg" href="#">Join Envoy for Business</a><a class="btn btn-secondary btn-lg" href="#m-pricing">See pricing</a></div>
+      <footer>
+        <nav aria-label="Footer"><a class="hit-extend" href="#m-start">Start a project</a><a class="hit-extend" href="#m-pricing">Pricing</a><a class="hit-extend" href="#m-business">For business</a><a class="hit-extend" href="#">Privacy</a></nav>
+        <span>© 2026 Envoy · Your digital representative for outreach.</span>
+        <span>this site was designed by a human.</span>
+      </footer>
+    </section>
+  </main>
+
+  <div class="dock">
+    <form class="composer" id="m-start" role="search" aria-label="Start a project">
+      <label class="sr" for="m-proj">Describe your project</label>
+      <textarea id="m-proj" rows="1" placeholder="An outdoor wedding for 150 guests this fall…"></textarea>
+      <button class="btn btn-primary btn-md start" type="submit">Start project</button>
+    </form>
+  </div>
+
+</div>
+
+</div>
+
 <script>
-  const nav = document.getElementById("lnav");
-  addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), { passive: true });
+/* desktop */
+(function(){
+  var STATES = {
+    kit:{ img:'ph-kit', ph:'Large kitchen renovation', loc:'Topeka, Kansas',
+      tips:[ {t:'Cabinetmaker',           n:'4 contacted',  x:69.242, y:17.349, w:119, r:'r14', tail:'down',  tb:18, tp:9, to:60},
+             {t:'General contractor',     n:'7 contacted',  x:46.428, y:48.675, w:147, r:'r22', tail:'up',    tb:28, tp:8, to:74},
+             {t:'Certified electrician',  n:'21 contacted', x:80.831, y:39.277, w:152, r:'r22', tail:'up',    tb:28, tp:8, to:130} ] },
+    wed:{ img:'ph-wed', ph:'An outdoor wedding for 150 guests this fall…', loc:'Austin, Texas',
+      tips:[ {t:'Day-of Coordinator',     n:'23 contacted', x:45.190, y:29.759, w:177, r:'r22', tail:'down',  tb:28, tp:8, to:22},
+             {t:'DJ + Lighting Services', n:'16 contacted', x:72.959, y: 8.072, w:164, r:'r14', tail:'right', tb:18, tp:9, to:22},
+             {t:'Florist',                n:'12 contacted', x:75.729, y:32.289, w:109, r:'r14', tail:'down',  tb:18, tp:9, to:55} ] },
+    off:{ img:'ph-off', ph:'A company offsite for 40 people', loc:'Burlington, Vermont',
+      tips:[ {t:'AV Setup',               n:'4 contacted',  x:61.297, y:16.988, w:105, r:'r22', tail:'left',  tb:28, tp:8, to:23},
+             {t:'Catering',               n:'34 contacted', x:83.601, y:32.651, w:112, r:'r14', tail:'right', tb:18, tp:9, to:22},
+             {t:'Venue',                  n:'11 contacted', x:62.318, y:53.976, w:107, r:'r14', tail:'up',    tb:18, tp:9, to:54} ] }
+  };
+  var order=['kit','wed','off'], cur='kit', timer=null;
+  var tips=document.getElementById('tips'), chips=document.getElementById('tipchips'),
+      proj=document.getElementById('proj'), loc=document.getElementById('loc'),
+      btns=[].slice.call(document.querySelectorAll('.states button')),
+      stage=document.querySelector('.stage');
+  var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Hold the tooltips in proportion with the photo at every width. The anchors are
+     percentages so they already track the picture; this keeps the boxes themselves
+     from looking oversized as the stage shrinks. The floor stops the text becoming
+     unreadable on a small tablet. */
+  var photoEl=document.querySelector('.photo');
+  function scaleTips(){
+    var k=Math.min(1, Math.max(.62, photoEl.getBoundingClientRect().width/1372));
+    tips.style.setProperty('--tip-k', k.toFixed(3));
+  }
+  if(window.ResizeObserver) new ResizeObserver(scaleTips).observe(photoEl);
+  else addEventListener('resize', scaleTips);
+
+  function show(k, focus){
+    cur=k;
+    var d=STATES[k];
+    order.forEach(function(key){ document.getElementById(STATES[key].img).classList.toggle('on', key===k); });
+    proj.placeholder=d.ph; loc.placeholder=d.loc;
+    tips.innerHTML=''; chips.innerHTML='';
+    d.tips.forEach(function(t){
+      var el=document.createElement('div');
+      el.className='tip '+t.r;
+      el.setAttribute('data-tail',t.tail);
+      el.style.left=t.x+'%'; el.style.top=t.y+'%';
+      el.style.setProperty('--tw', t.w+'px');
+      el.style.setProperty('--tb', t.tb+'px');
+      el.style.setProperty('--tp', t.tp+'px');
+      el.style.setProperty('--to', t.to+'px');
+      el.appendChild(document.createTextNode(t.t));
+      el.appendChild(document.createElement('br'));
+      el.appendChild(document.createTextNode(t.n));
+      tips.appendChild(el);
+      requestAnimationFrame(function(){ el.classList.add('on'); });
+      var li=document.createElement('li');
+      li.appendChild(document.createTextNode(t.t+' '));
+      var sp=document.createElement('span'); sp.textContent=t.n; li.appendChild(sp);
+      chips.appendChild(li);
+    });
+    btns.forEach(function(b){
+      var on=b.dataset.k===k;
+      b.setAttribute('aria-selected',String(on));
+      b.tabIndex=on?0:-1;
+      if(on&&focus) b.focus();
+    });
+  }
+  function advance(){ show(order[(order.indexOf(cur)+1)%order.length], false); }
+  function start(){ if(reduced) return; stop(); timer=setInterval(advance, 6000); }
+  function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ show(b.dataset.k,false); start(); });
+    b.addEventListener('keydown', function(e){
+      var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
+      if(!d) return; e.preventDefault();
+      show(order[(order.indexOf(cur)+d+order.length)%order.length], true); start();
+    });
+  });
+  stage.addEventListener('mouseenter',stop);
+  stage.addEventListener('mouseleave',start);
+  stage.addEventListener('focusin',stop);
+  document.getElementById('finder').addEventListener('submit',function(e){ e.preventDefault(); proj.focus(); });
+
+  scaleTips();
+  show('kit',false); start();
+})();
+</script>
+<script>
+/* mobile */
+(function(){
+  var FEAT=[
+    {word:'search', cap:'Envoy does the research',        bg:'radial-gradient(175px 201px at 26% 47%, rgb(122,102,232) 0%, rgb(51,42,142) 100%)', fg:'#FFFFFF'},
+    {word:'draft',  cap:'Envoy drafts each message',      bg:'radial-gradient(175px 181px at 28% 58%, rgb(76,143,200) 0%, rgb(27,63,99) 100%)',   fg:'#FFFFFF'},
+    {word:'approve',cap:'You approve the responses',      bg:'radial-gradient(225px 251px at 28% 75%, rgb(63,169,143) 0%, rgb(20,70,79) 100%)',   fg:'#FFFFFF'},
+    {word:'track',  cap:'Envoy keeps it all in one place',bg:'radial-gradient(405px 356px at 29% 86%, rgb(110,124,230) 0%, rgb(38,48,111) 100%)', fg:'#FFFFFF'}
+  ];
+  var BIZ=[
+    {word:'48hrs',cap:'48 hours average time to first reply',bg:'radial-gradient(175px 181px at 28% 58%, rgb(76,143,200) 0%, rgb(27,63,99) 100%)',   fg:'#FFFFFF'},
+    {word:'4x',   cap:'4x more qualified leads',             bg:'radial-gradient(225px 251px at 28% 75%, rgb(63,169,143) 0%, rgb(20,70,79) 100%)',   fg:'#FFFFFF'},
+    {word:'250',  cap:'250 credits to start',                bg:'radial-gradient(405px 356px at 29% 86%, rgb(110,124,230) 0%, rgb(38,48,111) 100%)', fg:'#FFFFFF'}
+  ];
+  var TIERS=[
+    {id:'pro',   name:'Pro',   price:'$96', per:'/yr',          desc:'Unlock unlimited projects and Pro mode.',
+     feat:['Everything in Free','Pro mode','Unlimited projects'], cta:'Choose Pro', badge:true},
+    {id:'free',  name:'Free',  price:'Free',per:'',             desc:'Plan projects and reach out to vendors yourself.',
+     feat:['1 active project','Envoy-built vendor lineups','Reach out to vendors yourself','Track every reply in one place'], cta:'Get started free'},
+    {id:'agency',name:'Agency',price:'$200',per:'/yr per user', desc:'Let Envoy draft and send outreach for your whole team.',
+     feat:['Everything in Pro','Automated Envoy outreach to vendors','Envoy drafts replies & follow-ups in your voice','Multiple seats for your whole team','Priority vendor responses'], cta:'Choose Agency'}
+  ];
+  var SPREAD=14; // the design's deckSpread default
+
+  function el(tag,cls,txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+
+  /* ---- stacked decks: tap to send the top card to the back ---- */
+  function makeDeck(root, list, withArrow, onChange){
+    var n=list.length, off=0;
+    var cards=list.map(function(c){
+      var d=el('div','card'); d.style.background=c.bg;
+      d.appendChild(el('span','ghost',c.word)).setAttribute('aria-hidden','true');
+      var cap=el('p','cap',c.cap); cap.style.color=c.fg; d.appendChild(cap);
+      if(withArrow){ var g=el('span','go'); g.setAttribute('aria-hidden','true'); g.appendChild(el('i')); d.appendChild(g); }
+      root.appendChild(d); return d;
+    });
+    function paint(){
+      cards.forEach(function(d,i){
+        var p=(i-off+n)%n;
+        d.style.zIndex=n-p;
+        d.style.opacity=p>2?0:1;
+        d.style.transform='translateY('+(-SPREAD*p)+'px) scale('+(1-0.05*p)+')';
+        d.setAttribute('aria-hidden', p===0?'false':'true');
+      });
+      onChange(off%n, n, list[off%n]);
+    }
+    function next(){ off++; paint(); }
+    root.addEventListener('click',next);
+    root.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); next(); } });
+    paint();
+  }
+
+  var step=document.getElementById('m-feat-step'), featLive=document.getElementById('m-feat-live'), deckF=document.getElementById('m-deck-f');
+  makeDeck(deckF, FEAT, true, function(i,n,c){
+    step.textContent=String(i+1).padStart(2,'0')+' / '+String(n).padStart(2,'0');
+    deckF.setAttribute('aria-label','Feature '+(i+1)+' of '+n+'. Show next feature');
+    featLive.textContent=c.cap;
+  });
+  var bizLive=document.getElementById('m-biz-live'), deckB=document.getElementById('m-deck-b');
+  makeDeck(deckB, BIZ, false, function(i,n,c){
+    deckB.setAttribute('aria-label','Stat '+(i+1)+' of '+n+'. Show next');
+    bizLive.textContent=c.cap;
+  });
+
+  /* ---- pricing: one tier open at a time, Pro by default ---- */
+  var tiersEl=document.getElementById('m-tiers'), open='pro', rows=[];
+  TIERS.forEach(function(t){
+    var row=el('div','tier');
+    var head=el('button','tier-head'); head.type='button'; head.setAttribute('aria-controls','m-tier-'+t.id);
+    var nm=el('span','tier-name'); nm.appendChild(el('b',null,t.name));
+    if(t.badge) nm.appendChild(el('span','badge','MOST POPULAR'));
+    var pr=el('span','tier-price'); pr.appendChild(el('b',null,t.price)); if(t.per) pr.appendChild(el('small',null,t.per));
+    head.appendChild(nm); head.appendChild(pr);
+    var body=el('div','tier-body'); body.id='m-tier-'+t.id;
+    body.appendChild(el('p','tier-desc',t.desc));
+    var ul=el('ul'); t.feat.forEach(function(f){ ul.appendChild(el('li',null,f)); }); body.appendChild(ul);
+    var cta=el('a','btn btn-md tier-cta',t.cta); cta.href='#start'; body.appendChild(cta);
+    row.appendChild(head); row.appendChild(body);
+    row.addEventListener('click',function(){ if(open!==t.id){ open=t.id; paintTiers(); } });
+    tiersEl.appendChild(row); rows.push({t:t,row:row,head:head,cta:cta});
+  });
+  function paintTiers(){ rows.forEach(function(r){ var o=r.t.id===open;
+    r.row.classList.toggle('open',o); r.row.classList.toggle('on-dark',o);
+    r.cta.classList.toggle('btn-primary',o); r.cta.classList.toggle('btn-secondary',!o);
+    r.head.setAttribute('aria-expanded',o); }); }
+  paintTiers();
+
+  /* ---- menu ---- */
+  var menu=document.getElementById('m-menu'), mb=document.getElementById('m-menu-btn');
+  function setMenu(on){
+    menu.hidden=!on; menu.classList.toggle('open',on);
+    mb.setAttribute('aria-expanded',on); mb.setAttribute('aria-label',on?'Close menu':'Open menu');
+    document.documentElement.style.overflow=on?'hidden':'';
+    if(on){ menu.querySelector('a').focus(); } else { mb.focus({preventScroll:true}); }
+  }
+  mb.addEventListener('click',function(){ setMenu(menu.hidden); });
+  menu.addEventListener('click',function(){ setMenu(false); }); // "Tap anywhere to close"
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!menu.hidden) setMenu(false); });
+
+  /* ---- composer (prototype: no backend yet) ---- */
+  var proj=document.getElementById('m-proj');
+  document.querySelectorAll('a[href="#m-start"]').forEach(function(a){
+    a.addEventListener('click',function(e){ e.preventDefault(); setTimeout(function(){ proj.focus(); },0); });
+  });
+  document.getElementById('m-start').addEventListener('submit',function(e){ e.preventDefault(); proj.focus(); });
+  proj.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); document.getElementById('m-start').requestSubmit(); } });
+
+  if(new URLSearchParams(location.search).has('frame')) document.documentElement.classList.add('framed');
+})();
+</script>
+<script>
+/* Only one view is ever live: the other is hidden from assistive tech and the tab order. */
+(function(){
+  var vd=document.querySelector('.vd'), vm=document.querySelector('.vm'), mq=matchMedia('(min-width:768px)');
+  function sync(){ var desk=mq.matches; vd.hidden=!desk; vd.inert=!desk; vm.hidden=desk; vm.inert=desk; }
+  (mq.addEventListener?mq.addEventListener('change',sync):mq.addListener(sync)); sync();
+})();
 </script>
 </body>
 </html>

@@ -9,7 +9,7 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 | File | What it is |
 |---|---|
 | `index.html` | Index of every page. |
-| `assets/tokens.css` | The "Linen" tokens: color, type, space, radius, elevation, chart palette. Also the base element styles and the Google Fonts import (Fraunces, Geist, Geist Mono). |
+| `assets/tokens.css` | **envoy-redesign** system tokens (Instrument Sans, ground `#EAECFA`, indigo ramp) plus kit aliases so existing components resolve. See **Redesign-repo alignment** below. |
 | `assets/components.css` | All components: topbar and nav tabs, Ask Envoy bar, buttons, inputs, chips and filter chips, tabs and segmented controls, cards and KPIs, bars, avatars, table with row actions, `.sheet` grid, attention strip, empty state, kanban, toast, demo rail, legend, Sankey, milestone timeline, gantt, utilities. |
 | `assets/app.js` | Shared runtime. It does the following: <br>• Injects the topbar from `body[data-page]`. <br>• Turns `<i data-i>` placeholders into an inline SVG icon set (about 45 icons). <br>• Handles toasts (`[data-toast]`) and tabs (`[data-tabs]`/`[data-tab]`/`[data-panel]`, where `data-hash` syncs the URL). <br>• Sets Chart.js defaults. <br>• Provides a dependency-free SVG `Envoy.sankey()`. <br>• Draws the demo-story rail. <br>• Fires the `envoy:ready` event. |
 | `app/overview.html` | Wedding hero: countdown, venue, guests 128/140, milestones 5/12, and the 5 CTAs. <br>Needs-attention strip: failed send, unanswered >3d, date conflict, missing deposit. <br>Vendor status table with a Needs me / Waiting on them / All toggle. <br>Budget card: total/committed/remaining, donut, and 8 category chips that deep-link to `contacts.html?type=`. <br>Milestone timeline (Booked/Deposit due/Final/Day-of), the Sankey (Total → Category → Booked/Remaining) and recent activity. |
@@ -164,7 +164,7 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
   - The existing Contacts radar is reused with plain axes (Price fit, Style, Date, Replies, Package, Track record), each explained in one line.
   - "You're leaning X because…" lists reasons and one honest "Watch" caveat. Clicking a card changes the lean.
   - CTAs: Draft inquiry, Mark preferred, Book (it drafts into Approve & send and never sends) and Send A/B to couple (goes to Share update).
-- Linked from Contacts → Compare ("Open full compare →"), index "Ideas · round 5", the topbar More menu, and the demo rail. VISION.md IA table gained one row.
+- Linked from Contacts → Compare ("Open full compare →"), index "Ideas · round 5", the topbar **More** menu, and the demo rail. VISION.md IA table gained one row.
 
 ## Charts pass (Sankey + radar)
 
@@ -178,3 +178,24 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
   - On vendor-compare, clicking a card bolds that florist's shape on the radar and updates the caption.
 - **Couple portal: budget glance.** A small, calm Sankey shows where the $40k left is set aside (florals, buffer, rentals…). It shows amounts only, with no scores or overspend warnings.
 - **Project → Sheet** is still reachable through "Sheet view" (verified: 15 rows).
+
+## Redesign-repo alignment (Nov 2, 2026)
+
+Source of truth: **hello-envoy/envoy-redesign** on main (a private fork of hillcitybaby/envoy-redesign). The files were pulled through the GitHub contents API into `/workspace/envoy-redesign-ref/`: README, `redesign/_system/{system.css,check.mjs}`, `redesign/07-buttons/index.html`, and `redesign/build/{index.html,waitlist.html,img/*.jpg}`. I didn't clone the repo or pull the large root-level JPGs. Nothing was pushed.
+
+The "Linen" notes in the sections above are history. Where they conflict with this section, this section wins.
+
+- **`assets/tokens.css`**: holds the system.css `:root` block copied verbatim. It's followed by a kit-aliases block that maps the old names onto redesign tokens (`--paper`→`--ground`, `--surface`→`--card`, `--ink-2/3`→`--muted/--faint`, `--clay*`→the indigo ramp, `--risk`→`--error`, `--chart-1..8`→ink, the indigo ramp, line-3, biz, line). Radii follow the landing page: pills for controls, 14/22/30 for surfaces.
+- **`assets/components.css`**: the system's button block is pasted verbatim (primary/secondary/ghost/chip, sm/md/lg, icon, on-dark). Kit extensions (`.btn-accent`, `.btn-link`, toolbar icon buttons, `.btn-group`) stay on the same ramp. Changes for redesign alignment:
+  - Cards are white on the ground with a 1px inset line.
+  - `.card-ink` uses `--biz` with the on-dark tokens.
+  - Inputs and filter chips use the `--line-3` boundary and the indigo focus ring.
+  - The topbar is ground-tinted glass.
+  - The brand mark is the landing page's diamond.
+- **Every hard-coded Linen hex** in `components.css`, `app.js` and `app/*.html` is remapped to its nearest redesign value. Fraunces and Geist are removed. Weight 300 becomes 500, since Instrument Sans has no 300. Italic clay accents become upright indigo.
+- **Charts**: Chart.js and the SVG Sankey read `--chart-*` at runtime, so the Sankey, the donut and the radar now render in ink and indigo.
+- **`landing/`**: the finished `redesign/build/index.html` plus `waitlist.html` and `img/hero-*.jpg`, with relative paths.
+- **`design-system/index.html`**: a living page generated from system.css. It shows swatches with contrast, the ramp, type, spacing, the buttons from 07-buttons, the on-dark variants, kit parts, and the check.mjs rules.
+- **`index.html`, `VISION.md`, `DEMO-WALKTHROUGH.md`**: now credit envoy-redesign.
+- **Verified**: served with `python3 -m http.server` and screenshotted in headless Chrome at 1440px into `screenshots/`. No 404s.
+- **Known gap**: the moodboard swatches on the couple portal (florist A/B) were remapped to indigo and greys. They were meant to suggest real flower colours, so they should become photos.

@@ -60,7 +60,7 @@
     });
   }
 
-  const BRAND = `<svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="#1C1A17" stroke-width="1.6"/><path d="M3.5 7.2 12 13l8.5-5.8" stroke="#9A3B27" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-word">Envoy</span>`;
+  const BRAND = `<svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21.5 6.5 12 21 2.5 6.5 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8.2c3.4 1.6 6.6 1.6 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="brand-word">Envoy</span>`;
 
   /* ---------- App topbar (planner) ---------- */
   function mountTopbar() {
@@ -139,14 +139,14 @@
   function chartDefaults() {
     if (!window.Chart) return;
     const C = window.Chart;
-    C.defaults.font.family = "Geist, ui-sans-serif, system-ui, sans-serif";
+    C.defaults.font.family = "Instrument Sans, ui-sans-serif, system-ui, sans-serif";
     C.defaults.font.size = 11.5;
     C.defaults.color = css("--ink-3");
     C.defaults.borderColor = css("--line");
     C.defaults.plugins.legend.display = false;
     C.defaults.plugins.tooltip.backgroundColor = css("--ink");
-    C.defaults.plugins.tooltip.titleColor = "#F7F4EE";
-    C.defaults.plugins.tooltip.bodyColor = "#E8E1D5";
+    C.defaults.plugins.tooltip.titleColor = "#EAECFA";
+    C.defaults.plugins.tooltip.bodyColor = "#E5E7F4";
     C.defaults.plugins.tooltip.padding = 10;
     C.defaults.plugins.tooltip.cornerRadius = 6;
     C.defaults.plugins.tooltip.displayColors = true;
