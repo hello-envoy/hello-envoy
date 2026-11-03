@@ -1,6 +1,6 @@
 # Envoy 2.0 demo
 
-Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, through round 5, is `envoy-2.0-mockups/STEPS.md`. The product map is `envoy-2.0-mockups/VISION.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of the core pages are in `envoy-2.0-mockups/screenshots/`.
+Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, through round 5, is `envoy-2.0-mockups/STEPS.md`. The 90-second founder walkthrough is `envoy-2.0-mockups/DEMO-WALKTHROUGH.md`. The product map is `envoy-2.0-mockups/VISION.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of the core pages are in `envoy-2.0-mockups/screenshots/`.
 
 ## Run locally
 

@@ -165,3 +165,11 @@ New pages are linked from `index.html` under "Ideas · round 3", from the demo r
   - "You're leaning X because…" lists reasons and one honest "Watch" caveat. Clicking a card changes the lean.
   - CTAs: Draft inquiry, Mark preferred, Book (it drafts into Approve & send and never sends) and Send A/B to couple (goes to Share update).
 - Linked from Contacts → Compare ("Open full compare →"), index "Ideas · round 5", the topbar More menu, and the demo rail. VISION.md IA table gained one row.
+
+## Charts polish (SCRUM-341)
+
+- **`app/overview.html`**: Budget card (Budgeted / Spent / Remaining, donut, category chips with Spent/Budgeted) plus a full-width **Sankey** (`#sankey`, `Envoy.sankey()`) — Total → eight categories → Booked vs Remaining. Pure SVG; works offline.
+- **`app/contacts.html#compare`** and **`app/vendor-compare.html`**: Chart.js radar on the same six plain axes (Price fit, Style, Date, Replies, Package, Track record). Full compare adds one-line axis copy and lean / Watch copy.
+- **`app/couple-portal.html`**: Compact **Budget at a glance** (shared totals + bar), not the full Sankey.
+- **`app/project.html`**: Sheet grid stays reachable via **Sheet view** and `#sheet` (demoted from the tab row).
+- Narrative docs: `DEMO-WALKTHROUGH.md`, root `DEMO.md`.

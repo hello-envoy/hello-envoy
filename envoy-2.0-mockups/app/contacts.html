@@ -432,7 +432,7 @@ window.addEventListener("envoy:ready", () => {
   const hexA = (h, a) => h + Math.round(a * 255).toString(16).padStart(2, "0");
   if (window.Chart) new Chart(document.getElementById("radar"), {
     type: "radar",
-    data: { labels: ["Price fit", "Style match", "Availability", "Response", "Package", "Vibe"],
+    data: { labels: ["Price fit", "Style", "Date", "Replies", "Package", "Track record"],
       datasets: R.map((r, i) => ({ label: r[0], data: r[1], borderColor: r[2], backgroundColor: hexA(r[2], i === 0 ? .10 : .06), borderWidth: i === 0 ? 2 : 1.5, pointRadius: 2.5, pointBackgroundColor: r[2], borderDash: i === 2 ? [4, 3] : [] })) },
     options: { scales: { r: { min: 0, max: 10, ticks: { display: false, stepSize: 2.5 }, grid: { color: css("--line") }, angleLines: { color: css("--line") }, pointLabels: { color: css("--ink-2"), font: { size: 12, weight: 500 } } } } }
   });
