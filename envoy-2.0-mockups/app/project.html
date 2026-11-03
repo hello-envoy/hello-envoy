@@ -99,21 +99,23 @@
         <li><i data-i="alert" data-s="15"></i>Fix hold → Oct 15–17 · <span class="owner o-me">Me</span></li>
         <li><i data-i="note" data-s="15"></i>Block agreement · <span class="owner o-vendor">Vendor</span></li>
       </ul>
-      <a class="btn btn-secondary btn-sm" href="contacts.html?c=harborline" style="align-self:flex-start">Open thread</a>
+      <a class="btn btn-secondary btn-sm" href="contacts.html?scope=project&amp;c=harborline" style="align-self:flex-start">Open thread</a>
     </section>
   </div>
   <div class="ms-summary" id="ms-summary" aria-label="All 12 milestones"></div>
 
   <!-- ============ Views ============ -->
-  <div class="row-between mt-8" style="border-bottom:1px solid var(--line)">
-    <div class="mastertabs" role="tablist" data-tabs="#views" data-hash>
-      <button type="button" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
-      <button type="button" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
-      <button type="button" data-tab="decisions" aria-selected="false"><i data-i="edit" data-s="15"></i>Decisions</button>
-      <button type="button" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
-      <button type="button" class="hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
+  <div class="row-between mt-8 project-subtabs-wrap">
+    <div class="section-tabs-wrap grow">
+      <div class="section-tabs mastertabs" role="tablist" data-tabs="#views" data-hash>
+        <button type="button" data-tab="week" aria-selected="true"><i data-i="listi" data-s="15"></i>This week <span class="count">7</span></button>
+        <button type="button" data-tab="timeline" aria-selected="false"><i data-i="gantt" data-s="15"></i>Timeline</button>
+        <button type="button" data-tab="decisions" aria-selected="false"><i data-i="edit" data-s="15"></i>Decisions</button>
+        <button type="button" data-tab="risks" aria-selected="false"><i data-i="shield" data-s="15"></i>Risks &amp; holds <span class="count count-risk" id="risk-n" title="Open risks and holds needing action">3</span></button>
+        <button type="button" class="hide" data-tab="sheet" aria-selected="false" id="sheet-tab">Sheet</button>
+      </div>
     </div>
-    <div class="row owner-filter" style="padding-bottom:6px">
+    <div class="row owner-filter owner-filter-pad">
       <span class="faint text-sm">Owner</span>
       <button class="fchip is-on" data-owner="all">All</button>
       <button class="fchip" data-owner="me">Me</button>
@@ -177,7 +179,7 @@
       <div class="eyebrow mb-2">Past notices · ledger</div>
       <ul class="ledger mb-6">
         <li><span class="when">Oct 24</span><div><span class="tag">Converted</span> <b>Guest count band</b> — decided row (128 vs 140)</div><span class="faint text-xs">You approved</span></li>
-        <li><span class="when">Sep 28</span><div><span class="tag">Notice</span> <b>Harborline hold dates</b> — open in contacts</div><a class="btn-link text-xs" href="contacts.html?c=harborline">Open →</a></li>
+        <li><span class="when">Sep 28</span><div><span class="tag">Notice</span> <b>Harborline hold dates</b> — open in contacts</div><a class="btn-link text-xs" href="contacts.html?scope=project&amp;c=harborline">Open →</a></li>
       </ul>
       <div class="bar-row"><div class="l"><div class="seg" id="filt"><button aria-selected="true" data-f="open">Open <span class="count" data-c="open"></span></button><button aria-selected="false" data-f="decided">Decided <span class="count" data-c="decided"></span></button><button aria-selected="false" data-f="all">All <span class="count" data-c="all"></span></button></div><button class="fchip" id="only-couple" aria-pressed="false"><i data-i="heart" data-s="13"></i>Couple-visible only</button></div><div class="r"><span class="couple-count"><i data-i="eye" data-s="14"></i><b id="vis-n">0</b> of <span id="all-n">0</span> visible to couple</span></div></div>
       <div id="planner-view"><div class="sheet"><table><thead><tr><th class="idx">#</th><th>Decision</th><th>Options · A / B</th><th>Who decides</th><th>Due</th><th>Status</th><th style="text-align:center">Who can see</th></tr></thead><tbody id="rows"></tbody><tbody><tr class="add-row"><td class="idx">+</td><td colspan="6"><button id="add"><i data-i="plus" data-s="14"></i>Add a decision</button></td></tr></tbody></table></div></div>
@@ -187,7 +189,7 @@
     <!-- Risks & holds -->
     <section data-panel="risks" class="hide">
       <div class="card">
-        <div class="card-head"><h3>Risks, decisions &amp; holds <span class="sub">Kept short on purpose — 10 rows max</span></h3>
+        <div class="card-head"><h3>Risks &amp; holds <span class="sub">Kept short on purpose — 10 rows max</span></h3>
           <div class="seg"><button aria-selected="true">Open</button><button aria-selected="false">All</button></div></div>
         <div class="table-wrap"><table class="table" id="risk-table">
           <thead><tr><th>Kind</th><th>Item</th><th>Impact</th><th>Owner</th><th>By</th><th>Status</th><th>Source</th></tr></thead><tbody></tbody></table></div>

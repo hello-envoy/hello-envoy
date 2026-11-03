@@ -3,39 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contacts · Elena &amp; Marcus · Envoy</title>
+<title>Directory · Contacts · Envoy</title>
 <link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/components.css">
-<style>
-  /* Page-local: compare + thread detail only */
-  .fix textarea.input { min-height: 110px; padding: 10px; line-height: 20px; resize: vertical; height: auto; }
-  .book-gate { border: 1px dashed var(--line-strong); background: var(--paper-2); border-radius: var(--r-md); padding: var(--s-3); }
-  .gate-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: var(--text-sm); }
-  .gate-list label { display: flex; gap: 8px; align-items: center; cursor: pointer; color: var(--ink-2); }
-  .attach-card { border-color: var(--clay-3); background: linear-gradient(180deg, var(--indigo-50), var(--card) 72%); margin: var(--s-3); border-radius: var(--r-lg); }
-  .dir-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
-  @media (min-width: 900px) { .dir-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .dir-item { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--card); cursor: pointer; }
-  .dir-item:has(input:checked) { border-color: var(--indigo-600); box-shadow: 0 0 0 1px var(--indigo-600); }
-  .kv { display: grid; grid-template-columns: 96px 1fr; gap: 8px 12px; font-size: var(--text-sm); }
-  .kv dt { color: var(--ink-3); } .kv dd { margin: 0; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  .msg { padding: 12px 14px; border-radius: var(--r-md); background: var(--card); border: 1px solid var(--line); font-size: var(--text-sm); line-height: 1.45; }
-  .msg.me { background: var(--wash); }
-  .msg-h { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; font-size: var(--text-xs); color: var(--ink-3); }
-  .msg-h b { color: var(--ink); font-weight: 600; font-size: var(--text-sm); }
-  .ask-bar { display: flex; gap: 8px; align-items: center; padding: 10px var(--s-4); border-top: 1px solid var(--line); background: var(--card); }
-  .ask-bar .input { height: 34px; background: var(--card); border-color: var(--line-3); }
-  .ladder { display: flex; flex-wrap: wrap; gap: 4px; }
-  .ladder button { font: inherit; font-size: var(--text-xs); height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink-2); cursor: pointer; }
-  .ladder button[aria-pressed="true"] { border-color: var(--indigo-600); color: var(--indigo-700); font-weight: 600; }
-  .ladder .arrow { color: var(--ink-4); font-size: 11px; align-self: center; }
-  .wed-list { display: grid; gap: 4px; margin-top: 8px; }
-  .wed-list button { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--card); font: inherit; font-size: var(--text-sm); cursor: pointer; text-align: left; }
-  .lean-line { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-2); line-height: 1.6; }
-  .lean-line em { font-family: var(--font-display); font-style: normal; color: var(--indigo-600); font-size: 16px; }
-  .new-row { animation: newrow 2.4s var(--ease) 1; }
-  @keyframes newrow { 0% { background: var(--indigo-50); } 100% { background: transparent; } }
-</style>
 </head>
 <body data-shell="planner" data-page="contacts" class="contacts-page">
 <div data-topbar></div>
@@ -43,91 +13,71 @@
 <main class="page">
   <div class="page-head">
     <div>
-      <div class="eyebrow" id="page-eyebrow">Elena &amp; Marcus · Contacts</div>
+      <div class="eyebrow" id="page-eyebrow">Account · Directory</div>
       <h1>Contacts</h1>
-      <div class="meta"><span id="meta-n">16 on this wedding</span><span class="faint">·</span><span id="meta-booked">7 booked</span><span class="faint">·</span><span class="accent" id="meta-reply">2 need your reply</span></div>
+      <div class="meta"><span id="meta-n">12 in contact book</span><span class="faint meta-extra">·</span><span id="meta-booked">4 directory-only</span><span class="faint meta-extra">·</span><span class="accent" id="meta-reply">2 need your reply on weddings</span></div>
     </div>
-    <div class="row">
+    <div class="row" id="page-head-actions">
       <button class="btn btn-secondary btn-sm" data-toast="Import from CSV, Gmail, or HoneyBook"><i data-i="upload"></i>Import</button>
       <button class="btn btn-secondary btn-sm" data-toast="New contact"><i data-i="plus"></i>Add contact</button>
-      <button class="btn btn-primary btn-sm" id="open-attach"><i data-i="attach"></i>Attach from book</button>
+      <button class="btn btn-primary btn-sm hide" id="open-attach"><i data-i="attach"></i>Attach from book</button>
+      <a class="btn btn-ghost btn-sm hide" id="back-to-dir" href="contacts.html">Account directory</a>
     </div>
   </div>
 
   <section class="contacts-chrome" aria-label="Contacts">
     <div class="contacts-chrome-head">
-      <div class="mastertabs" role="tablist" data-tabs="#contacts-views" data-hash>
-        <button type="button" data-tab="list" aria-selected="true">Directory</button>
-        <button type="button" data-tab="compare" aria-selected="false">Compare</button>
+      <div class="section-tabs-wrap">
+        <div class="section-tabs mastertabs" role="tablist" data-tabs="#contacts-views" data-hash>
+          <button type="button" data-tab="list" aria-selected="true">Directory</button>
+          <button type="button" data-tab="compare" aria-selected="false">Compare</button>
+        </div>
       </div>
     </div>
 
     <div id="contacts-views">
-      <div data-panel="list" class="contacts-workspace" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div data-panel="list" class="contacts-workspace">
 
         <section class="card attach-card hide" id="attach" aria-label="Attach from contact book">
-          <div class="card-head" style="border:0"><h3 style="font-size:var(--text-base)">Attach from contact book</h3>
+          <div class="card-head card-head-flush"><h3 class="text-base">Attach from contact book</h3>
             <button class="btn btn-ghost btn-sm btn-icon" id="close-attach" type="button" title="Close"><i data-i="x" data-s="14"></i></button></div>
-          <div class="card-body" style="padding-top:0"><div class="dir-grid" id="dir-grid"></div></div>
-          <div class="card-foot" style="border:0"><span class="text-sm faint" id="attach-hint">Suggested for October Charleston · 140 guests</span>
+          <div class="card-body card-body-tight"><div class="dir-grid" id="dir-grid"></div></div>
+          <div class="card-foot card-foot-flush"><span class="text-sm faint" id="attach-hint">Suggested for October Charleston · 140 guests</span>
             <button class="btn btn-primary btn-sm" type="button" id="do-attach"><i data-i="attach" data-s="14"></i>Attach <span id="attach-n">3</span></button></div>
         </section>
 
         <div class="outreach-shell">
           <aside class="outreach-inbox" aria-label="Inbox">
             <div class="outreach-inbox-head">
-              <div><span class="eyebrow" style="margin:0">Inbox</span><strong id="list-title">This wedding</strong></div>
+              <div><span class="eyebrow inbox-eyebrow">Inbox</span><strong id="list-title">Contact book</strong></div>
               <button type="button" class="btn btn-secondary btn-sm" data-toast="New thread — pick a contact, then draft in Approve &amp; send"><i data-i="plus" data-s="13"></i>New thread</button>
             </div>
-            <div class="outreach-filters" aria-label="Filters">
-              <div class="seg" data-f="scope">
-                <button type="button" data-v="project" aria-selected="true">This wedding</button>
-                <button type="button" data-v="dir" aria-selected="false">All contacts</button>
-              </div>
+            <div class="outreach-filter-bar" aria-label="Filters">
+              <button type="button" class="fchip" id="filter-all" aria-pressed="true">All</button>
+              <details class="filter-menu" id="type-menu">
+                <summary class="btn btn-secondary btn-sm">Type</summary>
+                <div class="filter-menu-pop" id="type-menu-pop"></div>
+              </details>
+              <details class="filter-menu" id="sort-filter-menu">
+                <summary class="btn btn-ghost btn-sm btn-icon btn-round" title="Sort and filter"><i data-i="sort" data-s="16"></i></summary>
+                <div class="filter-menu-pop" id="advanced-filters"></div>
+              </details>
               <div class="search"><i data-i="search" data-s="15"></i><input class="input" id="q" placeholder="Search name, company, email…" aria-label="Search"></div>
-              <div class="outreach-filter-row" role="group" aria-label="Quick filters">
-                <button type="button" class="fchip" data-quick="reply" aria-pressed="false">Needs attention</button>
-                <button type="button" class="fchip" data-quick="waiting" aria-pressed="false">Waiting</button>
-                <button type="button" class="fchip" data-quick="all" aria-pressed="true">All</button>
-              </div>
-              <select class="input" id="saved-view" aria-label="Saved views">
-                <option value="">Saved views…</option>
-                <option value="reply">Needs reply · 2</option>
-                <option value="florists">Florists · 3</option>
-                <option value="booked-team">Booked · 7</option>
-                <option value="in-book">In contact book · 8</option>
-                <option value="missing-email">Missing email · 1</option>
-              </select>
-              <div class="outreach-filter-label">Status</div>
-              <div class="outreach-filter-row" data-f="status">
-                <button type="button" class="fchip" data-v="all" aria-pressed="true">All <span class="count" data-c="all"></span></button>
-                <button type="button" class="fchip" data-v="reply" aria-pressed="false">Needs reply <span class="count" data-c="reply"></span></button>
-                <button type="button" class="fchip" data-v="waiting" aria-pressed="false">Waiting <span class="count" data-c="waiting"></span></button>
-                <button type="button" class="fchip" data-v="booked" aria-pressed="false">Booked <span class="count" data-c="booked"></span></button>
-              </div>
-              <div class="outreach-filter-label">Type</div>
-              <div class="types" id="types"></div>
-              <div class="outreach-filter-label">Labels</div>
-              <div class="types" id="label-chips"></div>
-              <div class="outreach-filter-row" data-f="email">
-                <button type="button" class="fopt" data-v="all" aria-pressed="true">Any email</button>
-                <button type="button" class="fopt" data-v="missing" aria-pressed="false">Missing email</button>
-              </div>
-              <div class="row-between"><span class="faint text-xs" id="result-n"></span><button type="button" class="btn btn-ghost btn-sm" id="reset">Clear</button></div>
             </div>
+            <div class="row-between pad-inbox-foot"><span class="faint text-xs" id="result-n"></span><button type="button" class="btn btn-ghost btn-sm" id="reset">Clear</button></div>
             <div class="outreach-list" id="inbox-list" role="listbox" aria-label="Contact list"></div>
-            <div class="empty hide" id="empty" style="padding:var(--s-6)"><div class="glyph"><i data-i="users" data-s="18"></i></div><h4>No matches</h4><p class="faint text-sm">Try filters or attach from your contact book.</p></div>
+            <div class="empty hide pad-inbox-empty" id="empty"><div class="glyph"><i data-i="users" data-s="18"></i></div><h4>No matches</h4><p class="faint text-sm">Try filters or search.</p></div>
           </aside>
           <section class="outreach-thread" id="drawer" aria-label="Thread"></section>
         </div>
       </div>
 
-      <div data-panel="compare" class="hide" id="compare" style="padding:var(--s-5)">
-        <div class="section-title" style="margin-top:0"><h2>Compare florists</h2><span class="faint text-sm">Matrix + radar · Envoy 2.0</span></div>
+      <div data-panel="compare" class="hide compare-panel" id="compare">
+        <div class="section-title section-title-flush"><h2>Compare florists</h2><span class="faint text-sm">Matrix + radar</span></div>
         <div class="g-12">
           <section class="card span-5">
             <div class="card-head"><h3>Fit profile</h3><div class="legend" id="radar-legend"></div></div>
-            <div class="card-body"><div class="chart-box" style="height:320px"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
+            <div class="card-body"><div class="chart-box chart-box-tall"><canvas id="radar" aria-label="Florist comparison radar"></canvas></div>
               <p class="lean-line">You’re leaning <em>Heron &amp; Fern</em> — garden fit, fast replies, six past weddings together.</p></div>
           </section>
           <section class="card span-7">

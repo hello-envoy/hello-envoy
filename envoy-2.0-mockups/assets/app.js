@@ -39,7 +39,7 @@
     attach: '<path d="M20 11.5 12 19.5a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/>',
     star: '<path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.8z"/>',
     filter: '<path d="M4 5h16l-6 7.5V19l-4 1.5v-8z"/>',
-    board: '<rect x="3.5" y="4" width="5" height="16" rx="1.2"/><rect x="10" y="4" width="5" height="11" rx="1.2"/><rect x="16.5" y="4" width="4" height="7" rx="1.2"/>',
+    sort: '<path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>',
     listi: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
     gantt: '<path d="M4 4v16h16"/><rect x="7" y="7" width="7" height="3" rx="1"/><rect x="10" y="12" width="8" height="3" rx="1"/>',
     shield: '<path d="M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6z"/>',
@@ -82,6 +82,14 @@
     const q = weddingQueryString();
     return base + q + (hash ? `#${hash}` : "");
   }
+  function contactsHref(scopeProject) {
+    const w = activeWeddingId();
+    const qs = new URLSearchParams();
+    if (scopeProject) qs.set("scope", "project");
+    if (w && w !== "em") qs.set("w", w);
+    const q = qs.toString();
+    return q ? `contacts.html?${q}` : "contacts.html";
+  }
   const PRIMARY_TABS = [
     ["overview", "Overview", "overview.html"],
     ["contacts", "Contacts", "contacts.html"],
@@ -105,9 +113,31 @@
     return autoSendPick.accounts.size + autoSendPick.projects.size + autoSendPick.vtypes.size + autoSendPick.vendors.size > 0;
   }
   function topbarNavHtml(page) {
-    const tab = (id, label, href) =>
-      `<a href="${withW(href)}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
+    const tab = (id, label, href) => {
+      let h = withW(href);
+      if (id === "contacts") {
+        const onContacts = page === "contacts";
+        const projectScope = onContacts
+          ? new URLSearchParams(location.search).get("scope") === "project"
+          : !!activeWeddingId();
+        h = contactsHref(projectScope);
+      }
+      return `<a href="${h}" ${page === id ? 'aria-current="page"' : ""}>${label}</a>`;
+    };
     return PRIMARY_TABS.map(([id, label, href]) => tab(id, label, href)).join("");
+  }
+  function mountSectionNav() {
+    if (document.body.dataset.shell !== "planner") return;
+    const main = document.querySelector("main.page");
+    if (!main || main.querySelector(".section-tabs-wrap[data-primary]")) return;
+    const page = document.body.dataset.page;
+    const wrap = document.createElement("div");
+    wrap.className = "section-tabs-wrap";
+    wrap.dataset.primary = "1";
+    wrap.innerHTML = `<nav class="section-tabs" aria-label="Primary">${topbarNavHtml(page)}</nav>`;
+    const anchor = main.querySelector(".page-head") || main.querySelector(".hero") || main.firstElementChild;
+    if (anchor) anchor.insertAdjacentElement("afterend", wrap);
+    else main.prepend(wrap);
   }
   function accountAutoSendHtml() {
     const chk = (group, id, label) => {
@@ -147,8 +177,7 @@
     host.outerHTML = `
     <header class="topbar"><div class="topbar-inner">
       <a class="brand" href="${withW("portfolio.html")}" title="Envoy">${BRAND}</a>
-      <nav class="mastertabs mastertabs-top navtabs-end" aria-label="Primary">${topbarNavHtml(page)}</nav>
-      <div class="topbar-right">
+      <div class="topbar-right grow" style="justify-content:flex-end">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
         <details class="menu account-menu">
           <summary class="account-trigger" title="Sarah Whitfield · Account"><span class="av av-ink">SW</span></summary>
@@ -482,7 +511,8 @@
       const draft = e.target.closest("[data-draft-v]");
       if (draft) {
         e.preventDefault();
-        window.location.href = "contacts.html#draft";
+        toast(`Review draft for <b>${draft.dataset.draftV.replace("&amp;", "&")}</b> in Approve &amp; send`);
+        window.location.href = withW("approve-send.html");
         return;
       }
       const h = e.target.closest(".col-h");
@@ -563,16 +593,19 @@
     panel.className = "project-panel";
     panel.setAttribute("aria-label", "Weddings");
     const page = document.body.dataset.page;
-    const dirScope = page === "contacts" && new URLSearchParams(location.search).get("scope") === "dir";
+    const dirScope = page === "contacts" && new URLSearchParams(location.search).get("scope") !== "project";
     const collapsed = sessionStorage.getItem("envoy-sidebar") === "collapsed";
     panel.classList.toggle("is-collapsed", collapsed);
     panel.innerHTML =
+      `<a class="sidebar-brand" href="${withW("portfolio.html")}" title="Envoy">${BRAND_MARK}<img class="brand-wordmark" src="${ASSETS}envoy-wordmark.svg" height="26" width="98" alt="Envoy" /></a>` +
+      `<div class="sidebar-body">` +
       `<button type="button" class="sidebar-toggle" aria-expanded="${!collapsed}" aria-label="${collapsed ? "Expand sidebar" : "Collapse sidebar"}">${icon("chevr", 14)}</button>` +
       `<div class="sidebar-shortcuts">` +
       `<a href="portfolio.html"${page === "portfolio" && !wid ? ' aria-current="page"' : ""} title="Dashboard">${icon("home", 16)}<span>Dashboard</span></a>` +
-      `<a href="contacts.html?scope=dir"${dirScope ? ' aria-current="page"' : ""} title="Contact book — all account contacts">${icon("users", 16)}<span>Contact book</span></a>` +
+      `<a href="contacts.html"${dirScope ? ' aria-current="page"' : ""} title="Contact book — all account contacts">${icon("users", 16)}<span>Contact book</span></a>` +
       `</div><div class="panel-divider"></div><div class="eyebrow">Weddings</div>` +
-      WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""} title="${w.label}"><span class="ini">${w.ini}</span><span class="w-label">${w.label}</span></a>`).join("");
+      WEDDINGS.map((w) => `<a href="${plannerPageHref(w.id)}"${wid === w.id ? ' aria-current="page"' : ""} title="${w.label}"><span class="ini">${w.ini}</span><span class="w-label">${w.label}</span></a>`).join("") +
+      `</div>`;
     panel.querySelector(".sidebar-toggle").addEventListener("click", () => {
       const c = panel.classList.toggle("is-collapsed");
       wrap.classList.toggle("sidebar-collapsed", c);
@@ -610,25 +643,6 @@
     document.body.appendChild(d);
   }
 
-  /* ---------- Drag & drop for boards ---------- */
-  function wireBoards() {
-    let drag = null;
-    document.querySelectorAll(".kcard[draggable]").forEach((c) => {
-      c.addEventListener("dragstart", () => { drag = c; c.classList.add("dragging"); });
-      c.addEventListener("dragend", () => { c.classList.remove("dragging"); drag = null; document.querySelectorAll(".col").forEach((x) => x.classList.remove("drop")); });
-    });
-    document.querySelectorAll(".col[data-col]").forEach((col) => {
-      col.addEventListener("dragover", (e) => { e.preventDefault(); col.classList.add("drop"); });
-      col.addEventListener("dragleave", () => col.classList.remove("drop"));
-      col.addEventListener("drop", (e) => {
-        e.preventDefault(); col.classList.remove("drop");
-        if (!drag) return; col.querySelector(".col-cards").appendChild(drag);
-        document.querySelectorAll(".col[data-col]").forEach((x) => { const n = x.querySelector(".count"); if (n) n.textContent = x.querySelectorAll(".kcard").length; });
-        toast(`Moved to <b>${col.dataset.col}</b>`);
-      });
-    });
-  }
-
   window.Envoy = {
     icon,
     hydrateIcons,
@@ -649,6 +663,7 @@
     plannerPageHref,
     activeWeddingId,
     withW,
+    contactsHref,
     BOOK_GATES,
     ASSETS,
     BRAND,
@@ -668,7 +683,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     ensureFavicon();
-    mountTopbar(); mountPlannerShell(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail(); wireBoards();
+    mountTopbar(); mountPlannerShell(); mountSectionNav(); hydrateIcons(); wireTabs(); chartDefaults(); mountRail();
     window.dispatchEvent(new Event("envoy:ready"));
   });
 })();

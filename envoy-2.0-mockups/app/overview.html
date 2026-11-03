@@ -76,14 +76,14 @@
         <span class="row gap-2"><i data-i="pin" data-s="15"></i>The Ashby Estate · Charleston, SC</span>
       </div>
       <div class="cta-row">
-        <a class="btn btn-primary" href="contacts.html?status=booked&amp;email=has"><i data-i="mail"></i>Email the team</a>
+        <a class="btn btn-primary" href="contacts.html?scope=project&amp;label=Shortlist"><i data-i="mail"></i>Email shortlist</a>
         <button class="btn btn-secondary" data-toast="Log a booking: pick vendor → status <b>Booked</b> → add deposit to reach <b>Deposit paid</b>"><i data-i="checkc"></i>Log a booking</button>
         <details class="menu" id="cta-more">
           <summary class="btn btn-secondary"><i data-i="more"></i>More<i data-i="chevd" data-s="14"></i></summary>
           <div class="menu-pop" role="menu">
             <a role="menuitem" href="couple-portal.html"><i data-i="eye" data-s="15"></i><span>Preview as couple<span class="sub">Open Elena &amp; Marcus’s portal (planner preview)</span></span></a>
             <a role="menuitem" href="share-update.html"><i data-i="share" data-s="15"></i><span>Share update<span class="sub">Thin update email · not the full portal</span></span></a>
-            <a role="menuitem" href="contacts.html#compare"><i data-i="flower" data-s="15"></i><span>Compare florists<span class="sub">Matrix &amp; radar on Contacts</span></span></a>
+            <a role="menuitem" href="contacts.html?scope=project#compare"><i data-i="flower" data-s="15"></i><span>Compare florists<span class="sub">Matrix &amp; radar on Contacts</span></span></a>
             <a role="menuitem" href="contacts.html#attach"><i data-i="upload" data-s="15"></i><span>Import vendors<span class="sub">From your directory, CSV or Gmail</span></span></a>
             <a role="menuitem" href="project.html#timeline"><i data-i="gantt" data-s="15"></i><span>Open timeline<span class="sub">14-month view in Project</span></span></a>
           </div>
@@ -103,15 +103,15 @@
   <!-- ============ Needs attention ============ -->
   <div class="section-title" id="attention"><h2>Needs attention</h2><span class="faint text-sm">Updated 2 min ago · from 41 threads</span></div>
   <section class="attn" id="attn-strip">
-    <a href="contacts.html?c=sweetgrass&amp;fix=email" class="hot" title="Opens Sweetgrass Stems with Add email / Retry send">
+    <a href="contacts.html?scope=project&amp;c=sweetgrass&amp;fix=email" class="hot" title="Opens Sweetgrass Stems with Add email / Retry send">
       <span class="n">1</span>
       <span><span class="t">Failed send</span><br><span class="d">Inquiry to Sweetgrass Stems bounced — email missing</span><br><span class="status sm s-none st">Not contacted</span> <span class="go">Add email &amp; retry →</span></span>
     </a>
-    <a href="contacts.html?c=glam&amp;fix=reply" class="hot" title="Opens the Lowcountry Glam thread with Draft reply">
+    <a href="contacts.html?scope=project&amp;c=glam&amp;fix=reply" class="hot" title="Opens the Lowcountry Glam thread with Draft reply">
       <span class="n">2</span>
       <span><span class="t">Unanswered &gt; 3 days</span><br><span class="d">Lowcountry Glam (4d), Coastal Event Rentals (5d)</span><br><span class="status sm s-reply st">Needs reply</span> <span class="go">Draft reply →</span></span>
     </a>
-    <a href="contacts.html?c=harborline&amp;fix=hold" title="Opens Harborline with Request date change">
+    <a href="contacts.html?scope=project&amp;c=harborline&amp;fix=hold" title="Opens Harborline with Request date change">
       <span class="n">1</span>
       <span><span class="t">Date conflict</span><br><span class="d">Harborline Hotel holding Oct 9, not Oct 16</span><br><span class="status sm s-waiting st">Waiting</span> <span class="go">Request Oct 15–17 →</span></span>
     </a>
@@ -121,11 +121,11 @@
     </a>
   </section>
 
-  <!-- ============ Vendors + Budget ============ -->
+  <!-- ============ Contacts + Budget ============ -->
   <div class="g-12 mt-8">
     <section class="card span-8">
       <div class="card-head">
-        <h3>Vendors <span class="sub">13 on this wedding</span></h3>
+        <h3>Contacts <span class="sub">16 on this wedding</span></h3>
         <div class="seg" data-tabs="#vendor-table" id="vendor-seg">
           <button data-tab="me" aria-selected="true">Needs me <span class="mono faint">5</span></button>
           <button data-tab="them" aria-selected="false">Waiting on them <span class="mono faint">3</span></button>
@@ -137,10 +137,10 @@
           <thead><tr><th>Vendor</th><th>Type</th><th>Status</th><th>Next action</th><th class="r">Last reply</th></tr></thead>
           <tbody>
             <tr data-b="me"><td><div class="row"><span class="logo-sq">W</span><div><div class="cell-main">Wildflour Catering</div><div class="cell-sub">Priya Natarajan</div></div></div></td><td>Caterer</td><td><span class="status s-booked">Booked</span></td><td><a class="btn-link" href="project.html#lock">Log $7,920 deposit</a></td><td class="r faint num">1d</td></tr>
-            <tr data-b="me"><td><div class="row"><span class="logo-sq">L</span><div><div class="cell-main">Lowcountry Glam</div><div class="cell-sub">Tasha Greene</div></div></div></td><td>Beauty</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?c=glam&amp;fix=reply">Draft reply · trial dates</a></td><td class="r num" style="color:var(--clay)">4d</td></tr>
-            <tr data-b="me"><td><div class="row"><span class="logo-sq">C</span><div><div class="cell-main">Coastal Event Rentals</div><div class="cell-sub">Dev Patel</div></div></div></td><td>Rentals</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?c=coastal&amp;fix=reply">Draft reply · chair count (128)</a></td><td class="r num" style="color:var(--clay)">5d</td></tr>
-            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Heron &amp; Fern Florals</div><div class="cell-sub">Shortlist · A</div></div></div></td><td>Florist</td><td><span class="status s-none">Not contacted</span></td><td><a class="btn-link" href="contacts.html#compare">Draft inquiry</a></td><td class="r faint">—</td></tr>
-            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Harborline Hotel</div><div class="cell-sub">Room block · 30 rooms</div></div></div></td><td>Hotel block</td><td><span class="status s-waiting">Waiting</span></td><td><a class="btn-link" href="contacts.html?c=harborline&amp;fix=hold">Fix hold date → Oct 16</a></td><td class="r faint num">2d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">L</span><div><div class="cell-main">Lowcountry Glam</div><div class="cell-sub">Tasha Greene</div></div></div></td><td>Beauty</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?scope=project&amp;c=glam&amp;fix=reply">Draft reply · trial dates</a></td><td class="r num" style="color:var(--clay)">4d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">C</span><div><div class="cell-main">Coastal Event Rentals</div><div class="cell-sub">Dev Patel</div></div></div></td><td>Rentals</td><td><span class="status s-reply">Needs reply</span></td><td><a class="btn-link" href="contacts.html?scope=project&amp;c=coastal&amp;fix=reply">Draft reply · chair count (128)</a></td><td class="r num" style="color:var(--clay)">5d</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Heron &amp; Fern Florals</div><div class="cell-sub">Shortlist · A</div></div></div></td><td>Florist</td><td><span class="status s-none">Not contacted</span></td><td><a class="btn-link" href="contacts.html?scope=project#compare">Draft inquiry</a></td><td class="r faint">—</td></tr>
+            <tr data-b="me"><td><div class="row"><span class="logo-sq">H</span><div><div class="cell-main">Harborline Hotel</div><div class="cell-sub">Room block · 30 rooms</div></div></div></td><td>Hotel block</td><td><span class="status s-waiting">Waiting</span></td><td><a class="btn-link" href="contacts.html?scope=project&amp;c=harborline&amp;fix=hold">Fix hold date → Oct 16</a></td><td class="r faint num">2d</td></tr>
             <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">S</span><div><div class="cell-main">Saltmarsh Films</div><div class="cell-sub">Inquiry sent Oct 29</div></div></div></td><td>Video</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Nudge Thu if silent</td><td class="r faint num">—</td></tr>
             <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">M</span><div><div class="cell-main">Marlowe Flower Co.</div><div class="cell-sub">Shortlist · B</div></div></div></td><td>Florist</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Awaiting proposal</td><td class="r faint num">—</td></tr>
             <tr data-b="them" class="hide"><td><div class="row"><span class="logo-sq">S</span><div><div class="cell-main">Sugar Hall Cakes</div><div class="cell-sub">Tasting request</div></div></div></td><td>Cake</td><td><span class="status s-waiting">Waiting</span></td><td class="muted">Tasting dates pending</td><td class="r faint num">—</td></tr>
