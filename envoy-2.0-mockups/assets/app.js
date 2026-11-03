@@ -73,13 +73,23 @@
       <a class="brand" href="../landing/index.html" title="Envoy">${BRAND}</a>
       <div class="crumb">
         <span class="sep">/</span>
-        <a class="project-switch" href="overview.html" title="Switch wedding"><span class="mono-ini">E&amp;M</span>Elena &amp; Marcus ${icon("chevd", 14)}</a>
+        <a class="crumb-all" href="portfolio.html" ${page === "portfolio" ? 'aria-current="page"' : ""}>All weddings</a>
+        ${page === "portfolio" ? "" : `<span class="sep">/</span>
+        <a class="project-switch" href="portfolio.html" title="Switch wedding"><span class="mono-ini">E&amp;M</span>Elena &amp; Marcus ${icon("chevd", 14)}</a>`}
       </div>
-      <nav class="navtabs" aria-label="Primary">
+      ${page === "portfolio" ? '<nav class="navtabs" aria-label="Primary"></nav>' : `<nav class="navtabs" aria-label="Primary">
         ${tab("overview", "Overview", "overview.html")}
         ${tab("contacts", "Contacts", "contacts.html")}
         ${tab("project", "Project", "project.html")}
-      </nav>
+        <details class="menu nav-more">
+          <summary class="${["decisions", "approve"].includes(page) ? "is-cur" : ""}">More ${icon("chevd", 13)}</summary>
+          <div class="menu-pop" role="menu">
+            <a role="menuitem" href="decisions.html" ${page === "decisions" ? 'aria-current="page"' : ""}>${icon("listi", 15)}<span>Decisions<span class="sub">Open &amp; decided, couple-visible</span></span></a>
+            <a role="menuitem" href="approve-send.html" ${page === "approve" ? 'aria-current="page"' : ""}>${icon("send", 15)}<span>Approve &amp; send<span class="sub">2 drafts waiting for you</span></span></a>
+            <a role="menuitem" href="portfolio.html">${icon("grid", 15)}<span>All weddings<span class="sub">24 active · start your day here</span></span></a>
+          </div>
+        </details>
+      </nav>`}
       <div class="topbar-right">
         <label class="ask" title="Ask Envoy — search, draft, or do">${icon("spark", 15)}<span>Ask Envoy to draft, find, or update…</span><span class="kbd">⌘K</span></label>
         <a class="btn btn-secondary btn-sm" href="couple-portal.html">${icon("eye", 14)} Couple view</a>
@@ -87,6 +97,9 @@
       </div>
     </div></header>`;
   }
+
+  document.addEventListener("click", (e) => { document.querySelectorAll("details.menu[open]").forEach((m) => { if (!m.contains(e.target)) m.open = false; }); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll("details.menu[open]").forEach((m) => (m.open = false)); });
 
   /* ---------- Toast ---------- */
   let toastEl, toastT;
@@ -188,13 +201,18 @@
     ["couple-portal.html#ab", "Couple picks florist A/B in their portal"],
     ["project.html#lock", "Milestone “Lock catering” → Done on Booked → Deposit paid"],
   ];
+  const IDEAS = [
+    ["portfolio.html", "All weddings — start the day across 24"],
+    ["approve-send.html", "Approve & send — nothing leaves without you"],
+    ["decisions.html", "Decisions — open vs decided, couple-visible"],
+  ];
   function mountRail() {
     if (document.body.dataset.rail === "off") return;
     const file = location.pathname.split("/").pop();
     const d = document.createElement("details");
     d.className = "demo-rail"; d.open = sessionStorage.getItem("envoy-rail") === "open";
     d.addEventListener("toggle", () => sessionStorage.setItem("envoy-rail", d.open ? "open" : "closed"));
-    d.innerHTML = `<summary><span class="pulse"></span> Demo story <span class="faint" style="font-weight:400;margin-left:auto">5 beats</span></summary><ol>${STORY.map(([h, t]) => `<li class="${h.split("#")[0] === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ol>`;
+    d.innerHTML = `<summary><span class="pulse"></span> Demo story <span class="faint" style="font-weight:400;margin-left:auto">5 beats + ideas</span></summary><ol>${STORY.map(([h, t]) => `<li class="${h.split("#")[0] === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ol><div class="rail-ideas"><div class="eyebrow">Ideas · round 3</div><ul>${IDEAS.map(([h, t]) => `<li class="${h === file ? "here" : ""}"><a href="${h}">${t}</a></li>`).join("")}</ul></div>`;
     document.body.appendChild(d);
   }
 

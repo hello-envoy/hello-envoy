@@ -1,6 +1,6 @@
 # Envoy 2.0 demo
 
-Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, including the round-2 planner and couple polish, is `envoy-2.0-mockups/STEPS.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of each page are in `envoy-2.0-mockups/screenshots/`.
+Static Linen mockups for the hello-envoy landing and the planner desk. Tokens and components live in `envoy-2.0-mockups/`. The flight log, including round-2 polish and the round-3 idea pages, is `envoy-2.0-mockups/STEPS.md`. The design system is `envoy-2.0-mockups/design-system/DESIGN.md`. Reference shots of the core pages are in `envoy-2.0-mockups/screenshots/`.
 
 ## Run locally
 
@@ -20,6 +20,12 @@ Vite serves the mockups at [http://localhost:5174/](http://localhost:5174/).
 - [Couple portal](http://localhost:5174/app/couple-portal.html)
 - [Design system](http://localhost:5174/design-system/)
 
+Ideas · round 3, also linked from the index, the topbar **More** menu, and the demo rail:
+
+- [All weddings](http://localhost:5174/app/portfolio.html) — planner home across weddings
+- [Approve & send](http://localhost:5174/app/approve-send.html) — drafts stay in Gmail until you approve
+- [Decisions](http://localhost:5174/app/decisions.html) — Decision, Options, Owner, Due, Status. Couple-visible starts off. Preview as couple shows only shared rows.
+
 Stop the server with Ctrl+C.
 
 The pages are plain HTML, CSS, and one script. `file://` works too: open `envoy-2.0-mockups/index.html`. Google Fonts and Chart.js load from the network. The Sankey is SVG and still draws offline.
@@ -32,4 +38,4 @@ Elena & Marcus · Saturday, October 16, 2027 · The Ashby Estate, Charleston · 
 
 ## Demo rail
 
-The rail in the bottom-right of the app pages walks the story in `STEPS.md`: attach three vendors, needs attention, florist radar and A/B, the couple picks A, then Log deposit paid moves milestones from 5 to 6 of 12.
+The rail in the bottom-right of the app pages walks the story in `STEPS.md`: attach three vendors, needs attention, florist radar and A/B, the couple picks A, then Log deposit paid moves milestones from 5 to 6 of 12. Under that, **Ideas · round 3** links All weddings, Approve & send, and Decisions.

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decisions · Elena &amp; Marcus · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-4); margin-bottom: var(--s-8); }
+  .ins { padding: var(--s-5); display: flex; flex-direction: column; gap: 10px; }
+  .ins .k { font-size: var(--text-xs); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; display: flex; gap: 6px; align-items: center; }
+  .ins .t { font-family: var(--font-display); font-size: 19px; line-height: 25px; letter-spacing: -0.005em; }
+  .ins .d { color: var(--ink-2); font-size: var(--text-sm); line-height: 1.55; flex: 1; }
+  .ins.added { opacity: .55; }
+  .bar-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-3); }
+  .bar-row .l, .bar-row .r { display: flex; align-items: center; gap: 10px; }
+  .couple-count { font-size: var(--text-sm); color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; }
+  .sheet td { white-space: normal; vertical-align: middle; }
+  .sheet td > .cell { height: auto; min-height: 44px; padding: 10px 12px; align-items: center; line-height: 1.45; }
+  .sheet td.dec .cell { font-weight: 500; color: var(--ink); min-width: 260px; }
+  .sheet td.opt .cell { color: var(--ink-2); min-width: 220px; }
+  .preview-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .preview-list li { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .preview-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .sheet td.due .cell { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+  .sheet td.due.late .cell { color: var(--risk); }
+  .sheet td.pick { padding: 0 8px; white-space: nowrap; }
+  .sheet tr.is-decided td.dec .cell { color: var(--ink-2); }
+  .sheet tr.flash td:not(.idx) { animation: rowflash 1.6s var(--ease); }
+  @keyframes rowflash { from { background: var(--clay-soft); } to { background: transparent; } }
+  .psel { appearance: none; border: 1px solid transparent; background: transparent; font: inherit; font-size: var(--text-sm); padding: 4px 22px 4px 8px; border-radius: 99px; cursor: pointer; color: var(--ink); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237A746B' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 7px center; }
+  .psel:hover { border-color: var(--line-strong); }
+  .psel:focus { outline: none; border-color: var(--clay); }
+  .psel.st-open { background-color: var(--warn-soft); color: var(--warn); }
+  .psel.st-couple { background-color: var(--clay-soft); color: var(--clay-ink); }
+  .psel.st-decided { background-color: var(--ok-soft); color: var(--ok); }
+  .owner-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 2px; }
+  .vis { display: flex; align-items: center; gap: 8px; justify-content: center; }
+  .vis .lbl { font-size: var(--text-xs); color: var(--ink-3); width: 44px; }
+  .add-row td { background: var(--paper) !important; }
+  .add-row button { width: 100%; text-align: left; border: 0; background: none; padding: 12px; color: var(--ink-3); font: inherit; font-size: var(--text-sm); cursor: pointer; display: flex; gap: 8px; align-items: center; }
+  .add-row button:hover { color: var(--ink); }
+  .hint { font-size: var(--text-xs); color: var(--ink-3); margin-top: var(--s-3); display: flex; gap: 16px; }
+  .hint kbd { font-family: var(--font-mono); font-size: 10.5px; border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 4px; background: var(--surface); }
+  .empty { padding: var(--s-10); text-align: center; color: var(--ink-3); }
+</style>
+</head>
+<body data-page="decisions">
+<div data-topbar></div>
+
+<main class="page">
+  <header class="page-head">
+    <div>
+      <div class="eyebrow">Elena &amp; Marcus · Decisions &amp; insights</div>
+      <h1>Decisions</h1>
+      <div class="meta"><span><i data-i="edit" data-s="14"></i>Click any cell to edit — it saves as you go</span><span><i data-i="eye" data-s="14"></i>You choose what the couple sees</span></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="btn btn-ghost" href="project.html#risks"><i data-i="shield" data-s="14"></i>Risks in Project</a>
+      <button class="btn btn-secondary" type="button" id="preview-toggle" aria-pressed="false" aria-controls="preview"><i data-i="eye" data-s="14"></i>Preview as couple</button>
+    </div>
+  </header>
+
+  <section aria-label="Insights">
+    <div class="eyebrow" style="margin-bottom:var(--s-3)">Noticed this week · turn one into a decision</div>
+    <div class="insights" id="insights">
+      <article class="card ins" data-ins="0">
+        <div class="k"><i data-i="clock" data-s="12"></i>Timing</div>
+        <div class="t">Videographer is the last open vendor</div>
+        <div class="d">October dates in Charleston fill by January. Two shortlisted studios have Oct 16 open today.</div>
+        <div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></div>
+      </article>
+      <article class="card ins" data-ins="1">
+        <div class="k"><i data-i="cal" data-s="12"></i>Hold</div>
+        <div class="t">Harborline room block releases Oct 8–10 hold</div>
+        <div class="d">The 20-room courtesy hold lapses Dec 15 unless the couple confirms a count.</div>
+        <div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></div>
+      </article>
+      <article class="card ins" data-ins="2">
+        <div class="k"><i data-i="globe" data-s="12"></i>Weather</div>
+        <div class="t">Mid-October rain odds are 1 in 4</div>
+        <div class="d">Tent hold with Coastal Tents is soft. A firm hold costs $600, refundable to Sep 1.</div>
+        <div><button class="btn btn-secondary btn-sm"><i data-i="plus" data-s="13"></i>Add as decision</button></div>
+      </article>
+    </div>
+  </section>
+
+  <div class="bar-row">
+    <div class="l">
+      <div class="seg" role="tablist" id="filt">
+        <button aria-selected="true" data-f="open">Open <span class="count" data-c="open"></span></button>
+        <button aria-selected="false" data-f="decided">Decided <span class="count" data-c="decided"></span></button>
+        <button aria-selected="false" data-f="all">All <span class="count" data-c="all"></span></button>
+      </div>
+      <button class="fchip" id="only-couple" aria-pressed="false"><i data-i="heart" data-s="13"></i>Couple-visible only</button>
+    </div>
+    <div class="r">
+      <span class="couple-count"><i data-i="eye" data-s="14"></i><span><b id="vis-n">0</b> of <span id="all-n">0</span> visible to Elena &amp; Marcus</span></span>
+    </div>
+  </div>
+
+  <section class="card" id="preview" hidden style="margin-bottom:var(--s-4)">
+    <div class="card-head"><h3>What Elena &amp; Marcus see</h3><span class="faint" style="font-size:var(--text-sm)">Couple-visible is off until you share a row</span></div>
+    <div class="card-body" id="preview-body"></div>
+  </section>
+
+  <div class="sheet">
+    <table>
+      <thead><tr><th class="idx">#</th><th>Decision</th><th>Options</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead>
+      <tbody id="rows"></tbody>
+      <tbody><tr class="add-row"><td class="idx">+</td><td colspan="5"><button id="add"><i data-i="plus" data-s="14"></i>Add a decision</button></td></tr></tbody>
+    </table>
+  </div>
+  <div class="hint"><span><kbd>Enter</kbd> save cell</span><span><kbd>Esc</kbd> cancel</span><span><kbd>Tab</kbd> next cell</span><span>Changes to couple-visible rows appear in their portal under <b>This week</b>.</span></div>
+</main>
+
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const OWNERS = { "Sarah": "var(--ink)", "Elena & Marcus": "var(--clay)", "Vendor": "var(--ink-4)" };
+  const STATUSES = [["open", "Open"], ["couple", "Waiting on couple"], ["decided", "Decided"]];
+  let rows = [
+    { d: "Florist", opt: "Hartley & Fern · Marlowe Studio", o: "Elena & Marcus", s: "couple", due: "Nov 9", v: false },
+    { d: "Harborline hold", opt: "Keep Oct 8–10 · Move to Oct 15–17", o: "Sarah", s: "open", due: "Nov 4", v: false, late: true },
+    { d: "Ceremony rain plan", opt: "Tent · Ashby ballroom", o: "Elena & Marcus", s: "open", due: "Dec 1", v: false },
+    { d: "Rehearsal dinner room", opt: "Ashby library · Offsite", o: "Sarah", s: "open", due: "Dec 15", v: false },
+    { d: "Hair & makeup trial", opt: "Sat Aug 21 · Sun Aug 29", o: "Vendor", s: "open", due: "Nov 5", v: false, link: "approve-send.html?to=glam" },
+    { d: "Catering menu", opt: "Menu B, plated", o: "Elena & Marcus", s: "decided", due: "Oct 24", v: false },
+    { d: "Guest count", opt: "128 · cap 140", o: "Elena & Marcus", s: "decided", due: "Oct 20", v: false },
+    { d: "Wildflour deposit", opt: "Pay $7,920 by Nov 6", o: "Sarah", s: "decided", due: "Nov 6", v: false, link: "approve-send.html?to=wild" },
+  ];
+  let filter = "open", onlyCouple = false, previewOn = false;
+  const $ = (id) => document.getElementById(id);
+  const body = $("rows");
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  function counts() {
+    const c = { open: rows.filter((r) => r.s !== "decided").length, decided: rows.filter((r) => r.s === "decided").length, all: rows.length };
+    document.querySelectorAll("[data-c]").forEach((e) => (e.textContent = c[e.dataset.c]));
+    $("vis-n").textContent = rows.filter((r) => r.v).length; $("all-n").textContent = rows.length;
+    if (previewOn) renderPreview();
+  }
+  function renderPreview() {
+    const shared = rows.filter((r) => r.v);
+    $("preview-body").innerHTML = shared.length
+      ? `<ul class="preview-list">${shared.map((r) => `<li><b>${esc(r.d)}</b><div class="faint">${esc(r.opt)} · due ${esc(r.due)}</div></li>`).join("")}</ul>`
+      : `<p class="faint" style="margin:0">Nothing is shared yet. Couple-visible stays off until you turn a row on.</p>`;
+  }
+  function render(flashIdx) {
+    const list = rows.map((r, i) => [r, i]).filter(([r]) => (filter === "all" || (filter === "open" ? r.s !== "decided" : r.s === "decided")) && (!onlyCouple || r.v));
+    body.innerHTML = list.length ? list.map(([r, i], n) => `
+      <tr data-i="${i}" class="${r.s === "decided" ? "is-decided" : ""} ${i === flashIdx ? "flash" : ""}">
+        <td class="idx">${n + 1}</td>
+        <td class="dec"><div class="cell" contenteditable="true" data-k="d">${esc(r.d)}</div></td>
+        <td class="opt"><div class="cell" contenteditable="true" data-k="opt">${esc(r.opt || "")}${r.link ? ` <a class="btn-link" href="${r.link}" contenteditable="false" style="white-space:nowrap">Open draft →</a>` : ""}</div></td>
+        <td class="pick"><span class="owner-dot" style="background:${OWNERS[r.o]}"></span><select class="psel" data-k="o" aria-label="Owner">${Object.keys(OWNERS).map((o) => `<option ${o === r.o ? "selected" : ""}>${esc(o)}</option>`).join("")}</select></td>
+        <td class="due ${r.late && r.s !== "decided" ? "late" : ""}"><div class="cell" contenteditable="true" data-k="due">${esc(r.due)}</div></td>
+        <td class="pick"><select class="psel st-${r.s}" data-k="s" aria-label="Status">${STATUSES.map(([v, l]) => `<option value="${v}" ${v === r.s ? "selected" : ""}>${l}</option>`).join("")}</select><label class="vis"><input type="checkbox" class="toggle" data-k="v" ${r.v ? "checked" : ""} aria-label="Visible to couple"><span class="lbl">${r.v ? "Shared" : "Private"}</span></label></td>
+      </tr>`).join("") : `<tr><td colspan="6"><div class="empty">Nothing ${filter === "decided" ? "decided" : "open"} here${onlyCouple ? " that the couple can see" : ""}.</div></td></tr>`;
+    counts();
+  }
+  body.addEventListener("keydown", (e) => {
+    const c = e.target.closest(".cell[contenteditable]"); if (!c) return;
+    if (e.key === "Enter") { e.preventDefault(); c.blur(); }
+    if (e.key === "Escape") { const r = rows[+c.closest("tr").dataset.i]; c.textContent = r[c.dataset.k]; c.blur(); }
+  });
+  body.addEventListener("focusout", (e) => {
+    const c = e.target.closest(".cell[contenteditable]"); if (!c) return;
+    const r = rows[+c.closest("tr").dataset.i], k = c.dataset.k;
+    const v = (c.firstChild && c.firstChild.nodeType === 3 ? c.firstChild.textContent : c.textContent).trim();
+    if (v && v !== r[k]) { r[k] = v; Envoy.toast(r.v ? "Saved · couple will see this update" : "Saved"); }
+  });
+  body.addEventListener("change", (e) => {
+    const t = e.target, tr = t.closest("tr"); if (!tr) return;
+    const i = +tr.dataset.i, r = rows[i], k = t.dataset.k;
+    if (k === "v") { r.v = t.checked; Envoy.toast(t.checked ? "Now visible in Elena &amp; Marcus’s portal" : "Hidden from the couple"); }
+    else if (k === "s") { r.s = t.value; Envoy.toast(t.value === "decided" ? `<b>Decided</b> · moved out of Open` : `Status · <b>${t.selectedOptions[0].text}</b>`); }
+    else if (k === "o") { r.o = t.value; }
+    render(i);
+  });
+  document.querySelectorAll("#filt button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("#filt button").forEach((x) => x.setAttribute("aria-selected", x === b)); filter = b.dataset.f; render();
+  }));
+  $("only-couple").addEventListener("click", (e) => { onlyCouple = !onlyCouple; e.currentTarget.setAttribute("aria-pressed", onlyCouple); render(); });
+  function addRow(r) {
+    rows.unshift(r); if (filter === "decided") { filter = "open"; document.querySelectorAll("#filt button").forEach((x) => x.setAttribute("aria-selected", x.dataset.f === "open")); }
+    render(0);
+    return body.querySelector('tr[data-i="0"] td.dec .cell');
+  }
+  $("add").addEventListener("click", () => { const c = addRow({ d: "New decision", opt: "Option A · Option B", o: "Sarah", s: "open", due: "—", v: false }); c.focus(); document.getSelection().selectAllChildren(c); });
+  $("preview-toggle").addEventListener("click", () => {
+    previewOn = !previewOn;
+    $("preview").hidden = !previewOn;
+    $("preview-toggle").setAttribute("aria-pressed", String(previewOn));
+    renderPreview();
+  });
+  const INS = [
+    { d: "Book videographer", opt: "Lumen Reel · Saltmarsh Films", o: "Sarah", s: "open", due: "Dec 1", v: false },
+    { d: "Harborline room block", opt: "Confirm 20 rooms · Release the hold", o: "Elena & Marcus", s: "couple", due: "Dec 15", v: false },
+    { d: "Tent hold", opt: "Firm hold, $600 · Leave it soft", o: "Elena & Marcus", s: "open", due: "Jan 15", v: false },
+  ];
+  document.querySelectorAll(".ins").forEach((card) => card.querySelector("button").addEventListener("click", (e) => {
+    addRow({ ...INS[+card.dataset.ins] });
+    card.classList.add("added"); e.currentTarget.disabled = true; e.currentTarget.innerHTML = Envoy.icon("check", 13) + " Added";
+    Envoy.toast("Added to Open decisions");
+  }));
+  render();
+});
+</script>
+</body>
+</html>

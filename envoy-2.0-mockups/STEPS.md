@@ -19,6 +19,9 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 | `design-system/index.html` | Living style guide: principles, color with contrast notes, type scale, spacing, radius/elevation, buttons, inputs, chips/status vocabulary, tabs, cards/KPIs, table and sheet, empty states, chart palette with a live bar chart and Sankey. |
 | `design-system/DESIGN.md` | Principles, token table, usage rules and don'ts. |
 | `landing/index.html` | Marketing page for planners. <br>Hero ("Plan the wedding, not the inbox.") with an HTML-built product shot, placeholder planner logos, the 3-step story (Attach → Know → Share), a 6-feature grid, a placeholder testimonial and illustrative stats, placeholder pricing, CTA and footer. |
+| `app/portfolio.html` | *Round 3 idea.* Planner home across all weddings ("Good morning, Sarah"). KPI strip (needs you today, deposits due in 7 days, vendors waiting on you, next wedding), a ranked "Start here" list of five cross-wedding actions, and 6 wedding cards with a countdown, needs-attention count, budget left with a bar, and next milestone. Filters: All / Needs attention / Next 6 months; sort by date or attention. Only Elena & Marcus opens (to overview.html). |
+| `app/approve-send.html` | *Round 3 idea.* The approval flow. Two queued drafts (Lowcountry Glam reply, Wildflour deposit + Menu B). From = sarah@whitfieldco.com (Gmail), editable subject and body, "Won't send until you approve" guard, and a required "I've read this" check before Approve & send is enabled. Ask Envoy panel side by side, with a strike/insert diff, sources and Apply/Dismiss, plus a "Before you send" checklist and their last message. Sending updates the status (Needs reply → Waiting, Booked → Deposit paid) and offers a 10-second Undo. `?to=wild` opens the Wildflour draft. |
+| `app/decisions.html` | *Round 3 idea.* A decisions log that builds on Risks & holds. Three "Noticed this week" insights can be added as decisions. Editable sheet: Decision / Owner / Status / Due / Notes / Couple sees. Text cells are contenteditable (Enter saves, Esc reverts). Owner and Status are pill selects. Open / Decided / All filter with counts, a couple-visible-only chip, a "N of M visible to Elena & Marcus" counter, and Add a decision. |
 
 ## Design decisions
 - **One accent, clay #9A3B27.** It's the colour of a wax seal (6.6:1 on paper). It marks urgency and the main action, and it doubles as the "risk" semantic so the UI never has two competing reds. Ok, warn and info are muted.
@@ -70,6 +73,38 @@ These are static HTML/CSS/JS mockups with no build step. Open `index.html` over 
 - The facts list replaces "Progress · 5 of 12 milestones" with "**Open this month** · Food & flowers".
 - The "Sarah's worked with 6×" chip is now "Sarah's worked with them", so it can't contradict the planner-side count.
 - Kept: mood boards, tags, Sarah handles booking. No confetti, no new tabs.
+
+## Round 3: ideas on the same vision
+New pages are linked from `index.html` under "Ideas · round 3", from the demo rail (a new "Ideas · round 3" list under the 5 beats) and from the topbar.
+
+**Topbar (assets/app.js + components.css)**
+- The crumb is now `All weddings / [E&M Elena & Marcus ▾]`. Both "All weddings" and the project switch go to `portfolio.html`. On the portfolio page the wedding switch and tabs are hidden, because you haven't opened a wedding yet.
+- The main nav is still Overview | Contacts | Project, with a quiet **More ▾** menu: Decisions, Approve & send (2 drafts waiting), All weddings. More is underlined when you're on one of its pages.
+- The menu close-on-outside-click and Esc handling is now global for every `details.menu`. The overview-only copy was removed.
+
+**Pages**
+1. **All weddings (`app/portfolio.html`).** This is where a planner with 15–30 weddings starts the day. It works in triage order: what needs me across all weddings → each wedding at a glance → the quiet rest in a plain table. Countdowns use the Fraunces display face. Under 14 days the countdown turns clay italic, which is the only accent use. "Start here" deep-links to the overview attention strip and to the Glam draft.
+2. **Approve & send (`app/approve-send.html`).** This flow is treated as sacred. Envoy never auto-sends, and no scheduled send is offered. The button stays disabled until the planner ticks "I've read this and it's ready to go". Applying a suggestion clears that tick, so she has to re-read the changed draft. The suggestion is highlighted in the body in clay-soft. After sending there is a 10-second Undo, and the result is logged to the vendor thread.
+3. **Decisions (`app/decisions.html`).** This is RAID turned into a planner's own words. Private is the default, and the couple sees only rows that are toggled on, which surface in their portal. It is reachable from More and from a new "Decisions log →" link in the Project Risks & holds footer.
+
+**Demo beats to add to the script**
+- Start at All weddings → click Elena & Marcus.
+- More → Approve & send → Apply suggestion → tick → Approve & send → status chip changes to Waiting → Undo.
+- More → Decisions → set "Release Harborline hold" to Decided (it leaves Open) → add the videographer insight → toggle it couple-visible.
+
+**Round 3 verification**
+- All 10 pages load headless with 0 page errors (`/tmp/shot/s.js`).
+- `/tmp/shot/t4.js` passed:
+  - Portfolio: 6 cards with countdowns 5/166/201/222/299/348; the attention filter shows 4; sorting by attention puts E&M first.
+  - Approve: send disabled → apply → enabled after tick → Waiting → Undo → Needs reply; switching to Wildflour works.
+  - Decisions: Open shows 5, deciding a row leaves 4, Decided shows 4; the visible counter updates; inline edit saves; the insight adds a row; the couple-only filter works.
+
+## Round 3 trust pass
+Additive to the idea pages. Linen and round 2 are unchanged.
+
+- **Portfolio.** Needs-you rows are actions: Confirm times, Log deposit, Review draft, Send nudge, Mark booked. A finished row leaves the list. Wedding cards show the date, a clay count, and the next action. Quiet weddings stay hidden until “Show 18 quiet weddings”. The card grid opens on Needs attention, so zero-count weddings stay out of the first view.
+- **Approve & send.** The From block shows the full Gmail address, Business or Personal, and Change. The tick reads “I reviewed this note to [Vendor]”. Undo puts back only Envoy’s suggested wording. A send is not undone.
+- **Decisions.** Couple-visible starts off, including rows added from insights. Columns are Decision, Options, Owner, Due, Status. Preview as couple lists only shared rows, and it is empty until one is turned on.
 
 ## Verification
 - Headless Chrome (puppeteer-core) loaded all 7 pages over `file://` with 0 page errors, 0 console errors and 0 failed requests. Fonts and Chart.js loaded.

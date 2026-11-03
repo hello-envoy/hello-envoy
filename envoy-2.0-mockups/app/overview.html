@@ -243,9 +243,6 @@ window.addEventListener("envoy:ready", () => {
     document.querySelectorAll("#vendor-table tbody tr").forEach(tr => tr.classList.toggle("hide", v !== "all" && tr.dataset.b !== v));
   });
 
-  const more = document.getElementById("cta-more");
-  document.addEventListener("click", (e) => { if (more.open && !more.contains(e.target)) more.open = false; });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") more.open = false; });
   if (location.hash === "#attention") { const s = document.getElementById("attn-strip"); s.classList.add("flash"); }
 });
 </script>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All weddings · Whitfield &amp; Co · Envoy</title>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  .greet h1 em { font-style: italic; color: var(--clay); font-weight: 300; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .kpis .kpi + .kpi { border-left: 1px solid var(--line); }
+  .start { display: grid; grid-template-columns: 1fr; }
+  .start li { display: grid; grid-template-columns: 22px 150px 1fr auto; gap: var(--s-3); align-items: center; padding: 12px var(--s-6); border-bottom: 1px solid var(--line); }
+  .start li:last-child { border-bottom: 0; }
+  .start .who { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .start .what { color: var(--ink-2); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--clay); justify-self: center; }
+  .dot.warn { background: var(--warn); } .dot.calm { background: var(--ink-4); }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin: var(--s-10) 0 var(--s-4); }
+  .toolbar h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--text-xl, 24px); letter-spacing: -0.01em; }
+  .wgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-5); }
+  .wcard { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: box-shadow var(--dur-2) var(--ease), transform var(--dur-2) var(--ease); cursor: pointer; }
+  .wcard:hover { box-shadow: var(--e-3); transform: translateY(-1px); }
+  .wcard .top { padding: var(--s-6) var(--s-6) var(--s-4); display: grid; grid-template-columns: 1fr auto; gap: var(--s-4); align-items: start; }
+  .wcard .names { font-family: var(--font-display); font-size: 24px; line-height: 30px; letter-spacing: -0.01em; font-variation-settings: "opsz" 72; }
+  .wcard .where { color: var(--ink-3); font-size: var(--text-sm); margin-top: 4px; display: flex; gap: 6px; align-items: center; }
+  .cd { text-align: right; }
+  .cd .n { font-family: var(--font-display); font-weight: 300; font-size: 44px; line-height: 44px; letter-spacing: -0.03em; font-variant-numeric: lining-nums tabular-nums; font-variation-settings: "opsz" 144; color: var(--ink-4); }
+  .cd .n.hot { color: var(--clay); font-style: italic; }
+  .cd .u { color: var(--ink-3); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
+  .wcard.soon .cd .n { color: var(--clay); font-style: italic; }
+  .wcard .rows { padding: 0 var(--s-6) var(--s-5); display: grid; gap: 12px; flex: 1; }
+  .wcard .r { display: grid; grid-template-columns: 112px 1fr; gap: var(--s-3); align-items: center; font-size: var(--text-sm); }
+  .wcard .r .k { color: var(--ink-3); }
+  .budget-line { display: grid; gap: 6px; }
+  .budget-line .t { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+  .budget-line .t span:last-child { color: var(--ink-3); }
+  .wcard .foot { border-top: 1px solid var(--line); padding: 12px var(--s-6); display: flex; justify-content: space-between; align-items: center; color: var(--ink-2); font-size: var(--text-sm); }
+  .wcard .foot .open { display: inline-flex; gap: 6px; align-items: center; color: var(--ink); font-weight: 500; }
+  .attn-n { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+  .attn-n b { font-family: var(--font-mono); font-size: 11px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 99px; display: inline-grid; place-items: center; background: var(--clay-soft); color: var(--clay-ink); }
+  .attn-n.zero b { background: var(--paper-2); color: var(--ink-3); }
+  .rest { margin-top: var(--s-6); }
+  .rest td.names { font-family: var(--font-display); font-size: 17px; }
+  .hidden { display: none !important; }
+  .mono { font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body data-page="portfolio">
+<div data-topbar></div>
+
+<main class="page">
+  <header class="page-head greet">
+    <div>
+      <div class="eyebrow">Monday, November 2 · Whitfield &amp; Co</div>
+      <h1>Good morning, <em>Sarah.</em></h1>
+      <div class="meta"><span><i data-i="heart" data-s="14"></i>24 weddings in flight</span><span><i data-i="cal" data-s="14"></i>Kate &amp; Dom are this Saturday</span><span><i data-i="mail" data-s="14"></i>2 drafts waiting for your approval</span></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="btn btn-secondary" href="approve-send.html"><i data-i="send" data-s="14"></i>Review drafts · 2</a>
+      <button class="btn btn-primary" data-toast="New wedding — demo only"><i data-i="plus" data-s="14"></i>New wedding</button>
+    </div>
+  </header>
+
+  <section class="card kpis" aria-label="Across all weddings">
+    <div class="kpi"><div class="label"><i data-i="alert" data-s="14"></i>Needs you today</div><div class="value">11<small>items · 6 weddings</small></div><div class="delta">4 fewer than Friday</div></div>
+    <div class="kpi"><div class="label"><i data-i="dollar" data-s="14"></i>Deposits due · 7 days</div><div class="value">$14,620<small>3 payments</small></div><div class="delta">Wildflour $7,920 on Nov 6</div></div>
+    <div class="kpi"><div class="label"><i data-i="thread" data-s="14"></i>Vendors waiting on you</div><div class="value">5<small>replies</small></div><div class="delta">Oldest: 3 days · Lowcountry Glam</div></div>
+    <div class="kpi"><div class="label"><i data-i="cal" data-s="14"></i>Next wedding</div><div class="value">5<small>days · Kate &amp; Dom</small></div><div class="delta">Run of show sent · 2 vendors unconfirmed</div></div>
+  </section>
+
+  <section class="card" style="margin-top:var(--s-6)">
+    <div class="card-head"><div><div class="eyebrow">Needs you</div><h3 style="margin-top:2px">Each row does the next thing</h3></div><span class="faint" style="font-size:var(--text-sm)">One click — then it leaves this list</span></div>
+    <ul class="list start" id="needs">
+      <li><span class="dot"></span><span class="who">Kate &amp; Dom</span><span class="what">Confirm arrival times with Petal &amp; Pine and the string trio — wedding is Saturday</span><button class="btn btn-sm btn-primary" type="button" data-done="Arrival times confirmed for Kate &amp; Dom">Confirm times</button></li>
+      <li><span class="dot"></span><span class="who">Elena &amp; Marcus</span><span class="what">Wildflour deposit <b>$7,920</b> due Thursday · invoice approved by couple</span><a class="btn btn-sm btn-primary" href="overview.html#attention">Log deposit</a></li>
+      <li><span class="dot warn"></span><span class="who">Elena &amp; Marcus</span><span class="what">Lowcountry Glam asked for trial dates — draft reply ready</span><a class="btn btn-sm btn-primary" href="approve-send.html?to=glam">Review draft</a></li>
+      <li><span class="dot warn"></span><span class="who">Noor &amp; Eli</span><span class="what">Couple hasn’t chosen between two ceremony layouts · 9 days since shared</span><button class="btn btn-sm btn-primary" type="button" data-done="Nudge for Noor &amp; Eli is in your drafts — nothing sent">Send nudge</button></li>
+      <li><span class="dot calm"></span><span class="who">Priya &amp; Sam</span><span class="what">Photographer contract returned signed — file it and mark booked</span><button class="btn btn-sm btn-primary" type="button" data-done="Priya &amp; Sam photographer marked <b>Booked</b>">Mark booked</button></li>
+    </ul>
+  </section>
+
+  <div class="toolbar">
+    <h2>Your weddings</h2>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="seg" role="tablist" id="filter">
+        <button aria-selected="false" data-f="all">All · 6 of 24</button>
+        <button aria-selected="true" data-f="attn">Needs attention</button>
+        <button aria-selected="false" data-f="month">Next 6 months</button>
+      </div>
+      <div class="seg" role="tablist" id="sort">
+        <button aria-selected="true" data-s="date">By date</button>
+        <button aria-selected="false" data-s="attn">By attention</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="wgrid" id="wgrid"></section>
+
+  <section class="card rest" id="quiet">
+    <div class="card-head"><h3>Quiet this week</h3><button class="btn btn-sm btn-ghost" type="button" id="show-quiet" aria-expanded="false" aria-controls="quiet-body">Show 18 quiet weddings</button></div>
+    <div id="quiet-body" hidden>
+    <table class="table">
+      <thead><tr><th>Couple</th><th>Date</th><th>Venue</th><th>Next milestone</th><th style="text-align:right">Budget left</th></tr></thead>
+      <tbody>
+        <tr><td class="names">Ava &amp; Theo</td><td>Dec 5, 2026</td><td>Middleton Place</td><td>Final headcount · Nov 20</td><td style="text-align:right" class="mono">$6,400</td></tr>
+        <tr><td class="names">June &amp; Owen</td><td>Mar 13, 2027</td><td>The Cedar Room</td><td>Save-the-dates out · Nov 15</td><td style="text-align:right" class="mono">$41,200</td></tr>
+        <tr><td class="names">Mira &amp; Cal</td><td>Jul 24, 2027</td><td>Kiawah Island Club</td><td>Venue walkthrough · Dec 3</td><td style="text-align:right" class="mono">$88,900</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/app.js"></script>
+<script>
+window.addEventListener("envoy:ready", () => {
+  const TODAY = new Date(2026, 10, 2);
+  const W = [
+    { ini: "K&D", names: "Kate &amp; Dom", date: new Date(2026, 10, 7), venue: "Lowndes Grove, Charleston", attn: 3, budget: 64000, spent: 61200, next: "Rehearsal dinner · Nov 6", nextTone: "warn" },
+    { ini: "N&E", names: "Noor &amp; Eli", date: new Date(2027, 3, 17), venue: "Wavering Place, Eastover", attn: 2, budget: 95000, spent: 52400, next: "Ceremony layout · couple choosing" },
+    { ini: "P&S", names: "Priya &amp; Sam", date: new Date(2027, 4, 22), venue: "The Dewberry, Charleston", attn: 1, budget: 140000, spent: 61000, next: "Photographer booked · file contract" },
+    { ini: "R&I", names: "Rosa &amp; Ian", date: new Date(2027, 5, 12), venue: "Boone Hall, Mt Pleasant", attn: 0, budget: 72000, spent: 18500, next: "Florist proposals · Nov 18" },
+    { ini: "B&J", names: "Bea &amp; Jon", date: new Date(2027, 7, 28), venue: "Montage Palmetto Bluff", attn: 0, budget: 210000, spent: 64000, next: "Venue walkthrough · Dec 9" },
+    { ini: "E&M", names: "Elena &amp; Marcus", date: new Date(2027, 9, 16), venue: "The Ashby Estate, Charleston", attn: 5, budget: 120000, spent: 80000, next: "Lock catering · Nov 6", nextTone: "warn", href: "overview.html", live: true },
+  ];
+  const days = (d) => Math.round((d - TODAY) / 864e5);
+  const fmtD = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const grid = document.getElementById("wgrid");
+  let filter = "attn", sort = "date";
+  function render() {
+    let list = W.slice();
+    if (filter === "attn") list = list.filter((w) => w.attn > 0);
+    if (filter === "month") list = list.filter((w) => days(w.date) <= 183);
+    list.sort(sort === "date" ? (a, b) => a.date - b.date : (a, b) => b.attn - a.attn || a.date - b.date);
+    grid.innerHTML = list.map((w) => {
+      const unit = w.attn === 1 ? "needs you" : "need you";
+      return `<a class="card wcard" ${w.href ? `href="${w.href}"` : `data-demo="${w.names}"`}>
+        <div class="top">
+          <div><div class="names">${w.names}</div><div class="where"><i data-i="cal" data-s="13"></i>${fmtD(w.date)}</div></div>
+          <div class="cd"><div class="n ${w.attn ? "hot" : ""}">${w.attn}</div><div class="u">${unit}</div></div>
+        </div>
+        <div class="foot"><span>${w.next}</span><span class="open">Next action ${Envoy.icon("arrowr", 14)}</span></div>
+      </a>`;
+    }).join("");
+    Envoy.hydrateIcons(grid);
+    grid.querySelectorAll("[data-demo]").forEach((c) => c.addEventListener("click", () => Envoy.toast(`${c.dataset.demo} — only Elena &amp; Marcus is built out in this demo`)));
+  }
+  const seg = (id, key, set) => document.querySelectorAll(`#${id} button`).forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(`#${id} button`).forEach((x) => x.setAttribute("aria-selected", x === b));
+    set(b.dataset[key]); render();
+  }));
+  seg("filter", "f", (v) => (filter = v));
+  seg("sort", "s", (v) => (sort = v));
+  document.getElementById("needs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-done]");
+    if (!b) return;
+    b.closest("li").remove();
+    Envoy.toast(b.dataset.done);
+  });
+  document.getElementById("show-quiet").addEventListener("click", (e) => {
+    const body = document.getElementById("quiet-body");
+    const open = body.hidden;
+    body.hidden = !open;
+    e.currentTarget.setAttribute("aria-expanded", String(open));
+    e.currentTarget.textContent = open ? "Hide quiet weddings" : "Show 18 quiet weddings";
+  });
+  render();
+});
+</script>
+</body>
+</html>
